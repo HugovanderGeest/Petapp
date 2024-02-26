@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>{{ location.name }}</title>
 </head>
 <body>
@@ -11,23 +12,30 @@
 
 <script>
 $(document).ready(function() {
+    // Toggle form visibility
+    $('#toggleFormVisibility').click(function() {
+        $('#formContainer').slideToggle();
+    });
+
+    // Handle form submission
     $('#barLinkForm').submit(function(e) {
-        e.preventDefault(); // Prevent default form submission
+        e.preventDefault();
         $.ajax({
-            url: '/add_bar_to_location/{{ location.id }}', // Use the location ID in the URL
+            url: '/add_bar_to_location/{{ location.id }}',
             type: 'POST',
-            data: $(this).serialize(), // Serialize form data for submission
+            data: $(this).serialize(),
             success: function(response) {
-                // Append the new bar to the list
                 $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-                // Optionally clear the form or provide further feedback
+                $('#errorText').text('');
+                $('#formContainer').slideUp(); // Optionally hide form after success
             },
-            error: function() {
-                alert('Error adding bar');
+            error: function(response) {
+                $('#errorText').text('Error: The bar already exists.');
             }
         });
     });
 });
+
 </script>
 <script>
     success: function(response) {
@@ -36,18 +44,33 @@ $(document).ready(function() {
 },
 </script>
 
-<form id="barLinkForm" method="POST">
-    <!-- Your form inputs here -->
-    <input type="text" name="bar_name" required>
-    <input type="submit" value="Add Bar">
-</form>
+<a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
 
-<ul id="barsList">
+<!-- Gear icon for toggling the form -->
+<div class="gear-icon-container">
+    <i id="toggleFormVisibility" class="fa fa-cog"></i>
+</div>
+
+<!-- Form, initially hidden -->
+<div id="formContainer" class="form-container" style="display: none;">
+    <form id="barLinkForm" method="POST">
+        <input type="text" name="bar_name" class="form-input" placeholder="Bar Name" required>
+        <input type="submit" value="Add Bar" class="submit-button">
+        <div id="errorText" class="error-text"></div> <!-- Error message will be displayed here -->
+    </form>
+</div>
+
+    
+
+<ul id="barsList" class="bars-list">
     {% for bar in bars %}
-    <li><a href="{{ url_for('bar', bar_id=bar.id) }}">{{ bar.name }}</a></li>
+    <li>
+        <!-- Each list item is now fully a clickable button -->
+        <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
+    </li>
     {% endfor %}
 </ul>
-
+</div>
 
 </body>
 

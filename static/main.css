@@ -47,7 +47,7 @@
     #volleZakken-minus,
     #volleZakken-plus {
         padding: 10px 20px;
-        width: 100%;
+        width: 30%;
         text-align: center;
         font-size: 50px;
         background-color: transparent;
@@ -113,6 +113,9 @@
         color: #f8f9fa;
     }
 
+    
+    
+
     #link {
         margin: 0px;
         border: 2px solid;
@@ -126,7 +129,6 @@
 
 
     .input-group-form {
-        border: 5px solid;
         width: 70vw;
         border-radius: 20px;
         color: rgba(128, 128, 128, 0.274);
@@ -171,6 +173,120 @@
         cursor: pointer;
         transition: background-color 0.3s ease;
     }
+
+/* Additional CSS for gear icon and form transition */
+.gear-icon-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 24px; /* Adjust size as needed */
+    color: #007bff; /* Adjust color as needed */
+}
+
+/* Improved form styles for a cleaner look */
+.form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 280px;
+    margin: 0 auto;
+    transition: all 0.3s ease-in-out; /* Smooth transition for toggling form */
+}
+
+.form-input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border 0.3s ease-in-out;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+}
+
+#formContainer {
+    position: absolute;
+    bottom: 0px;
+    height: 110px;
+  }
+
+.submit-button {
+    background-color: #76C9FB;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.submit-button:hover {
+    background-color: #76C9FB;
+}
+
+.error-text {
+    color: #dc3545;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* Hide/Show Transition for the form */
+.hide {
+    display: none;
+}
+
+
+.submit-button:hover {
+    background-color: #0069d9;
+}
+
+/* List container styling */
+.bars-list {
+    display: flex; /* Use flexbox to layout children */
+    flex-wrap: wrap; /* Allow items to wrap to next line on small screens */
+    gap: 10px; /* Space between items */
+    justify-content: center; /* Center items horizontally */
+    list-style: none;
+    padding: 0;
+    margin-top: -120px; /* Space for form when it's visible */
+}
+
+/* List item styling */
+.bars-list li {
+    /* No bottom margin needed since flexbox handles spacing */
+}
+
+/* List item link styling */
+.bars-list li a {
+    background-color: #007bff;
+    color: white;
+    display: flex; /* Use flex to center content */
+    justify-content: center; /* Center text horizontally */
+    align-items: center; /* Center text vertically */
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    min-width: 100px; /* Minimum width for each item */
+    text-align: center;
+    font-size: 20px;
+}
+
+.bars-list li a:hover, .bars-list li a:focus {
+    background-color: #0056b3;
+    color: white;
+    text-decoration: none;
+    outline: none;
+}
+
 
     .login-form input[type="submit"]:hover {
         background-color: #3658a4;
@@ -260,10 +376,6 @@
     .form-container {
         display: flex;
         justify-content: space-between;
-    }
-
-    .form-container form {
-        width: 60%;
     }
 
     .form-container .button-container {

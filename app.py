@@ -265,6 +265,13 @@ def update_bar_link(bar_id):
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+@app.route('/remove_bar_from_location/<int:bar_id>', methods=['POST'])
+def remove_bar(bar_id):
+    bar_to_remove = Bar.query.get_or_404(bar_id)  # Get the bar or return 404 if not found
+    db.session.delete(bar_to_remove)  # Remove the bar from the database
+    db.session.commit()  # Commit the changes to the database
+    return jsonify({'success': 'Bar removed successfully'}), 200
+
 
 @app.route('/submit_link', methods=['POST'])
 def submit_link():

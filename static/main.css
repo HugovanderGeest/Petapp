@@ -101,7 +101,7 @@
         top: 10px;
         left: 10px;
         background-color: transparent;
-        color: black;
+        color: #1220B0;
         text-decoration: none;
         padding: 10px 20px;
         border-radius: 5px;
@@ -174,6 +174,18 @@
         transition: background-color 0.3s ease;
     }
 
+    #gear-icon {
+        font-size: 30px;
+
+}
+
+.logo2 {
+    position: absolute;
+  top: 10px;
+  width: 90px;
+}
+    
+
 /* Additional CSS for gear icon and form transition */
 .gear-icon-container {
     position: fixed;
@@ -181,7 +193,18 @@
     right: 20px;
     cursor: pointer;
     font-size: 24px; /* Adjust size as needed */
-    color: #007bff; /* Adjust color as needed */
+    color: #141AAC; /* Adjust color as needed */
+    font-size: 30px;
+    padding: 10px 20px;
+    margin-top: -10px;
+    margin-right: -10px;
+}
+
+.gear-icon-container:hover {
+    background-color: #333;
+    color: #f8f9fa;
+    padding: 10px 20px;
+    border-radius: 5px;
 }
 
 /* Improved form styles for a cleaner look */
@@ -358,13 +381,6 @@
         border-radius: 10px;
         display: inline-block;
         /* Center form on the page */
-    }
-
-    #gear-icon {
-        position: absolute;
-        font-size: 30px;
-        right: 0px;
-        padding: 20px;
     }
 
     form label,

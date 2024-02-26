@@ -44,12 +44,18 @@ $(document).ready(function() {
 },
 </script>
 
+<img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+
+
 <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
 
-<!-- Gear icon for toggling the form -->
 <div class="gear-icon-container">
     <i id="toggleFormVisibility" class="fa fa-cog"></i>
 </div>
+
+<!-- Button to remove bar, initially hidden -->
+<button id="removeBarBtn" style="display: none;">Remove Bar</button>
+
 
 <!-- Form, initially hidden -->
 <div id="formContainer" class="form-container" style="display: none;">

@@ -13,6 +13,9 @@
 
 <body>
 
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+
+
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
 
 
@@ -22,7 +25,7 @@
             <p id="displayUrl"></p>
 
             <!-- Gear icon -->
-            <i id="gear-icon" class="fa fa-cog"></i>
+            <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
 
             <!-- Hidden form -->
             <form id="link-form" style="display: none;" method="post">

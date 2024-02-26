@@ -1,0 +1,26 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <title>Dashboard</title>
+</head>
+<body>
+    <img src="{{ url_for('static', filename='cup.png') }}" alt="Floating Cup" class="floating-cup">
+    <div class="login-container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo">
+        <div class="login-form">
+            <form method="POST" action="{{ url_for('login') }}">
+                <form method="POST">
+                    <h2>Welcome, {{ username }}!</h2> 
+            
+                    {{ form.hidden_tag() }}
+                    {{ form.location.label }} {{ form.location() }}
+                    {{ form.submit() }}
+                </form>
+            
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <title>{{ location.name }}</title>
+</head>
+<body>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+$(document).ready(function() {
+    $('#barLinkForm').submit(function(e) {
+        e.preventDefault(); // Prevent default form submission
+        $.ajax({
+            url: '/add_bar_to_location/{{ location.id }}', // Use the location ID in the URL
+            type: 'POST',
+            data: $(this).serialize(), // Serialize form data for submission
+            success: function(response) {
+                // Append the new bar to the list
+                $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+                // Optionally clear the form or provide further feedback
+            },
+            error: function() {
+                alert('Error adding bar');
+            }
+        });
+    });
+});
+</script>
+<script>
+    success: function(response) {
+    // Make sure `response` actually includes `bar_id`
+    $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+},
+</script>
+
+<form id="barLinkForm" method="POST">
+    <!-- Your form inputs here -->
+    <input type="text" name="bar_name" required>
+    <input type="submit" value="Add Bar">
+</form>
+
+<ul id="barsList">
+    {% for bar in bars %}
+    <li><a href="{{ url_for('bar', bar_id=bar.id) }}">{{ bar.name }}</a></li>
+    {% endfor %}
+</ul>
+
+
+</body>
+
+
+</html>

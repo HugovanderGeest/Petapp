@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <title>{{ bar.name }}</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+
+    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+
+
+    <div class="cube-container">
+        <div class="cube user-cube">
+
+            <p id="displayUrl"></p>
+
+            <!-- Gear icon -->
+            <i id="gear-icon" class="fa fa-cog"></i>
+
+            <!-- Hidden form -->
+            <form id="link-form" style="display: none;" method="post">
+                <label for="link">googlemaps link:</label><br>
+                <input type="text" id="link" name="link" required>
+                <input type="submit" value="Submit">
+            </form>
+
+            <h1 class="titel-bar">{{ bar.name }}</h1> <br>
+            <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
+            <div class="form-container">
+                <form method="POST" style="width: 60%;">
+                    <div class="meer">
+                        <label  for="zakkenInput">zakken gekregen:</label>
+                        <div class="input-group-form">
+                            <button id="zakken-minus">-</button>
+                            <input type="number" id="zakken_gekregenInput" name="zakken_gekregen"
+                                value="{{ bar.zakken_gekregen }}" style=" -moz-appearance: textfield;">
+                            <button id="zakken-plus">+</button>
+                        </div>
+                    </div>
+                    <div class="meer">
+                        <label  for="muntenInput">munten gekregen:</label>
+                        <div class="input-group-form">
+                            <button id="munten-minus">-</button>
+                            <input type="number" id="munten_gekregenInput" name="munten_gekregen"
+                                value="{{ bar.munten_gekregen }}" style="-moz-appearance: textfield;" >
+
+                            <button id="munten-plus">+</button>
+                        </div>
+                    </div>
+                    <div class="meer">
+                        <label for="volleZakkenInput">volle zakken opgehaald:</label>
+                        <div class="input-group-form">
+                            <button id="volleZakken-minus">-</button>
+                            <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
+                                value="{{ bar.volle_zakken_opgehaald }}" style=" -moz-appearance: textfield;">
+                            <button id="volleZakken-plus">+</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+            document.getElementById('gear-icon').addEventListener('click', function () {
+                var form = document.getElementById('link-form');
+                var buttons = document.querySelectorAll('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus'); // Select all the buttons
+
+                // Toggle form display
+                form.style.display = form.style.display === "block" ? "none" : "block";
+
+                // Toggle buttons display
+                buttons.forEach(function(button) {
+                    button.style.display = button.style.display === "inline-block" ? "none" : "inline-block"; // Adjust display style as needed
+                });
+            });
+
+                document.getElementById('link-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            var link = document.getElementById('link').value;
+
+            $.ajax({
+                url: '/bar/{{ bar.id }}/update-link',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ link: link }),
+                success: function(response) {
+                    console.log('Link update successful', response);
+                    document.querySelector('a[href="{{ bar.link }}"]').href = link;
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Link update failed:', textStatus, errorThrown);
+                }
+            });
+        });
+        
+
+        function updateBar(field, increment) {
+            console.log('Field:', field); // Log the field
+
+            var input = $('#' + field + 'Input'); // Ensure this selector matches your input ID
+            console.log('Input element:', input); // Log the input element
+
+            var currentValue = parseInt(input.val(), 10); // Parse the current value as integer
+            console.log('Current value:', currentValue); // Log the current value
+
+            if (isNaN(currentValue)) {
+                console.error('Current value is not a number');
+                currentValue = 0;
+            }
+
+            var newValue = currentValue + increment;
+            console.log('New value:', newValue); // Log the new value
+
+            $.ajax({
+                url: '/bar/{{ bar.id }}/update',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    field: field,
+                    increment: increment
+                }),
+                success: function (response) {
+                    console.log('Request successful', response); // Log success and response
+                    input.val(newValue); // Update the input field with the new value
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.error('Request failed:', textStatus, errorThrown); // Log any errors
+                }
+            });
+        }
+
+
+        $('#zakken-minus').off('click').on('click', function (e) {
+            e.preventDefault();
+            updateBar('zakken_gekregen', -1);
+        });
+        $('#zakken-plus').off('click').on('click', function (e) {
+            e.preventDefault();
+            updateBar('zakken_gekregen', 1);
+        });
+        $('#munten-minus').off('click').on('click', function (e) {
+            e.preventDefault();
+            updateBar('munten_gekregen', -1);
+        });
+        $('#munten-plus').off('click').on('click', function (e) {
+            e.preventDefault();
+            updateBar('munten_gekregen', 1);
+        });
+        $('#volleZakken-minus').off('click').on('click', function (e) {
+            e.preventDefault();
+            updateBar('volle_zakken_opgehaald', -1);
+        });
+        $('#volleZakken-plus').off('click').on('click', function (e) {
+            e.preventDefault();
+            updateBar('volle_zakken_opgehaald', 1);
+        });
+    </script>
+</body>
+
+</html>

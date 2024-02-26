@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <title>CircularPET - Login</title>
+</head>
+
+<body>
+
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <img id="loading-icon" src="{{ url_for('static', filename='path_to_your_cup.png') }}" alt="Loading...">
+    </div>
+
+    <img src="{{ url_for('static', filename='cup.png') }}" alt="Floating Cup" class="floating-cup">
+    <div class="login-container">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo">
+        <div class="login-form">
+            <form id="loginForm" method="POST" action="{{ url_for('login') }}">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                {% for category, message in messages %}
+                <div style="color: red;" class="alert alert-{{ category }}">{{ message }}</div> <br>
+                {% endfor %}
+                {% endif %}
+                {% endwith %}
+                <div class="input-group">
+                    <input type="text" id="username" name="username" required placeholder="Naam">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" name="password" required placeholder="Wachtwoord">
+                </div>
+                <div class="input-group">
+                    <input type="submit" value="Login">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function () {
+            document.getElementById('loading').style.display = 'block';
+        });
+    </script>
+
+</body>
+
+</html>

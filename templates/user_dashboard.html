@@ -1,0 +1,17 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <title>User Dashboard</title>
+</head>
+<body>
+    <div class="cube-container" style="width: 100%; display: flex; justify-content: center; padding-top: 20px;">
+        <div class="cube user-dashboard-cube" style="width: auto; padding: 20px; margin: 20px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center;">
+            <h1>User Dashboard</h1>
+            <p>Username: {{ user.username }}</p>
+            <p>Location: {{ user.location }}</p>
+        </div>
+    </div>
+</body>
+</html>

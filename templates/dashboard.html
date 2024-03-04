@@ -10,17 +10,10 @@
     <div class="login-container">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo">
         <div class="login-form">
-            <form method="POST" action="{{ url_for('login') }}">
-                <form method="POST">
-                    <h2>Welcome, {{ username }}!</h2> 
-            
-                    {{ form.hidden_tag() }}
-                    {{ form.location.label }} {{ form.location() }}
-                    {{ form.submit() }}
-                </form>
-            
-            </form>
+            <h2>Welcome, {{ username }}!</h2>
+            <p>Your location: {{ location_name }}</p>
         </div>
     </div>
 </body>
 </html>
+s

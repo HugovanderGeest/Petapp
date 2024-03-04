@@ -1,17 +1,32 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-
     <title>Admin</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
 
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
     <div class="cube-container">
         <div class="cube user-cube">
@@ -27,16 +42,23 @@
                     {% for user in users %}
                     <li>
                         <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
-                        <form method="POST" action="{{ url_for('delete_user', id=user.id) }}">
-                            <input type="submit" value="Remove User">
-                        </form>
                     </li>
                     {% endfor %}
                 </ul>
+
+                <div class="gear-icon-container">
+                    <i id="toggleAssignLocation" class="fa fa-cog"></i>
+                </div>
+                <div id="assignLocationList" class="hidden">
+                    <ul>
+                        {% for user in users %}
+                        <li>{{ user.username }} - <a href="{{ url_for('assign_location', user_id=user.id) }}">Assign
+                                Location</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
             </div>
         </div>
-
-        
 
         <div class="cube location-cube">
             <form method="POST" class="form-section">
@@ -54,11 +76,21 @@
                     <li>
                         <a href="{{ url_for('location', location_id=location.id) }}">{{ location.name }}</a>
                     </li>
-                {% endfor %}
+                    {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#toggleAssignLocation').click(function () {
+                $('#assignLocationList').slideToggle();
+            });
+        });
+    </script>
+
 </body>
+
 </html>

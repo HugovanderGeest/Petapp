@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect, request, url_for, flash, jsonify, send_from_directory, abort  # Added abort herefrom flask import flash, session, jsonify
+from flask import Flask, render_template, redirect, request, url_for, flash, jsonify, send_from_directory, abort, session  # Added session here
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 import os
@@ -9,6 +9,9 @@ from wtforms_sqlalchemy.fields import QuerySelectField
 from flask import send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
+from wtforms import SelectField, Form
+from flask_migrate import Migrate
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
@@ -17,25 +20,28 @@ app.config['GOOGLE_MAPS_API_KEY'] = 'AIzaSyDjyGyXUa6Wnapxt-7HOity5K4Ydnb--2w'
 
 db = SQLAlchemy(app)
 
+migrate = Migrate(app, db)
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    location = db.Column(db.String(120), nullable=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)  # Foreign key to Location
+    location = db.relationship('Location', backref=db.backref('users', lazy=True))
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
 
-    def __init__(self, username, password, location=None, group=None, badges=0):
+    def __init__(self, username, password, location_id=None, group=None, badges=0):
         self.username = username
         self.password = generate_password_hash(password)
-        self.location = location
+        self.location_id = location_id
         self.group = group
         self.badges = badges
-        
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('Create User')
+    location = QuerySelectField('Location', query_factory=lambda: Location.query, allow_blank=True, get_label='name')
+    submit = SubmitField('Create or Update User')
 
 class LocationForm(FlaskForm):
     name = StringField('Location', validators=[DataRequired()])
@@ -127,16 +133,15 @@ def admin():
     form = UserForm()
     location_form = LocationForm()
     if form.validate_on_submit():
-        user = User(form.username.data, form.password.data)
+        user = User(username=form.username.data, password=form.password.data)  # Adjusted to named arguments
         db.session.add(user)
         db.session.commit()
     if location_form.validate_on_submit():
-        location = Location(location_form.name.data)
+        location = Location(name=location_form.name.data)  # Adjusted to named arguments
         db.session.add(location)
         db.session.commit()
     users = User.query.all()  # Fetch all users
     locations = Location.query.all()  # Fetch all locations
-    # fetch all locations and pass them to the template, can be used to display a list of locations. 
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
 
 @app.route('/')
@@ -175,11 +180,23 @@ def login():
     # Render login form
     return render_template('login.html')
 
-@app.route('/user_dashboard/<int:user_id>')
+@app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
     user = User.query.get_or_404(user_id)
-    # Assuming you want to display the same information as the dashboard but for a specific user
-    return render_template('user_dashboard.html', user=user)
+    form = UserForm(obj=user)  # Instantiate form with user's existing data
+
+    if form.validate_on_submit():
+        # Update user details based on form input
+        user.username = form.username.data
+        user.password = generate_password_hash(form.password.data)  # Hash the new password
+        user.location_id = form.location.data.id
+        db.session.commit()
+        flash('User details and location updated successfully!', 'success')
+        return redirect(url_for('user_dashboard', user_id=user.id))
+
+    # Render the combined user dashboard and location assignment form
+    return render_template('user_dashboard.html', user=user, form=form)
+
 
 @app.route('/location/<int:location_id>', methods=['GET', 'POST'])
 def location(location_id):
@@ -283,21 +300,34 @@ def submit_link():
         db.session.commit()
     return redirect(url_for('bar', bar_id=bar_id))
 
-@app.route('/dashboard', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET'])
 def dashboard():
-    form = LocationSelectForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=session['username']).first()
-        if user:
-            user.location = form.location.data.name
-            db.session.commit()
-            flash('Your location has been updated!')
-            return redirect(url_for('dashboard'))  # Redirect to dashboard after updating location
-    elif request.method == 'GET' and 'username' in session:
-        user = User.query.filter_by(username=session['username']).first()
+    if 'username' in session:
+        username = session['username']
+        user = User.query.filter_by(username=username).first()
         if user and user.location:
-            form.location.data = Location.query.filter_by(name=user.location).first()
-    return render_template('dashboard.html', form=form, username=session.get('username'))
+            # Assuming 'location' is a relationship field in the 'User' model
+            location_name = user.location.name
+        else:
+            location_name = 'No location assigned'
+        return render_template('dashboard.html', username=username, location_name=location_name)
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/assign_location/<int:user_id>', methods=['GET', 'POST'])
+def assign_location(user_id):
+    user = User.query.get_or_404(user_id)
+    form = UserForm(obj=user)
+    
+    if form.validate_on_submit():
+        user.username = form.username.data  # Assuming you want to possibly update this as well
+        user.password = form.password.data  # And this, though consider hashing the password before saving
+        user.location_id = form.location.data.id
+        db.session.commit()
+        flash('User location updated successfully!', 'success')
+        return redirect(url_for('admin'))  # Redirect to /admin
+    
+    return render_template('assign_location.html', form=form)
 
 with app.app_context():
     db.drop_all()

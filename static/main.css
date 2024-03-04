@@ -179,13 +179,50 @@
 
 }
 
+.alert {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    max-width: 300px;
+    color: #fff;
+    animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
+
+}
+
+@keyframes fadeIn {
+    0% {opacity: 0;}
+    100% {opacity: 1;}
+}
+
+@keyframes fadeOut {
+    0% {opacity: 1;}
+    100% {opacity: 0;}
+}
+
+
+.alert-success {
+    background-color: #28a745;
+}
+
+.alert-error {
+    background-color: #dc3545;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+}
+
 .logo2 {
     position: absolute;
   top: 10px;
   width: 90px;
+  position: fixed;
 }
     
-
 /* Additional CSS for gear icon and form transition */
 .gear-icon-container {
     position: fixed;
@@ -254,7 +291,7 @@
 }
 
 .error-text {
-    color: #dc3545;
+    color: white;
     margin-top: 10px;
     text-align: center;
     font-size: 0.9em;

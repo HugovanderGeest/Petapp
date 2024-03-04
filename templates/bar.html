@@ -13,10 +13,10 @@
 
 <body>
 
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
 
-
-    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+        <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+        <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
 
 
     <div class="cube-container">
@@ -25,8 +25,6 @@
             <p id="displayUrl"></p>
 
             <!-- Gear icon -->
-            <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
-
             <!-- Hidden form -->
             <form id="link-form" style="display: none;" method="post">
                 <label for="link">googlemaps link:</label><br>
@@ -36,7 +34,6 @@
 
             <h1 class="titel-bar">{{ bar.name }}</h1> <br>
             <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
-            <div class="form-container ">
                 <form method="POST" style="width: 60%;">
                     <div class="meer">
                         <label  for="zakkenInput">zakken gekregen:</label>

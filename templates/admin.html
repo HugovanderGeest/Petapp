@@ -17,6 +17,7 @@
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+    <div class="gear-icon-container"> <i id="toggleAssignLocation" class="fa fa-cog"></i></div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -45,18 +46,14 @@
                     </li>
                     {% endfor %}
                 </ul>
-
-                <div class="gear-icon-container">
-                    <i id="toggleAssignLocation" class="fa fa-cog"></i>
-                </div>
-                <div id="assignLocationList" class="hidden">
+                <!-- <div id="assignLocationList" class="hidden">
                     <ul>
                         {% for user in users %}
                         <li>{{ user.username }} - <a href="{{ url_for('assign_location', user_id=user.id) }}">Assign
                                 Location</a></li>
                         {% endfor %}
                     </ul>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -73,13 +70,12 @@
                 <h2>Locations</h2>
                 <ul>
                     {% for location in locations %}
-                    <li>
-                        <a href="{{ url_for('location', location_id=location.id) }}">{{ location.name }}</a>
-                    </li>
-                    {% endfor %}
+                    <li><a href="{{ url_for('location', user_id=user.id if user else 0, location_id=location.id if location else 0) }}">{{ location.name }}</a></li>
+                {% endfor %}
                 </ul>
             </div>
         </div>
+
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

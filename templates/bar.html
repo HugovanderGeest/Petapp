@@ -13,26 +13,21 @@
 
 <body>
 
-
         <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
         <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
         <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
-
 
     <div class="cube-container">
         <div class="cube user-cube">
 
             <p id="displayUrl"></p>
-
-            <!-- Gear icon -->
-            <!-- Hidden form -->
             <form id="link-form" style="display: none;" method="post">
                 <label for="link">googlemaps link:</label><br>
                 <input type="text" id="link" name="link" required>
                 <input type="submit" value="Submit">
             </form>
 
-            <h1 class="titel-bar">{{ bar.name }}</h1> <br>
+            <a href="{{ url_for('bar', user_id=user.id, bar_id=bar.id) }}">{{ bar.name }}</a>
             <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
                 <form method="POST" style="width: 60%;">
                     <div class="meer">

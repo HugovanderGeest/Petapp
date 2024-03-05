@@ -12,7 +12,6 @@ import requests
 from wtforms import SelectField, Form
 from flask_migrate import Migrate
 
-
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
@@ -26,17 +25,18 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)  # Foreign key to Location
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)  # Make it nullable
     location = db.relationship('Location', backref=db.backref('users', lazy=True))
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
 
-    def __init__(self, username, password, location_id=None, group=None, badges=0):
+    def __init__(self, username, password, location_id=None, group=None, badges=0):  # Make location_id optional
         self.username = username
         self.password = generate_password_hash(password)
         self.location_id = location_id
         self.group = group
         self.badges = badges
+
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -132,22 +132,28 @@ class Bar(db.Model):
 def admin():
     form = UserForm()
     location_form = LocationForm()
+    users = User.query.all()  # Fetch all users
+    user = None  # Initialize user variable
     if form.validate_on_submit():
-        user = User(username=form.username.data, password=form.password.data)  # Adjusted to named arguments
+        # Check if a location is selected before creating a user
+        if form.location.data:
+            user = User(username=form.username.data, password=form.password.data, location_id=form.location.data.id)
+        else:
+            user = User(username=form.username.data, password=form.password.data)
         db.session.add(user)
         db.session.commit()
     if location_form.validate_on_submit():
-        location = Location(name=location_form.name.data)  # Adjusted to named arguments
+        location = Location(name=location_form.name.data)
         db.session.add(location)
         db.session.commit()
-    users = User.query.all()  # Fetch all users
     locations = Location.query.all()  # Fetch all locations
-    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
+    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, user=user)
+
+
 
 @app.route('/')
 def index():
     return render_template('/index.html')
-
 
 @app.route('/delete_user/<int:id>', methods=['POST'])
 def delete_user(id):
@@ -178,28 +184,32 @@ def login():
             flash('Invalid username or password', 'error')
             return redirect(url_for('index'))  # Redirect to index page if login fails
     # Render login form
-    return render_template('login.html')
+    return render_template('index.html')
 
 @app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
     user = User.query.get_or_404(user_id)
-    form = UserForm(obj=user)  # Instantiate form with user's existing data
+    form = UserForm(obj=user)  
 
     if form.validate_on_submit():
-        # Update user details based on form input
         user.username = form.username.data
-        user.password = generate_password_hash(form.password.data)  # Hash the new password
-        user.location_id = form.location.data.id
+        user.password = generate_password_hash(form.password.data)
+        
+        # Check if a location is selected before updating the user's location
+        if form.location.data:
+            user.location_id = form.location.data.id
+            flash('User details and location updated successfully!', 'success')
+        else:
+            flash('Please select a location for the user', 'error')
+        
         db.session.commit()
-        flash('User details and location updated successfully!', 'success')
         return redirect(url_for('user_dashboard', user_id=user.id))
 
-    # Render the combined user dashboard and location assignment form
     return render_template('user_dashboard.html', user=user, form=form)
 
-
-@app.route('/location/<int:location_id>', methods=['GET', 'POST'])
-def location(location_id):
+@app.route('/location/<int:user_id>/<int:location_id>', methods=['GET', 'POST'])
+def location(user_id, location_id):
+    session['location_id'] = location_id  # Store location_id in session
     location = Location.query.get_or_404(location_id)
     bars = Bar.query.filter_by(location_id=location_id).all()
     bar_form = BarForm()  # For adding new bars
@@ -237,8 +247,9 @@ def add_bar_to_location(location_id):
     return jsonify({'error': 'Missing data'}), 400
 
 
-@app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])
-def bar(bar_id):
+@app.route('/bar/<int:user_id>/<int:bar_id>', methods=['GET', 'POST'])
+def bar(user_id, bar_id):
+    session['bar_id'] = bar_id  # Store bar_id in session
     bar = Bar.query.get_or_404(bar_id)  # Fetch the specific bar or return 404
     if request.method == 'POST':
         # Handle any POST request logic here. You might want to process form submissions for updates.
@@ -289,7 +300,6 @@ def remove_bar(bar_id):
     db.session.commit()  # Commit the changes to the database
     return jsonify({'success': 'Bar removed successfully'}), 200
 
-
 @app.route('/submit_link', methods=['POST'])
 def submit_link():
     link = request.form['link']
@@ -310,7 +320,7 @@ def dashboard():
             location_name = user.location.name
         else:
             location_name = 'No location assigned'
-        return render_template('dashboard.html', username=username, location_name=location_name)
+        return render_template('dashboard.html', username=username, location_name=location_name, user=user)
     else:
         return redirect(url_for('login'))
 

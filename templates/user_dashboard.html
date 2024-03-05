@@ -13,8 +13,8 @@
         style="width: auto; padding: 20px; margin: 20px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center;">
         <h1>User Dashboard</h1>
         <p>Username: {{ user.username }}</p>
-        <p>Location: {{ user.location }}</p>
-        <!-- Remove User Form -->
+        <p>Location: {{ user.location.name }}</p>
+                <!-- Remove User Form -->
         <form method="POST" action="{{ url_for('delete_user', id=user.id) }}" style="margin-top: 20px;">
             <input type="submit" value="Remove User"
                 onclick="return confirm('Are you sure you want to delete this user?');">
@@ -24,8 +24,6 @@
     <!-- Assign Location Form -->
     <form method="POST" action="{{ url_for('assign_location', user_id=user.id) }}">
         {{ form.hidden_tag() }}
-        <div>{{ form.username.label }} {{ form.username() }}</div>
-        <div>{{ form.password.label }} {{ form.password() }}</div>
         <div>{{ form.location.label }} {{ form.location() }}</div>
         <div>{{ form.submit() }}</div>
     </form>

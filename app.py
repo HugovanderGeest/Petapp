@@ -11,21 +11,28 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import requests
 from wtforms import SelectField, Form
 from flask_migrate import Migrate
+from flask_login import LoginManager
+from flask_login import current_user
+from flask_login import UserMixin, login_user, login_required, logout_user, current_user  # Import UserMixin and login_user
+
 
 app = Flask(__name__)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'  # Specify the login view
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['GOOGLE_MAPS_API_KEY'] = 'AIzaSyDjyGyXUa6Wnapxt-7HOity5K4Ydnb--2w'
+
 
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
 
-class User(db.Model):
+class User(db.Model, UserMixin):  # Extend User model with UserMixin
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)  # Make it nullable
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
     location = db.relationship('Location', backref=db.backref('users', lazy=True))
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
@@ -149,7 +156,10 @@ def admin():
     locations = Location.query.all()  # Fetch all locations
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, user=user)
 
-
+@login_manager.user_loader
+def load_user(user_id):
+    # This callback is used to reload the user object from the user ID stored in the session
+    return User.query.get(int(user_id))
 
 @app.route('/')
 def index():
@@ -177,9 +187,8 @@ def login():
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
-            # Store the user's username in the session
-            session['username'] = user.username
-            return redirect(url_for('dashboard'))  # Redirect to dashboard after successful login
+            login_user(user)  # Use Flask-Login's login_user function
+            return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password', 'error')
             return redirect(url_for('index'))  # Redirect to index page if login fails
@@ -208,6 +217,7 @@ def user_dashboard(user_id):
     return render_template('user_dashboard.html', user=user, form=form)
 
 @app.route('/location/<int:user_id>/<int:location_id>', methods=['GET', 'POST'])
+@login_required  # Use login_required to ensure the user is logged in
 def location(user_id, location_id):
     session['location_id'] = location_id  # Store location_id in session
     location = Location.query.get_or_404(location_id)
@@ -234,7 +244,7 @@ def location(user_id, location_id):
         bar_number = bar_link_form.bar_number.data
         return redirect(url_for('bar', bar_id=bar_number))
 
-    return render_template('location.html', location=location, bars=bars, bar_form=bar_form, bar_link_form=bar_link_form)
+    return render_template('location.html', location=location, bars=bars, bar_form=bar_form, bar_link_form=bar_link_form, current_user=current_user)
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
@@ -247,18 +257,24 @@ def add_bar_to_location(location_id):
     return jsonify({'error': 'Missing data'}), 400
 
 
-@app.route('/bar/<int:user_id>/<int:bar_id>', methods=['GET', 'POST'])
-def bar(user_id, bar_id):
+
+# ... (previous code)
+
+@app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])
+def bar(bar_id):
     session['bar_id'] = bar_id  # Store bar_id in session
     bar = Bar.query.get_or_404(bar_id)  # Fetch the specific bar or return 404
+    user = User.query.get_or_404(bar.location.users[0].id)  # Fetch the first user of the bar's location
     if request.method == 'POST':
-        # Handle any POST request logic here. You might want to process form submissions for updates.
-        # Example: Updating bar description or details.
-        # After processing, redirect back to the same bar page.
         return redirect(url_for('bar', bar_id=bar_id))
     # 'link' is used for a default bar URL if the specific bar has no URL set.
     link = bar.link if bar.link else Bar.query.first().link  # Fallback to the first bar's link if none set.
-    return render_template('bar.html', bar=bar, link=link)
+    return render_template('bar.html', bar=bar, link=link, user=user)
+
+# ... (remaining code)
+
+
+
 
 @app.route('/bar/<int:bar_id>/update', methods=['POST'])
 def update_bar(bar_id):
@@ -312,17 +328,13 @@ def submit_link():
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    if 'username' in session:
-        username = session['username']
-        user = User.query.filter_by(username=username).first()
-        if user and user.location:
-            # Assuming 'location' is a relationship field in the 'User' model
-            location_name = user.location.name
-        else:
-            location_name = 'No location assigned'
-        return render_template('dashboard.html', username=username, location_name=location_name, user=user)
+    if current_user.is_authenticated:
+        username = current_user.username
+        location_name = current_user.location.name if current_user.location else 'No location assigned'
+        return render_template('dashboard.html', username=username, location_name=location_name, user=current_user)
     else:
         return redirect(url_for('login'))
+
 
 @app.route('/assign_location/<int:user_id>', methods=['GET', 'POST'])
 def assign_location(user_id):
@@ -339,9 +351,9 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+# with app.app_context():
+#     db.drop_all()
+#     db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)  

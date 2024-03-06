@@ -41,7 +41,7 @@ $(document).ready(function() {
     success: function(response) {
     // Make sure `response` actually includes `bar_id`
     $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-},
+}
 </script>
 
 <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
@@ -72,10 +72,11 @@ $(document).ready(function() {
     {% for bar in bars %}
     <li>
         <!-- Each list item is now fully a clickable button -->
-        <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
+        <a href="{{ url_for('bar', user_id=current_user.id, bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
     </li>
     {% endfor %}
 </ul>
+
 </div>
 
 </body>

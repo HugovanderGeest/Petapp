@@ -1,8 +1,11 @@
-from flask import Flask, render_template, redirect, request, url_for, flash, jsonify, send_from_directory, abort, session  # Added session here
+from flask import Flask, render_template, redirect, request, url_for, flash, jsonify, send_from_directory, abort, session# Added session here
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import FlaskForm
 import os
 import logging
+import datetime
+from datetime import datetime
+
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, URL
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -22,7 +25,6 @@ login_manager.login_view = 'login'  # Specify the login view
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['GOOGLE_MAPS_API_KEY'] = 'AIzaSyDjyGyXUa6Wnapxt-7HOity5K4Ydnb--2w'
-
 
 db = SQLAlchemy(app)
 
@@ -120,6 +122,8 @@ class Bar(db.Model):
     volle_zakken_opgehaald = db.Column(db.Integer, default=0)
     url = db.Column(db.String)  # Add this line
     link = db.Column(db.String)  # Add this line
+    change_log = db.Column(db.String, default="", nullable=True)
+    activity_log = db.relationship('ActivityLog', backref='bar', lazy=True)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True, nullable=False)
@@ -134,6 +138,19 @@ class Bar(db.Model):
         self.zakken = zakken
         self.bekers = bekers
         self.location_id = location_id
+
+class ActivityLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
+    field = db.Column(db.String, nullable=False)
+    old_value = db.Column(db.String, nullable=True)
+    new_value = db.Column(db.String, nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ActivityLog {self.field} - User: {self.user.username}, Bar: {self.bar.name}>'
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -194,6 +211,33 @@ def login():
             return redirect(url_for('index'))  # Redirect to index page if login fails
     # Render login form
     return render_template('index.html')
+
+@app.route('/log_activity', methods=['POST'])
+def log_activity():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'error': 'Invalid request data'}), 400
+
+    user_id = data.get('user_id')
+    bar_id = data.get('bar_id')
+    field = data.get('field')
+    old_value = data.get('old_value')
+    new_value = data.get('new_value')
+
+    activity_log = ActivityLog(
+        user_id=user_id,
+        bar_id=bar_id,
+        field=field,
+        old_value=old_value,
+        new_value=new_value
+    )
+
+    db.session.add(activity_log)
+    db.session.commit()
+
+    return jsonify({'success': 'Activity logged successfully'}), 200
+
 
 @app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
@@ -257,9 +301,6 @@ def add_bar_to_location(location_id):
     return jsonify({'error': 'Missing data'}), 400
 
 
-
-# ... (previous code)
-
 @app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])
 def bar(bar_id):
     session['bar_id'] = bar_id  # Store bar_id in session
@@ -271,10 +312,10 @@ def bar(bar_id):
     link = bar.link if bar.link else Bar.query.first().link  # Fallback to the first bar's link if none set.
     return render_template('bar.html', bar=bar, link=link, user=user)
 
-# ... (remaining code)
-
-
-
+@app.route('/activity_log')
+def activity_log():
+    activity_log_entries = ActivityLog.query.all()
+    return render_template('activity_log.html', activity_log=activity_log_entries)
 
 @app.route('/bar/<int:bar_id>/update', methods=['POST'])
 def update_bar(bar_id):
@@ -351,9 +392,9 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
-# with app.app_context():
-#     db.drop_all()
-#     db.create_all()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)  

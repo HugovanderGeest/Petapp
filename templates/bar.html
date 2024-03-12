@@ -10,7 +10,6 @@
     <title>{{ bar.name }}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
-
 <body>
 
         <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
@@ -26,10 +25,6 @@
                 <input type="text" id="link" name="link" required>
                 <input type="submit" value="Submit">
             </form>
-
-            <a href="{{ url_for('activity_log') }}">View Activity Log</a>
-
-            <a href="{{ url_for('bar', user_id=user.id, bar_id=bar.id) }}">{{ bar.name }}</a>
             <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
                 <form method="POST" style="width: 60%;">
                     <div class="meer">
@@ -61,160 +56,102 @@
                         </div>
                     </div>
                 </form>
-                <div id="activity-log">
-                    <h3>Activity Log</h3>
-                    <ul>
-                        {% for entry in activity_log %}
-                            <li>{{ entry.timestamp.strftime('%Y-%m-%d %H:%M:%S') }} - {{ entry.field }} updated by {{ entry.user.username }}: {{ entry.old_value }} to {{ entry.new_value }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
             </div>
         </div>
     </div>
+
     <script>
         document.getElementById('gear-icon').addEventListener('click', function () {
             var form = document.getElementById('link-form');
             var buttons = document.querySelectorAll('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus');
-    
-            // Toggle form display
+
             form.style.display = form.style.display === "block" ? "none" : "block";
-    
-            // Toggle buttons display
             buttons.forEach(function (button) {
                 button.style.display = button.style.display === "inline-block" ? "none" : "inline-block";
             });
         });
-    
+
         document.getElementById('link-form').addEventListener('submit', function (e) {
             e.preventDefault();
-    
             var link = document.getElementById('link').value;
-    
+            var oldLink = "{{ bar.link }}";
+
             $.ajax({
                 url: '/bar/{{ bar.id }}/update-link',
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ link: link }),
                 success: function (response) {
-                    console.log('Link update successful', response);
-                    document.querySelector('a[href="{{ bar.link }}"]').href = link;
-    
-                    // Log the change
-                    logChange('Link', '{{ bar.link }}', link);
-    
-                    // Update activity log
-                    updateActivityLog();
+                    document.querySelector('a[href="' + oldLink + '"]').href = link;
+                    logChangeToServer('{{ bar.id }}', 'Link', oldLink, link);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error('Link update failed:', textStatus, errorThrown);
+                    console.log(jqXHR.responseText); // Log the response text to get more details on the error
                 }
             });
         });
-    
-        function logChange(field, oldValue, newValue) {
-            // Log the change
-            var changeLog = $('#change-log');
-            changeLog.append('<p>' + new Date().toLocaleString() + ': ' + field + ' updated by {{ user.username }} - ' +
-                'Old Value: ' + oldValue + ', New Value: ' + newValue + '</p>');
-        }
-    
+
         function updateBar(field, increment) {
-            console.log('Field:', field);
-    
             var input = $('#' + field + 'Input');
-            console.log('Input element:', input);
-    
-            var currentValue = parseInt(input.val(), 10);
-            console.log('Current value:', currentValue);
-    
-            if (isNaN(currentValue)) {
-                console.error('Current value is not a number');
-                currentValue = 0;
-            }
-    
+            var currentValue = parseInt(input.val(), 10) || 0;
             var newValue = currentValue + increment;
-            console.log('New value:', newValue);
-    
+
+            console.log(`Sending update for field: ${field}, Increment: ${increment}, New Value: ${newValue}`);
+
             $.ajax({
                 url: '/bar/{{ bar.id }}/update',
                 type: 'POST',
                 contentType: 'application/json',
-                data: JSON.stringify({
-                    field: field,
-                    increment: increment
-                }),
+                data: JSON.stringify({ field: field, increment: increment }),
                 success: function (response) {
-                    console.log('Request successful', response);
                     input.val(newValue);
-    
-                    // Log the change
-                    logChange(field, currentValue, newValue);
-    
-                    // Update activity log
-                    updateActivityLog();
+                    logChangeToServer('{{ bar.id }}', field, currentValue, newValue);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.error('Request failed:', textStatus, errorThrown);
-                }
-            });
-        }
-    
-        $('#zakken-minus').off('click').on('click', function (e) {
-            e.preventDefault();
-            updateBar('zakken_gekregen', -1);
-        });
-        $('#zakken-plus').off('click').on('click', function (e) {
-            e.preventDefault();
-            updateBar('zakken_gekregen', 1);
-        });
-        $('#munten-minus').off('click').on('click', function (e) {
-            e.preventDefault();
-            updateBar('munten_gekregen', -1);
-        });
-        $('#munten-plus').off('click').on('click', function (e) {
-            e.preventDefault();
-            updateBar('munten_gekregen', 1);
-        });
-        $('#volleZakken-minus').off('click').on('click', function (e) {
-            e.preventDefault();
-            updateBar('volle_zakken_opgehaald', -1);
-        });
-        $('#volleZakken-plus').off('click').on('click', function (e) {
-            e.preventDefault();
-            updateBar('volle_zakken_opgehaald', 1);
-        });
-    
-        // Additional function to update the activity log on the page
-        function updateActivityLog() {
-            // Perform an AJAX request to fetch the updated activity log entries
-            $.ajax({
-                url: '/activity_log',
-                type: 'GET',
-                success: function (response) {
-                    // Update the activity log on the page with the new entries
-                    $('#activity-log').html(response);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Failed to fetch activity log:', textStatus, errorThrown);
+                    console.log(jqXHR.responseText); // Log the response text to get more details on the error
                 }
             });
         }
 
-        function updateActivityLog() {
-        // Perform an AJAX request to fetch the updated activity log entries
-        $.ajax({
-            url: '/activity_log',
-            type: 'GET',
-            success: function (response) {
-                // Update the activity log on the page with the new entries
-                $('#activity-log').html(response);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.error('Failed to fetch activity log:', textStatus, errorThrown);
-            }
+
+        function logChangeToServer(barId, field, oldValue, newValue) {
+            console.log(`Sending change log to server. Bar ID: ${barId}, Field: ${field}, Old Value: ${oldValue}, New Value: ${newValue}`);
+
+            $.ajax({
+                url: '/log_change',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    bar_id: barId,
+                    field: field,
+                    old_value: oldValue.toString(),
+                    new_value: newValue.toString()
+                }),
+                success: function(response) {
+                    console.log('Change logged successfully', response);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Failed to log change:', textStatus, errorThrown);
+                    console.log(jqXHR.responseText); // Log the response text to get more details on the error
+                }
+            });
+        }
+
+
+        $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
+            e.preventDefault();
+            var idParts = this.id.split('-');
+            var field = idParts[0] + '_gekregen'; // This will result in "volleZakken_gekregen"
+            var increment = idParts[1] === 'plus' ? 1 : -1;
+            
+            // Correct the field name for "volle zakken opgehaald"
+            if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald'; // Corrected condition
+
+            updateBar(field, increment);
         });
-    }
+
     </script>
     
 </body>

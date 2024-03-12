@@ -5,7 +5,6 @@ import os
 import logging
 import datetime
 from datetime import datetime
-
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, URL
 from wtforms_sqlalchemy.fields import QuerySelectField
@@ -17,7 +16,6 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_login import current_user
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user  # Import UserMixin and login_user
-
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -51,6 +49,18 @@ class UserForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     location = QuerySelectField('Location', query_factory=lambda: Location.query, allow_blank=True, get_label='name')
     submit = SubmitField('Create or Update User')
+
+class ChangeLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
+    field = db.Column(db.String, nullable=False)
+    old_value = db.Column(db.String, nullable=True)
+    new_value = db.Column(db.String, nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ChangeLog {self.field} - Old Value: {self.old_value}, New Value: {self.new_value}, Timestamp: {self.timestamp}>'
+
 
 class LocationForm(FlaskForm):
     name = StringField('Location', validators=[DataRequired()])
@@ -290,6 +300,31 @@ def location(user_id, location_id):
 
     return render_template('location.html', location=location, bars=bars, bar_form=bar_form, bar_link_form=bar_link_form, current_user=current_user)
 
+@app.route('/log_change', methods=['POST'])
+def log_change():
+    data = request.get_json()
+
+    if not data:
+        return jsonify({'error': 'Invalid request data'}), 400
+
+    change_log = ChangeLog(
+        bar_id=data.get('bar_id'),
+        field=data.get('field'),
+        old_value=data.get('old_value'),
+        new_value=data.get('new_value')
+    )
+
+    db.session.add(change_log)
+    db.session.commit()
+
+    return jsonify({'success': 'Change logged successfully'}), 200
+
+@app.route('/change_log')
+def change_log():
+    changes = ChangeLog.query.all()
+    return render_template('change_log.html', changes=changes)
+
+
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
     bar_name = request.form.get('bar_name')
@@ -308,32 +343,34 @@ def bar(bar_id):
     user = User.query.get_or_404(bar.location.users[0].id)  # Fetch the first user of the bar's location
     if request.method == 'POST':
         return redirect(url_for('bar', bar_id=bar_id))
-    # 'link' is used for a default bar URL if the specific bar has no URL set.
     link = bar.link if bar.link else Bar.query.first().link  # Fallback to the first bar's link if none set.
     return render_template('bar.html', bar=bar, link=link, user=user)
 
-@app.route('/activity_log')
-def activity_log():
-    activity_log_entries = ActivityLog.query.all()
-    return render_template('activity_log.html', activity_log=activity_log_entries)
-
 @app.route('/bar/<int:bar_id>/update', methods=['POST'])
 def update_bar(bar_id):
-    bar = Bar.query.get_or_404(bar_id)  # Ensure bar exists or return 404
-    data = request.get_json()  # Get JSON data from the request
+    data = request.get_json()
+    print(f"Received data: {data}")  # Debugging line
+
     if not data:
         return jsonify({'error': 'Invalid request data'}), 400
+
     field = data.get('field')
-    increment = data.get('increment')
-    if field in ['zakken_gekregen', 'munten_gekregen', 'volle_zakken_opgehaald'] and isinstance(increment, int):
-        # Update the specified field by incrementing/decrementing its value
+    increment = data.get('increment', 0)
+    print(f"Field: {field}, Increment: {increment}")  # Debugging line
+
+    valid_fields = ['zakken_gekregen', 'munten_gekregen', 'volle_zakken_opgehaald']
+
+    if field in valid_fields and isinstance(increment, int):
+        bar = Bar.query.get_or_404(bar_id)
         current_value = getattr(bar, field, 0)
         new_value = current_value + increment
         setattr(bar, field, new_value)
-        db.session.commit()  # Commit the update to the database
-        return jsonify({field: new_value})  # Return the updated value for the field
+        db.session.commit()
+        return jsonify({field: new_value})
     else:
         return jsonify({'error': 'Invalid field or increment value'}), 400
+
+
 
 @app.route('/bar/<int:bar_id>/update-link', methods=['POST'])
 def update_bar_link(bar_id):
@@ -345,6 +382,14 @@ def update_bar_link(bar_id):
         return jsonify({'message': 'Link updated successfully'}), 200
     else:
         return jsonify({'error': 'Invalid request'}), 
+
+@app.route('/activity_log')
+def activity_log():
+    # Fetch the activity log entries from the database
+    activity_log_entries = ActivityLog.query.all()  # Example; adjust based on your actual data model and needs
+    # Render a template or return a JSON response with these entries
+    return render_template('activity_log.html', activity_log=activity_log_entries)
+
 
 @app.route('/favicon.ico')
 def favicon():
@@ -392,9 +437,9 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+# with app.app_context():
+#     db.drop_all()
+#     db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)  

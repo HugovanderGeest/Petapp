@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Change Log</title>
+</head>
+<body>
+    <h1>Change Log</h1>
+    <ul>
+        {% for change in changes %}
+        <li>{{ change.timestamp }} - {{ change.field }} changed from "{{ change.old_value }}" to "{{ change.new_value }}"</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

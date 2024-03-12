@@ -3,13 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <title>Change Log</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <style>
+        .user-changes-toggle {
+            cursor: pointer;
+            color: #007bff;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .user-changes {
+            display: none;
+            margin-top: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        tr:nth-child(even) {background-color: #f9f9f9;}
+    </style>
 </head>
 <body>
-    <h1>Change Log</h1>
-    <ul>
-        {% for change in changes %}
-        <li>{{ change.timestamp }} - {{ change.field }} changed from "{{ change.old_value }}" to "{{ change.new_value }}"</li>
+    <div class="content-container">
+        <h1>Change Log</h1>
+        {% for user, changes in changes_grouped_by_user.items() %}
+        <div class="user-changes-container">
+            <p class="user-changes-toggle">{{ user.username }}</p>
+            <div class="user-changes">
+                <table>
+                    <tr>
+                        <th>Bar</th>
+                        <th>Field</th>
+                        <th>Old Value</th>
+                        <th>New Value</th>
+                        <th>Timestamp</th>
+                    </tr>
+                    {% for change, bar_name in changes %}
+                    <tr>
+                        <td>{{ bar_name }}</td>
+                        <td>{{ change.field }}</td>
+                        <td>{{ change.old_value }}</td>
+                        <td>{{ change.new_value }}</td>
+                        <td>{{ change.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div>
         {% endfor %}
-    </ul>
+    </div>
+
+    <script>
+        document.querySelectorAll('.user-changes-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function() {
+                var changes = this.nextElementSibling;
+                changes.style.display = changes.style.display === 'none' ? 'block' : 'none';
+            });
+        });
+    </script>
 </body>
 </html>

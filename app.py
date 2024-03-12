@@ -52,11 +52,14 @@ class UserForm(FlaskForm):
 
 class ChangeLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)  # Add this line
+    user = db.relationship('User', backref='change_logs')  # Add this line for backref
     bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
     field = db.Column(db.String, nullable=False)
     old_value = db.Column(db.String, nullable=True)
     new_value = db.Column(db.String, nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 
     def __repr__(self):
         return f'<ChangeLog {self.field} - Old Value: {self.old_value}, New Value: {self.new_value}, Timestamp: {self.timestamp}>'
@@ -301,13 +304,19 @@ def location(user_id, location_id):
     return render_template('location.html', location=location, bars=bars, bar_form=bar_form, bar_link_form=bar_link_form, current_user=current_user)
 
 @app.route('/log_change', methods=['POST'])
+@login_required  # Ensures only logged-in users can log changes
 def log_change():
     data = request.get_json()
 
     if not data:
         return jsonify({'error': 'Invalid request data'}), 400
 
+    # Ensure the current user is logged in
+    if not current_user.is_authenticated:
+        return jsonify({'error': 'User not authenticated'}), 403
+
     change_log = ChangeLog(
+        user_id=current_user.id,  # Get the current user's ID
         bar_id=data.get('bar_id'),
         field=data.get('field'),
         old_value=data.get('old_value'),
@@ -321,9 +330,18 @@ def log_change():
 
 @app.route('/change_log')
 def change_log():
-    changes = ChangeLog.query.all()
-    return render_template('change_log.html', changes=changes)
+    # Fetch all changes with bar names
+    changes_with_bar_names = db.session.query(
+        ChangeLog, Bar.name.label('bar_name')
+    ).join(Bar, ChangeLog.bar_id == Bar.id).all()
 
+    # Group changes by user
+    changes_grouped_by_user = {}
+    for change, bar_name in changes_with_bar_names:
+        user_changes = changes_grouped_by_user.setdefault(change.user, [])
+        user_changes.append((change, bar_name))
+
+    return render_template('change_log.html', changes_grouped_by_user=changes_grouped_by_user)
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):

@@ -552,3 +552,34 @@
     #loading-icon {
         animation: spin 2s linear infinite;
     }
+
+    .content-container {
+        width: 80%;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+        margin: 20px auto;
+    }
+    
+    .change-log-list {
+        list-style-type: none;
+        padding: 0;
+    }
+    
+    .change-log-item {
+        border-bottom: 1px solid #eee;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .change-log-item:last-child {
+        border-bottom: none;
+    }
+    
+    .change-log-item p {
+        margin: 5px 0;
+        font-size: 16px;
+        color: #333;
+    }
+    

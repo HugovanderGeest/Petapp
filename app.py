@@ -48,7 +48,7 @@ class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     location = QuerySelectField('Location', query_factory=lambda: Location.query, allow_blank=True, get_label='name')
-    submit = SubmitField('Create or Update User')
+    submit = SubmitField('Update')
 
 class ChangeLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)

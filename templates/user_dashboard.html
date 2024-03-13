@@ -4,8 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>User Dashboard</title>
 </head>
+
+
+<img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+<a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+<i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
+
 
 <body>
     <!-- User Information and Remove User Form -->
@@ -23,8 +30,8 @@
 
     <!-- Assign Location Form -->
     <form method="POST" action="{{ url_for('assign_location', user_id=user.id) }}">
-        {{ form.hidden_tag() }}
-        <div>{{ form.location.label }} {{ form.location() }}</div>
+        {{ form.hidden_tag() }} <br>
+        <div>{{ form.location.label }} <br> {{ form.location() }}</div> <br>
         <div>{{ form.submit() }}</div>
     </form>
     

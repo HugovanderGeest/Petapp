@@ -6,6 +6,7 @@
         display: flex;
         height: 100vh;
         align-items: center;
+        flex-wrap: wrap;
         justify-content: center;
     }
 
@@ -17,7 +18,7 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
-    .logo {
+    .logo { 
         width: 150px;
         /* Adjust the size of your logo as needed */
         margin-bottom: 30px;
@@ -26,6 +27,7 @@
     .login-form form {
         width: 300px;
         margin: 0 auto;
+        height: 300px;
     }
 
     .input-group {
@@ -38,6 +40,8 @@
     .meer {
         width: 200%;
     }
+
+    
 
 
     #zakken-minus,
@@ -87,13 +91,17 @@
         padding: 10px 20px;
         margin: 15px;
         position: absolute;
-        left: 0;
         background-color: #76C9FB;
         border-radius: 20px;
         color: black;
         text-decoration: none;
         font-size: 20px;
+        top: -36px;
     }
+
+    .input-group-form button {
+        width: 80px;
+      } 
 
     .back-button {
         position: fixed;
@@ -329,7 +337,7 @@
     display: flex; /* Use flex to center content */
     justify-content: center; /* Center text horizontally */
     align-items: center; /* Center text vertically */
-    padding: 10px 15px;
+    padding: 20px 15px;
     text-decoration: none;
     border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -338,6 +346,40 @@
     text-align: center;
     font-size: 20px;
 }
+
+.list-section {
+    background-color: white;
+  padding: 5px 20px 20px 20px;
+  margin-top: 20px;
+  border-radius: 15px;
+}
+
+.list-section li {
+    color: #4E73DF;
+}
+
+.list-section a, .links {
+    font-size: 19px;
+  line-height: 3;
+  text-decoration: none;
+  color: white;
+  padding: 10px;
+  background-color: #4E73DF;
+  border-radius: 10px;
+  min-width: 100px;
+  text-align: center;
+  transition: 0.2s ease-in-out;
+  margin-bottom: 10px;
+ }
+
+ .list-section a:hover, .links:hover {
+    background-color: #3658A4;
+    color: white;
+    text-decoration: none;
+    outline: none;
+ }
+
+ 
 
 .bars-list li a:hover, .bars-list li a:focus {
     background-color: #0056b3;
@@ -467,6 +509,11 @@
             /* Makes sure padding doesn't affect the width */
         }
     }
+
+    .cube-titel {
+        margin: 0px 0px 30px 0px;
+        font-size: 23px;
+      }
 
 
     .cube-container {

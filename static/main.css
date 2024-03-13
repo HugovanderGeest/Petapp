@@ -28,6 +28,14 @@
         width: 300px;
         margin: 0 auto;
         height: 300px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+        .login-form form {
+            height: 350px;
+            width: 340px;
+        }
     }
 
     .input-group {
@@ -350,8 +358,8 @@
 .list-section {
     background-color: white;
   padding: 5px 20px 20px 20px;
-  margin-top: 20px;
   border-radius: 15px;
+  width: 300px;
 }
 
 .list-section li {
@@ -508,6 +516,14 @@
             box-sizing: border-box;
             /* Makes sure padding doesn't affect the width */
         }
+
+        .cube-container {
+            margin-top: 100px;
+        }
+
+        .cube.user-dashboard-cube {
+            width: 300px;
+          }
     }
 
     .cube-titel {

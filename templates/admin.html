@@ -31,7 +31,7 @@
 
     <div class="cube-container">
         <div class="login-form">
-            <form method="POST" class="loginForm">
+            <form method="POST" class="loginForm form-to-toggle">
                 <h2 class="cube-titel">Maak gebruiker aan</h2>
                 {{ form.hidden_tag() }}
                 {{ form.username.label }} {{ form.username() }} <br><br>
@@ -47,19 +47,11 @@
                     </li>
                     {% endfor %}
                 </ul>
-                <!-- <div id="assignLocationList" class="hidden">
-                    <ul>
-                        {% for user in users %}
-                        <li>{{ user.username }} - <a href="{{ url_for('assign_location', user_id=user.id) }}">Assign
-                                Location</a></li>
-                        {% endfor %}
-                    </ul>
-                </div> -->
             </div>
         </div>
 
         <div class="login-form">
-            <form method="POST" class="loginForm">
+            <form method="POST" class="loginForm form-to-toggle">
                 <h2 class="cube-titel">Maak Locatie aan</h2>
                 {{ location_form.hidden_tag() }}
                 <p>
@@ -94,7 +86,17 @@
             });
         });
     </script>
-
+    <script>
+        $(document).ready(function () {
+            // Hide the forms initially
+            $('.form-to-toggle').hide();
+    
+            $('#toggleAssignLocation').click(function () {
+                // Toggle the visibility of the forms when the gear icon is clicked
+                $('.form-to-toggle').toggle();
+            });
+        });
+    </script>
 </body>
 
 </html>

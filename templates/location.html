@@ -7,77 +7,80 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>{{ location.name }}</title>
 </head>
+
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-<script>
-$(document).ready(function() {
-    // Toggle form visibility
-    $('#toggleFormVisibility').click(function() {
-        $('#formContainer').slideToggle();
-    });
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+    {% if from_admin %}
+    <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
 
-    // Handle form submission
-    $('#barLinkForm').submit(function(e) {
-        e.preventDefault();
-        $.ajax({
-            url: '/add_bar_to_location/{{ location.id }}',
-            type: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-                $('#errorText').text('');
-                $('#formContainer').slideUp(); // Optionally hide form after success
-            },
-            error: function(response) {
-                $('#errorText').text('Error: The bar already exists.');
-            }
-        });
-    });
-});
+    <div id="formContainer" class="form-container">
+        <form id="barLinkForm" method="POST">
+            <input type="text" name="bar_name" class="form-input" placeholder="Bar Name" required>
+            <input type="submit" value="Add Bar" class="submit-button">
+            <div id="errorText" class="error-text"></div> <!-- Error message will be displayed here -->
+        </form>
+    </div>
+    {% endif %}
 
-</script>
-<script>
-    success: function(response) {
-    // Make sure `response` actually includes `bar_id`
-    $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-}
-</script>
-
-<img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <!-- Button to remove bar, initially hidden -->
+    <button id="removeBarBtn" style="display: none;">Remove Bar</button>
 
 
-<a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+    <!-- Form, initially hidden -->
 
-<div class="gear-icon-container">
-    <i id="toggleFormVisibility" class="fa fa-cog"></i>
-</div>
-
-<!-- Button to remove bar, initially hidden -->
-<button id="removeBarBtn" style="display: none;">Remove Bar</button>
-
-
-<!-- Form, initially hidden -->
-<div id="formContainer" class="form-container" style="display: none;">
-    <form id="barLinkForm" method="POST">
-        <input type="text" name="bar_name" class="form-input" placeholder="Bar Name" required>
-        <input type="submit" value="Add Bar" class="submit-button">
-        <div id="errorText" class="error-text"></div> <!-- Error message will be displayed here -->
-    </form>
-</div>
-
+    <ul id="barsList" class="bars-list">
+        {% for bar in bars %}
+        <li>
+            <!-- Conditionally render the URL based on the user's admin status -->
+            {% if current_user.is_admin %}
+                <a href="{{ url_for('bar', bar_id=bar.id, user_id=current_user.id, from_admin=true) }}" class="bar-button">{{ bar.name }}</a>
+            {% else %}
+                <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
     
 
-<ul id="barsList" class="bars-list">
-    {% for bar in bars %}
-    <li>
-        <!-- Each list item is now fully a clickable button -->
-        <a href="{{ url_for('bar', user_id=current_user.id, bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
-    </li>
-    {% endfor %}
-</ul>
+    </div>
 
-</div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // Toggle form visibility when the gear icon is clicked
+            $('#gear-icon').click(function () {
+                $('#formContainer').toggle(); // This toggles the visibility of the form
+            });
+    
+            // Handle form submission
+            $('#barLinkForm').submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/add_bar_to_location/{{ location.id }}',
+                    type: 'POST',
+                    data: $(this).serialize(),
+                    success: function (response) {
+                        $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+                        $('#errorText').text('');
+                        $('#formContainer').slideUp(); // Optionally hide form after success
+                    },
+                    error: function (response) {
+                        $('#errorText').text('Error: The bar could not be added.');
+                    }
+                });
+            });
+        });
+    </script>
+    
+    <script>
+        success: function(response) {
+            // Make sure `response` actually includes `bar_id`
+            $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+        }
+    </script>
 
 </body>
 

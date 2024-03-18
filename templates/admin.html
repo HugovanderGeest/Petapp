@@ -36,6 +36,7 @@
                 {{ form.hidden_tag() }}
                 {{ form.username.label }} {{ form.username() }} <br><br>
                 {{ form.password.label }} {{ form.password() }} <br><br>
+                {{ form.is_admin.label }} {{ form.is_admin() }} <br><br>
                 {{ form.submit() }}
             </form>
             <div class="list-section ">
@@ -43,7 +44,7 @@
                 <ul>
                     {% for user in users %}
                     <li>
-                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
+                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}?user_id=1&from_admin=true">{{ user.username }}</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -64,7 +65,7 @@
                 <h2>Locations</h2>
                 <ul>
                     {% for location in locations %}
-                    <li><a href="{{ url_for('location', user_id=user.id if user else 0, location_id=location.id if location else 0) }}">{{ location.name }}</a></li>
+                    <li><a href="{{ url_for('location', user_id=user.id if user else 0, location_id=location.id if location else 0) }}?user_id=1&from_admin=true">{{ location.name }}</a></li>
                 {% endfor %}
                 </ul>
             </div>

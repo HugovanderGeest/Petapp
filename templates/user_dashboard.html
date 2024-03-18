@@ -1,5 +1,4 @@
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,33 +7,32 @@
     <title>User Dashboard</title>
 </head>
 
-
+<body>
 <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
 <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
 <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
 
+<!-- User Information and Remove User Form -->
+<div class="cube user-dashboard-cube"
+    style="width: auto; padding: 20px; margin: 20px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center;">
+    <h1>User Dashboard</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Location: {{ user.location.name if user.location else 'Not Assigned' }}</p>
+    <p>Admin Status: {{ 'Yes' if user.is_admin else 'No' }}</p> <!-- Display Admin Status -->
 
-<body>
-    <!-- User Information and Remove User Form -->
-    <div class="cube user-dashboard-cube"
-        style="width: auto; padding: 20px; margin: 20px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center;">
-        <h1>User Dashboard</h1>
-        <p>Username: {{ user.username }}</p>
-        <p>Location: {{ user.location.name }}</p>
-                <!-- Remove User Form -->
-        <form method="POST" action="{{ url_for('delete_user', id=user.id) }}" style="margin-top: 20px;">
-            <input type="submit" value="Remove User"
-                onclick="return confirm('Are you sure you want to delete this user?');">
-        </form>
-    </div>
-
-    <!-- Assign Location Form -->
-    <form method="POST" action="{{ url_for('assign_location', user_id=user.id) }}">
-        {{ form.hidden_tag() }} <br>
-        <div>{{ form.location.label }} <br> {{ form.location() }}</div> <br>
-        <div>{{ form.submit() }}</div>
+    <!-- Remove User Form -->
+    <form method="POST" action="{{ url_for('delete_user', id=user.id) }}" style="margin-top: 20px;">
+        <input type="submit" value="Remove User"
+            onclick="return confirm('Are you sure you want to delete this user?');">
     </form>
-    
-</body>
+</div>
 
+<!-- Assign Location Form -->
+<form method="POST" action="{{ url_for('assign_location', user_id=user.id) }}">
+    {{ form.hidden_tag() }} <br>
+    <div>{{ form.location.label }} <br> {{ form.location() }}</div> <br>
+    <div>{{ form.submit() }}</div>
+</form>
+
+</body>
 </html>

@@ -14,7 +14,9 @@
 
         <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
         <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+        {% if from_admin %}
         <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
+    {% endif %}
 
     <div class="cube-container">
         <div class="cube user-cube">
@@ -60,65 +62,71 @@
         </div>
     </div>
 
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        document.getElementById('gear-icon').addEventListener('click', function () {
-            var form = document.getElementById('link-form');
-            var buttons = document.querySelectorAll('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus');
-
-            form.style.display = form.style.display === "block" ? "none" : "block";
-            buttons.forEach(function (button) {
-                button.style.display = button.style.display === "inline-block" ? "none" : "inline-block";
+        $(document).ready(function () {
+            // Toggle the form and buttons when the gear icon is clicked
+            $('#gear-icon').click(function () {
+                $('#link-form').toggle();
+                $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').toggle();
+            });
+    
+            // Handle link form submission
+            $('#link-form').submit(function (e) {
+                e.preventDefault();
+                var link = $('#link').val();
+                var oldLink = "{{ bar.link }}";
+                $.ajax({
+                    url: '/bar/{{ bar.id }}/update-link',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ link: link }),
+                    success: function (response) {
+                        $('a[href="' + oldLink + '"]').attr('href', link);
+                        logChangeToServer('{{ bar.id }}', 'Link', oldLink, link);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Link update failed:', textStatus, errorThrown);
+                        console.log(jqXHR.responseText);
+                    }
+                });
+            });
+    
+            // Existing logic for updating bar details and logging changes
+            function updateBar(field, increment) {
+                // Use jQuery for DOM manipulation and AJAX requests
+                var input = $('#' + field + 'Input');
+                var currentValue = parseInt(input.val(), 10) || 0;
+                var newValue = currentValue + increment;
+                $.ajax({
+                    url: '/bar/{{ bar.id }}/update',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ field: field, increment: increment }),
+                    success: function (response) {
+                        input.val(newValue);
+                        logChangeToServer('{{ bar.id }}', field, currentValue, newValue);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Request failed:', textStatus, errorThrown);
+                        console.log(jqXHR.responseText);
+                    }
+                });
+            }
+    
+            // Button click event handlers for increment/decrement actions
+            $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
+                e.preventDefault();
+                var idParts = this.id.split('-');
+                var field = idParts[0] + '_gekregen';
+                var increment = idParts[1] === 'plus' ? 1 : -1;
+                if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald';
+                updateBar(field, increment);
             });
         });
-
-        document.getElementById('link-form').addEventListener('submit', function (e) {
-            e.preventDefault();
-            var link = document.getElementById('link').value;
-            var oldLink = "{{ bar.link }}";
-
-            $.ajax({
-                url: '/bar/{{ bar.id }}/update-link',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ link: link }),
-                success: function (response) {
-                    document.querySelector('a[href="' + oldLink + '"]').href = link;
-                    logChangeToServer('{{ bar.id }}', 'Link', oldLink, link);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Link update failed:', textStatus, errorThrown);
-                    console.log(jqXHR.responseText); // Log the response text to get more details on the error
-                }
-            });
-        });
-
-        function updateBar(field, increment) {
-            var input = $('#' + field + 'Input');
-            var currentValue = parseInt(input.val(), 10) || 0;
-            var newValue = currentValue + increment;
-
-            console.log(`Sending update for field: ${field}, Increment: ${increment}, New Value: ${newValue}`);
-
-            $.ajax({
-                url: '/bar/{{ bar.id }}/update',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ field: field, increment: increment }),
-                success: function (response) {
-                    input.val(newValue);
-                    logChangeToServer('{{ bar.id }}', field, currentValue, newValue);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.error('Request failed:', textStatus, errorThrown);
-                    console.log(jqXHR.responseText); // Log the response text to get more details on the error
-                }
-            });
-        }
-
-
+    
         function logChangeToServer(barId, field, oldValue, newValue) {
-            console.log(`Sending change log to server. Bar ID: ${barId}, Field: ${field}, Old Value: ${oldValue}, New Value: ${newValue}`);
-
+            // jQuery AJAX for logging changes
             $.ajax({
                 url: '/log_change',
                 type: 'POST',
@@ -134,25 +142,12 @@
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                     console.error('Failed to log change:', textStatus, errorThrown);
-                    console.log(jqXHR.responseText); // Log the response text to get more details on the error
+                    console.log(jqXHR.responseText);
                 }
             });
         }
-
-
-        $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
-            e.preventDefault();
-            var idParts = this.id.split('-');
-            var field = idParts[0] + '_gekregen'; // This will result in "volleZakken_gekregen"
-            var increment = idParts[1] === 'plus' ? 1 : -1;
-            
-            // Correct the field name for "volle zakken opgehaald"
-            if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald'; // Corrected condition
-
-            updateBar(field, increment);
-        });
-
     </script>
+    
     
 </body>
 

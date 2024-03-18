@@ -5,12 +5,13 @@ import os
 import logging
 import datetime
 from datetime import datetime
-from wtforms import StringField, PasswordField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, URL
 from wtforms_sqlalchemy.fields import QuerySelectField
 from flask import send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
+from flask import current_app
 from wtforms import SelectField, Form
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -32,23 +33,28 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=True)
     location = db.relationship('Location', backref=db.backref('users', lazy=True))
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
 
-    def __init__(self, username, password, location_id=None, group=None, badges=0):  # Make location_id optional
+    def __init__(self, username, password, location_id=None, group=None, badges=0, is_admin=False):
         self.username = username
         self.password = generate_password_hash(password)
         self.location_id = location_id
         self.group = group
         self.badges = badges
+        self.is_admin = is_admin
+
 
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     location = QuerySelectField('Location', query_factory=lambda: Location.query, allow_blank=True, get_label='name')
+    is_admin = BooleanField('Admin')  # Add this line to include an admin checkbox
     submit = SubmitField('Update')
+
 
 class ChangeLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -173,18 +179,24 @@ def admin():
     user = None  # Initialize user variable
     if form.validate_on_submit():
         # Check if a location is selected before creating a user
-        if form.location.data:
-            user = User(username=form.username.data, password=form.password.data, location_id=form.location.data.id)
-        else:
-            user = User(username=form.username.data, password=form.password.data)
+        # And handle the 'is_admin' field from the form
+        user = User(
+            username=form.username.data,
+            password=form.password.data,
+            location_id=form.location.data.id if form.location.data else None,
+            is_admin=form.is_admin.data  # Capture the is_admin boolean from the form
+        )
         db.session.add(user)
         db.session.commit()
+        flash('User created successfully!', 'success')  # Provide feedback to the admin
     if location_form.validate_on_submit():
         location = Location(name=location_form.name.data)
         db.session.add(location)
         db.session.commit()
+        flash('Location created successfully!', 'success')  # Provide feedback for location creation
     locations = Location.query.all()  # Fetch all locations
-    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, user=user)
+    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -212,18 +224,19 @@ def delete_user(id):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        # Handle login
         username = request.form.get('username')
         password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
         if user and check_password_hash(user.password, password):
-            login_user(user)  # Use Flask-Login's login_user function
+            login_user(user)
+            print(f"Logging in user: {user.username}, Admin: {user.is_admin}")  # Debug print
+            if user.is_admin:
+                return redirect(url_for('admin'))
             return redirect(url_for('dashboard'))
         else:
             flash('Invalid username or password', 'error')
-            return redirect(url_for('index'))  # Redirect to index page if login fails
-    # Render login form
     return render_template('index.html')
+
 
 @app.route('/log_activity', methods=['POST'])
 def log_activity():
@@ -281,6 +294,7 @@ def location(user_id, location_id):
     bars = Bar.query.filter_by(location_id=location_id).all()
     bar_form = BarForm()  # For adding new bars
     bar_link_form = BarLinkForm()  # For navigating to a specific bar
+    from_admin = request.args.get('from_admin', 'false').lower() == 'true'  # Capture the parameter
 
     if bar_form.validate_on_submit():
         # Create a new Bar instance with form data
@@ -301,7 +315,7 @@ def location(user_id, location_id):
         bar_number = bar_link_form.bar_number.data
         return redirect(url_for('bar', bar_id=bar_number))
 
-    return render_template('location.html', location=location, bars=bars, bar_form=bar_form, bar_link_form=bar_link_form, current_user=current_user)
+    return render_template('location.html', location=location, bars=bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
 
 @app.route('/log_change', methods=['POST'])
 @login_required  # Ensures only logged-in users can log changes
@@ -356,13 +370,14 @@ def add_bar_to_location(location_id):
 
 @app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])
 def bar(bar_id):
+    from_admin = request.args.get('from_admin', 'false').lower() == 'true'
     session['bar_id'] = bar_id  # Store bar_id in session
-    bar = Bar.query.get_or_404(bar_id)  # Fetch the specific bar or return 404
+    bar = Bar.query.get_or_404(bar_id)
     user = User.query.get_or_404(bar.location.users[0].id)  # Fetch the first user of the bar's location
     if request.method == 'POST':
         return redirect(url_for('bar', bar_id=bar_id))
     link = bar.link if bar.link else Bar.query.first().link  # Fallback to the first bar's link if none set.
-    return render_template('bar.html', bar=bar, link=link, user=user)
+    return render_template('bar.html', bar=bar, link=link, user=user, from_admin=from_admin)
 
 @app.route('/bar/<int:bar_id>/update', methods=['POST'])
 def update_bar(bar_id):

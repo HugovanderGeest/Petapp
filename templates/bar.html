@@ -5,68 +5,108 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <title>{{ bar.name }}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
 <body>
 
-        <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
-        <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
-        {% if from_admin %}
-        <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+    {% if from_admin %}
+        <i id="toggleDetailsButton" class="fa fa-cog gear-icon-container"></i>
     {% endif %}
 
-    <div class="cube-container">
+    <div class="cube-container bottom-boy" style="display: none;">
         <div class="cube user-cube">
 
-            <p id="displayUrl"></p>
-            <form id="link-form" style="display: none;" method="post">
-                <label for="link">googlemaps link:</label><br>
-                <input type="text" id="link" name="link" required>
-                <input type="submit" value="Submit">
-            </form>
-            <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
-                <form method="POST" style="width: 80%;">
-                    <div class="meer">
-                        <label  for="zakkenInput">zakken gekregen:</label>
-                        <div class="input-group-form">
-                            <button id="zakken-minus">-</button>
-                            <input type="number" id="zakken_gekregenInput" name="zakken_gekregen"
-                                value="{{ bar.zakken_gekregen }}" style=" -moz-appearance: textfield;">
-                            <button id="zakken-plus">+</button>
-                        </div>
+            <form method="POST">
+                <div class="meer">
+                    <label for="zakkenInput">Zakken gekregen:</label>
+                    <div class="input-group-form">
+                        <button id="zakken-minus">-</button>
+                        <input type="number" id="zakken_gekregenInput" name="zakken_gekregen"
+                            value="{{ bar.zakken_gekregen }}" style=" -moz-appearance: textfield;">
+                        <button id="zakken-plus">+</button>
                     </div>
-                    <div class="meer">
-                        <label  for="muntenInput">munten gekregen:</label>
-                        <div class="input-group-form">
-                            <button id="munten-minus">-</button>
-                            <input type="number" id="munten_gekregenInput" name="munten_gekregen"
-                                value="{{ bar.munten_gekregen }}" style="-moz-appearance: textfield;" >
+                </div>
+                <div class="meer">
+                    <label for="muntenInput">Munten gekregen:</label>
+                    <div class="input-group-form">
+                        <button id="munten-minus">-</button>
+                        <input type="number" id="munten_gekregenInput" name="munten_gekregen"
+                            value="{{ bar.munten_gekregen }}" style="-moz-appearance: textfield;">
 
-                            <button id="munten-plus">+</button>
-                        </div>
+                        <button id="munten-plus">+</button>
                     </div>
-                    <div class="meer">
-                        <label for="volleZakkenInput">volle zakken opgehaald:</label>
-                        <div class="input-group-form">
-                            <button id="volleZakken-minus">-</button>
-                            <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
-                                value="{{ bar.volle_zakken_opgehaald }}" style=" -moz-appearance: textfield;">
-                            <button id="volleZakken-plus">+</button>
-                        </div>
+                </div>
+                <div class="meer">
+                    <label for="volleZakkenInput">Volle zakken opgehaald:</label>
+                    <div class="input-group-form">
+                        <button id="volleZakken-minus">-</button>
+                        <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
+                            value="{{ bar.volle_zakken_opgehaald }}" style=" -moz-appearance: textfield;">
+                        <button id="volleZakken-plus">+</button>
+                    </div> 
+                </div>
+                <div class="meer" id="kgVanZakContainer">
+                    <label for="kg_van_zakInput">Totaal KG van zakken:</label>
+                    <div class="input-group-form">
+                        <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
+                               value="{{ bar.kg_van_zak }}" style=" -moz-appearance: textfield;">
                     </div>
+                </div>
+                <div class="gray"> 
+                <form id="link-form" style="display: none;" method="post">
+                    <label for="link">googlemaps link:</label><br>
+                    <input type="text" id="link" name="link">
+                    <input type="submit" value="Submit">
                 </form>
             </div>
+            </form>
+        </div>
+    </div>
+    </div>
+
+    <div class="cube-container bottom-boy">
+        <div class="cube user-cube">
+
+            <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
+
+
+            <form method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}">
+                <div class="input-group">
+                    <label for="zakken_gekregen">Zakken gekregen:</label>
+                    <input type="number" name="zakken_gekregen" id="zakken_gekregen" >
+                </div>
+                <div class="input-group">
+                    <label for="munten_gekregen">Munten gekregen:</label>
+                    <input type="number" name="munten_gekregen" id="munten_gekregen" >
+                </div>
+                <div class="input-group">
+                    <label for="volle_zakken_opgehaald">Volle zakken opgehaald:</label>
+                    <input type="number" name="volle_zakken_opgehaald" id="volle_zakken_opgehaald" >
+                </div>
+                <div class="input-group meer" id="kgVanZakContainer">
+                    <label for="kg_van_zakInput">Totaal KG van zakken:</label>
+                    <input type="number" id="kg_van_zakInput" name="kg_van_zak" style=" -moz-appearance: textfield;">
+                </div>
+
+                <input type="submit" value="Stuur">
+            </form>
+
+
         </div>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
     <script>
         $(document).ready(function () {
-            // Toggle the form and buttons when the gear icon is clicked
-            $('#gear-icon').click(function () {
+            // Toggle details functionality
+            $("#toggleDetailsButton").click(function () {
+                $(".cube-container").slideToggle(); // Adjust the selector if needed
                 $('#link-form').toggle();
                 $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').toggle();
             });
@@ -92,9 +132,31 @@
                 });
             });
     
-            // Existing logic for updating bar details and logging changes
+            // Button click event handlers for increment/decrement actions
+            $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
+                e.preventDefault();
+                var idParts = this.id.split('-');
+                var field = idParts[0] + '_gekregen';
+                var increment = idParts[1] === 'plus' ? 1 : -1;
+                if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald';
+                updateBar(field, increment);
+            });
+    
+            // Show/hide Kg van zak dynamically
+            function toggleKgVanZakVisibility() {
+                var volleZakkenValue = $('#volle_zakken_opgehaaldInput').val();
+                if (volleZakkenValue > 0) {
+                    $('#kgVanZakContainer').show();
+                } else {
+                    $('#kgVanZakContainer').hide();
+                }
+            }
+    
+            $('#volle_zakken_opgehaaldInput').on('input', toggleKgVanZakVisibility);
+            toggleKgVanZakVisibility(); // Call on document ready to ensure correct initial state
+    
+            // Function to update bar details and log changes
             function updateBar(field, increment) {
-                // Use jQuery for DOM manipulation and AJAX requests
                 var input = $('#' + field + 'Input');
                 var currentValue = parseInt(input.val(), 10) || 0;
                 var newValue = currentValue + increment;
@@ -114,41 +176,32 @@
                 });
             }
     
-            // Button click event handlers for increment/decrement actions
-            $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
-                e.preventDefault();
-                var idParts = this.id.split('-');
-                var field = idParts[0] + '_gekregen';
-                var increment = idParts[1] === 'plus' ? 1 : -1;
-                if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald';
-                updateBar(field, increment);
-            });
+            // Logging function
+            function logChangeToServer(barId, field, oldValue, newValue) {
+                $.ajax({
+                    url: '/log_change',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        bar_id: barId,
+                        field: field,
+                        old_value: oldValue.toString(),
+                        new_value: newValue.toString()
+                    }),
+                    success: function (response) {
+                        console.log('Change logged successfully', response);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Failed to log change:', textStatus, errorThrown);
+                        console.log(jqXHR.responseText);
+                    }
+                });
+            }
         });
-    
-        function logChangeToServer(barId, field, oldValue, newValue) {
-            // jQuery AJAX for logging changes
-            $.ajax({
-                url: '/log_change',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    bar_id: barId,
-                    field: field,
-                    old_value: oldValue.toString(),
-                    new_value: newValue.toString()
-                }),
-                success: function(response) {
-                    console.log('Change logged successfully', response);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.error('Failed to log change:', textStatus, errorThrown);
-                    console.log(jqXHR.responseText);
-                }
-            });
-        }
     </script>
     
-    
+
+
 </body>
 
 </html>

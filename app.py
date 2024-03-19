@@ -139,6 +139,7 @@ class Bar(db.Model):
     zakken_gekregen = db.Column(db.Integer, default=0)
     munten_gekregen = db.Column(db.Integer, default=0)
     volle_zakken_opgehaald = db.Column(db.Integer, default=0)
+    kg_van_zak = db.Column(db.Integer, default=0)  # Add this line for the new field
     url = db.Column(db.String)  # Add this line
     link = db.Column(db.String)  # Add this line
     change_log = db.Column(db.String, default="", nullable=True)
@@ -402,6 +403,32 @@ def update_bar(bar_id):
         return jsonify({field: new_value})
     else:
         return jsonify({'error': 'Invalid field or increment value'}), 400
+
+@app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
+def update_bar_details(bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+
+    zakken_gekregen = request.form.get('zakken_gekregen')
+    if zakken_gekregen.isdigit():  # Checks if the input is a digit, thus not empty and a valid number
+        bar.zakken_gekregen += int(zakken_gekregen)
+
+    munten_gekregen = request.form.get('munten_gekregen')
+    if munten_gekregen.isdigit():  # Apply similar logic for munten_gekregen
+        bar.munten_gekregen += int(munten_gekregen)
+
+    volle_zakken_opgehaald = request.form.get('volle_zakken_opgehaald')
+    if volle_zakken_opgehaald.isdigit():  # And for volle_zakken_opgehaald
+        bar.volle_zakken_opgehaald += int(volle_zakken_opgehaald)
+
+    # If you've added a "kg van zak" field, handle it similarly:
+    kg_van_zak_input = request.form.get('kg_van_zak')
+    if kg_van_zak_input and kg_van_zak_input.isdigit():
+        kg_van_zak_input = int(kg_van_zak_input)
+        bar.kg_van_zak += kg_van_zak_input  # Add the input value to the existing total
+
+    db.session.commit()
+    flash('Bar details updated successfully!', 'success')
+    return redirect(url_for('bar', bar_id=bar_id))
 
 
 

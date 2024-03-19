@@ -16,7 +16,7 @@
         padding: 20px;
         border-radius: 10px;
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        height: 320px;
+        height: 350px;
     }
 
     .logo { 
@@ -133,24 +133,25 @@
     
 
     #link {
-        margin: 0px;
-        border: 2px solid;
-        padding: 9px 0px;
-        padding-top: 9px;
-        padding-right: 0px;
-        padding-bottom: 9px;
-        padding-left: 0px;
-        border-radius: 10px;
+        width: 100%;
+        padding: 15px;
+        font-size: 18px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
     }
 
 
     .input-group-form {
-        width: 70vw;
-        border-radius: 20px;
+        display: flex; /* Enables flexbox layout */
+        flex-direction: row; /* Aligns children horizontally */
+        gap: 10px; /* Adjusts the gap between each item */
+        width: auto; /* Adjusts the width to fit content or as needed */
+        border-radius: 20px; /* Keeps your rounded corners */
         color: rgba(128, 128, 128, 0.274);
         margin: 3px 0px 20px 0px;
-        justify-content: center;
     }
+    
 
     .meer label {
         font-size: 20px;
@@ -167,6 +168,14 @@
         border-radius: 20px;
     }
 
+ .kg_zak {
+    border: none;
+    font-size: 40px;
+    text-align: left !important;
+    width: 200px !important;
+    overflow: auto;
+    text-align: center;
+    border-radius: 20px;}
 
     .login-form input[type="text"],
     .login-form input[type="password"] {
@@ -283,6 +292,15 @@
 
 .form-input:focus {
     border-color: #007bff;
+}
+
+#link-form {
+    width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
 #formContainer {
@@ -513,7 +531,6 @@
         }
 
         form {
-            width: 90%;
             box-sizing: border-box;
             /* Makes sure padding doesn't affect the width */
         }
@@ -524,6 +541,7 @@
 
         .cube.user-dashboard-cube {
             width: 300px;
+            background-color: white;
           }
     }
 
@@ -544,13 +562,12 @@
 
 
     .cube {
-        background-color: #fff;
         padding: 20px;
         border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         display: flex;
         flex-direction: column;
         align-items: center;
+        margin-right: 20px;
     }
 
     .user-cube,
@@ -613,6 +630,14 @@
         }
     }
 
+
+    .gray {
+        background-color: lightblue;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: 20px;
+    }
+
     #loading-icon {
         animation: spin 2s linear infinite;
     }
@@ -645,5 +670,72 @@
         margin: 5px 0;
         font-size: 16px;
         color: #333;
+    }
+    
+    .cube-container {
+        background-color: #fff; /* Light background for the form */
+        border-radius: 10px; /* Rounded corners */
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        width: fit-content;
+        margin: auto; /* Center the form */
+    }
+
+    .bottom-boy {
+        position: absolute;
+        bottom: 0;
+    } 
+    
+    .cube {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center; /* Center content */
+    }
+    
+    #toggleDetailsButton {
+        z-index: 1000;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 25px; /* Increased spacing between fields */
+        width: 100%;
+    }
+    
+    .input-group label {
+        margin-bottom: 10px; /* Slightly more space between label and input */
+        font-size: 18px; /* Larger font size for better visibility on small screens */
+        color: #333;
+    }
+    
+    .input-group input[type="number"] {
+        width: 100%; /* Full width to maximize touch target */
+        padding: 15px; /* Larger padding for a bigger touch area */
+        font-size: 18px; /* Larger font size for easier reading */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    
+    input[type="submit"] {
+        padding: 15px 20px; /* Larger padding for a bigger button */
+        font-size: 18px; /* Larger font size for readability and easier tapping */
+        margin-top: 10px; /* More space above the submit button */
+        width: 100%;
+    }
+    
+    @media (max-width: 600px) {
+        .cube-container {
+            width: 90%; /* Allows some margin on small screens */
+        }
+    
+        .input-group input[type="number"],
+        input[type="submit"] {
+            /* Ensures that font size and padding adjustments are not too large for very small devices */
+            font-size: 16px; /* Slightly smaller font size for extremely small screens */
+            padding: 12px; /* Adjust padding to fit smaller screens */
+        }
     }
     

@@ -29,6 +29,12 @@
     {% endif %}
     {% endwith %}
 
+    <div class="cube user-dashboard-cube">
+        <h2 class="cube-titel">Links</h2>
+        <a class="links" href="{{ url_for('change_log') }}">Log</a>
+        <a class="links" href="{{ url_for('index') }}">Start</a>
+    </div>
+
     <div class="cube-container">
         <div class="login-form">
             <form method="POST" class="loginForm form-to-toggle">
@@ -44,7 +50,8 @@
                 <ul>
                     {% for user in users %}
                     <li>
-                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}?user_id=1&from_admin=true">{{ user.username }}</a>
+                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}?user_id=1&from_admin=true">{{
+                            user.username }}</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -65,16 +72,12 @@
                 <h2>Locations</h2>
                 <ul>
                     {% for location in locations %}
-                    <li><a href="{{ url_for('location', user_id=user.id if user else 0, location_id=location.id if location else 0) }}?user_id=1&from_admin=true">{{ location.name }}</a></li>
-                {% endfor %}
+                    <li><a
+                            href="{{ url_for('location', user_id=user.id if user else 0, location_id=location.id if location else 0) }}?user_id=1&from_admin=true">{{
+                            location.name }}</a></li>
+                    {% endfor %}
                 </ul>
             </div>
-        </div>
-
-        <div class="cube user-dashboard-cube">
-            <h2 class="cube-titel">Links</h2>
-            <a class="links" href="{{ url_for('change_log') }}">Log</a>
-            <a class="links" href="{{ url_for('index') }}">Start</a>
         </div>
 
     </div>
@@ -91,7 +94,7 @@
         $(document).ready(function () {
             // Hide the forms initially
             $('.form-to-toggle').hide();
-    
+
             $('#toggleAssignLocation').click(function () {
                 // Toggle the visibility of the forms when the gear icon is clicked
                 $('.form-to-toggle').toggle();

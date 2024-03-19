@@ -58,8 +58,8 @@
                     </div>
                 </div>
                 <div class="gray"> 
-                <form id="link-form" style="display: none;" method="post">
-                    <label for="link">googlemaps link:</label><br>
+                    <form id="link-form" style="display: none;" method="post" data-bar-id="{{ bar.id }}">
+                        <label for="link">googlemaps link:</label><br>
                     <input type="text" id="link" name="link">
                     <input type="submit" value="Submit">
                 </form>
@@ -111,26 +111,27 @@
                 $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').toggle();
             });
     
-            // Handle link form submission
-            $('#link-form').submit(function (e) {
-                e.preventDefault();
-                var link = $('#link').val();
-                var oldLink = "{{ bar.link }}";
+            $('#link-form').submit(function(e) {
+                e.preventDefault(); // Prevent default form submission
+                var barId = $(this).data('bar-id');
+                var linkValue = $('#link').val();
+                var updateLinkUrl = `/bar/${barId}/update-link`;
+                
                 $.ajax({
-                    url: '/bar/{{ bar.id }}/update-link',
+                    url: updateLinkUrl,
                     type: 'POST',
                     contentType: 'application/json',
-                    data: JSON.stringify({ link: link }),
-                    success: function (response) {
-                        $('a[href="' + oldLink + '"]').attr('href', link);
-                        logChangeToServer('{{ bar.id }}', 'Link', oldLink, link);
+                    data: JSON.stringify({ link: linkValue }),
+                    success: function(response) {
+                        alert('Link updated successfully');
                     },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Link update failed:', textStatus, errorThrown);
-                        console.log(jqXHR.responseText);
+                    error: function(xhr, status, error) {
+                        alert('Error updating link');
                     }
                 });
             });
+
+
     
             // Button click event handlers for increment/decrement actions
             $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {

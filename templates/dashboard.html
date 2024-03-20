@@ -14,7 +14,7 @@
         <div class="login-form">
             <h2>Welcome, {{ username }}</h2>
             {% if location_name != 'Je hebt nog geen locatie' %}
-            <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}">{{ location_name }}</a>
+            <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id if user.location else 0) }}">{{ location_name }}</a>
             {% else %}
             {{ location_name }}
             {% endif %}

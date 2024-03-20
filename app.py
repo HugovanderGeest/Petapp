@@ -516,9 +516,9 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
-with app.app_context():
-    db.drop_all()
-    db.create_all()
+# with app.app_context():
+#     db.drop_all()
+#     db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)  

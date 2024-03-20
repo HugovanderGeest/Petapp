@@ -137,11 +137,11 @@ class PostForm(FlaskForm):
 class Bar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     zakken_gekregen = db.Column(db.Integer, default=0)
-    munten_gekregen = db.Column(db.Integer, default=0)
     volle_zakken_opgehaald = db.Column(db.Integer, default=0)
-    kg_van_zak = db.Column(db.Integer, default=0)  # Add this line for the new field
-    url = db.Column(db.String)  # Add this line
-    link = db.Column(db.String)  # Add this line
+    kg_van_zak = db.Column(db.Integer, default=0)
+    url = db.Column(db.String)
+    link = db.Column(db.String)
+    note = db.Column(db.String, nullable=True)  # Add this line to include a note field
     change_log = db.Column(db.String, default="", nullable=True)
     activity_log = db.relationship('ActivityLog', backref='bar', lazy=True)
 
@@ -345,18 +345,28 @@ def log_change():
 
 @app.route('/change_log')
 def change_log():
-    # Fetch all changes with bar names
+    # Fetch all changes with bar names and user names
     changes_with_bar_names = db.session.query(
         ChangeLog, Bar.name.label('bar_name')
     ).join(Bar, ChangeLog.bar_id == Bar.id).all()
 
-    # Group changes by user
+    # Group changes by user (existing logic)
     changes_grouped_by_user = {}
     for change, bar_name in changes_with_bar_names:
         user_changes = changes_grouped_by_user.setdefault(change.user, [])
         user_changes.append((change, bar_name))
 
-    return render_template('change_log.html', changes_grouped_by_user=changes_grouped_by_user)
+    # New logic to group changes by bar
+    changes_grouped_by_bar = {}
+    for change, bar_name in changes_with_bar_names:
+        bar_changes = changes_grouped_by_bar.setdefault(bar_name, [])
+        bar_changes.append(change)
+
+    # Pass both dictionaries to the template
+    return render_template('change_log.html', 
+                           changes_grouped_by_user=changes_grouped_by_user, 
+                           changes_grouped_by_bar=changes_grouped_by_bar)
+
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
@@ -392,7 +402,7 @@ def update_bar(bar_id):
     increment = data.get('increment', 0)
     print(f"Field: {field}, Increment: {increment}")  # Debugging line
 
-    valid_fields = ['zakken_gekregen', 'munten_gekregen', 'volle_zakken_opgehaald']
+    valid_fields = ['zakken_gekregen', 'volle_zakken_opgehaald']
 
     if field in valid_fields and isinstance(increment, int):
         bar = Bar.query.get_or_404(bar_id)
@@ -412,10 +422,6 @@ def update_bar_details(bar_id):
     if zakken_gekregen.isdigit():  # Checks if the input is a digit, thus not empty and a valid number
         bar.zakken_gekregen += int(zakken_gekregen)
 
-    munten_gekregen = request.form.get('munten_gekregen')
-    if munten_gekregen.isdigit():  # Apply similar logic for munten_gekregen
-        bar.munten_gekregen += int(munten_gekregen)
-
     volle_zakken_opgehaald = request.form.get('volle_zakken_opgehaald')
     if volle_zakken_opgehaald.isdigit():  # And for volle_zakken_opgehaald
         bar.volle_zakken_opgehaald += int(volle_zakken_opgehaald)
@@ -430,6 +436,19 @@ def update_bar_details(bar_id):
     flash('Bar details updated successfully!', 'success')
     return redirect(url_for('bar', bar_id=bar_id))
 
+@app.route('/bar/<int:bar_id>/leave_note', methods=['POST'])
+def leave_note_for_bar(bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+    note = request.form.get('bar_note')
+    if note:
+        # Assuming you have a notes or similar attribute in your Bar model to store the note
+        # You might need to adjust this part according to your data model
+        bar.note = note  # Add or update the note for the bar
+        db.session.commit()
+        flash('Your note has been saved!', 'success')
+    else:
+        flash('Please enter a note before submitting.', 'error')
+    return redirect(url_for('bar', bar_id=bar_id))
 
 
 @app.route('/bar/<int:bar_id>/update-link', methods=['POST'])
@@ -497,9 +516,9 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
-# with app.app_context():
-#     db.drop_all()
-#     db.create_all()
+with app.app_context():
+    db.drop_all()
+    db.create_all()
 
 if __name__ == '__main__':
     app.run(debug=True)  

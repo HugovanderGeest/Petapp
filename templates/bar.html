@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>{{ bar.name }}</title>
+    <title>Bar {{ bar.name }} op {{ bar.location.name }}</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
@@ -15,11 +15,67 @@
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
     {% if from_admin %}
-        <i id="toggleDetailsButton" class="fa fa-cog gear-icon-container"></i>
+    <script>
+        $(document).ready(function () {
+            $("#toggle").click(function () {
+                $(".sidebar").slideToggle();
+                $(".cube-container").slideToggle();
+            });
+        });
+    </script>
+
+    <i id="toggle" class="fa fa-cog gear-icon-container"></i>
+
+
+    <div class="sidebar" style="display: none;">
+        <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Not logged in' }}</h2>
+        {% if current_user.is_admin %}
+        <h3>Admin</h3>
+        {% else %}
+        <h3>Controleur</h3>
+        {% endif %}
+        <h2 class="side-titel">Links</h2>
+
+        <a href="{{ url_for('admin') }}">
+            <div class="side-link">
+                <i class="fas fa-user"></i>
+                <p>Admin</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('change_log') }}">
+            <div class="side-link">
+                <i class="fas fa-book"></i>
+                <p>Log</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('index') }}">
+            <div class="side-link">
+                <i class="fas fa-play"></i>
+                <p>Start</p>
+            </div>
+        </a>
+        <div class="side-bottom">
+
+            <div class="line"></div>
+
+            <a href="{{ url_for('index') }}">
+                <div class="side-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <p>Log-uit</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
     {% endif %}
 
     <div class="cube-container bottom-boy" style="display: none;">
         <div class="cube user-cube">
+
+            <h2>Bar {{ bar.name }} op {{ bar.location.name }}</h2>
+
 
             <form method="POST">
                 <div class="meer">
@@ -32,38 +88,46 @@
                     </div>
                 </div>
                 <div class="meer">
-                    <label for="muntenInput">Munten gekregen:</label>
-                    <div class="input-group-form">
-                        <button id="munten-minus">-</button>
-                        <input type="number" id="munten_gekregenInput" name="munten_gekregen"
-                            value="{{ bar.munten_gekregen }}" style="-moz-appearance: textfield;">
-
-                        <button id="munten-plus">+</button>
-                    </div>
-                </div>
-                <div class="meer">
                     <label for="volleZakkenInput">Volle zakken opgehaald:</label>
                     <div class="input-group-form">
                         <button id="volleZakken-minus">-</button>
                         <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
                             value="{{ bar.volle_zakken_opgehaald }}" style=" -moz-appearance: textfield;">
                         <button id="volleZakken-plus">+</button>
-                    </div> 
+                    </div>
                 </div>
                 <div class="meer" id="kgVanZakContainer">
                     <label for="kg_van_zakInput">Totaal KG van zakken:</label>
                     <div class="input-group-form">
                         <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
-                               value="{{ bar.kg_van_zak }}" style=" -moz-appearance: textfield;">
+                            value="{{ bar.kg_van_zak }}" style=" -moz-appearance: textfield;">
                     </div>
                 </div>
-                <div class="gray"> 
+                <i id="showNotesBtn" class="fas fa-file" style="cursor: pointer;"></i>
+                    <!-- Modal for displaying notes -->
+                    <div id="showNotesModal" class="modal">
+
+                        <!-- Modal content -->
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <h2>Notes for Bar {{ bar.name }}:</h2>
+                            {% if bar.note %}
+                                <p>{{ bar.note }}</p>
+                            {% else %}
+                                <p>No notes have been left for this bar.</p>
+                            {% endif %}
+                        </div>
+
+                    </div>
+
+                
+                <div class="gray">
                     <form id="link-form" style="display: none;" method="post" data-bar-id="{{ bar.id }}">
                         <label for="link">googlemaps link:</label><br>
-                    <input type="text" id="link" name="link">
-                    <input type="submit" value="Submit">
-                </form>
-            </div>
+                        <input type="text" id="link" name="link">
+                        <input type="submit" value="Submit">
+                    </form>
+                </div>
             </form>
         </div>
     </div>
@@ -74,19 +138,16 @@
 
             <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
 
+            <h2>Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
 
             <form method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}">
                 <div class="input-group">
                     <label for="zakken_gekregen">Zakken gekregen:</label>
-                    <input type="number" name="zakken_gekregen" id="zakken_gekregen" >
-                </div>
-                <div class="input-group">
-                    <label for="munten_gekregen">Munten gekregen:</label>
-                    <input type="number" name="munten_gekregen" id="munten_gekregen" >
+                    <input type="number" name="zakken_gekregen" id="zakken_gekregen">
                 </div>
                 <div class="input-group">
                     <label for="volle_zakken_opgehaald">Volle zakken opgehaald:</label>
-                    <input type="number" name="volle_zakken_opgehaald" id="volle_zakken_opgehaald" >
+                    <input type="number" name="volle_zakken_opgehaald" id="volle_zakken_opgehaald">
                 </div>
                 <div class="input-group meer" id="kgVanZakContainer">
                     <label for="kg_van_zakInput">Totaal KG van zakken:</label>
@@ -97,6 +158,24 @@
             </form>
 
 
+
+            <i id="noteBtn" class="fas fa-file "></i>
+            <!-- The Modal -->
+            <div id="noteModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Wat is er aan de hand bij Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
+                    <form method="POST" action="{{ url_for('leave_note_for_bar', bar_id=bar.id) }}">
+                        <textarea name="bar_note" id="bar_note" rows="4" cols="50"
+                            placeholder="Bekers zijn... , zakken zijn..."></textarea>
+                        <input type="submit" value="Verstuur">
+                    </form>
+                </div>
+
+            </div>
+
         </div>
     </div>
 
@@ -105,36 +184,31 @@
     <script>
         $(document).ready(function () {
             // Toggle details functionality
-            $("#toggleDetailsButton").click(function () {
-                $(".cube-container").slideToggle(); // Adjust the selector if needed
-                $('#link-form').toggle();
-                $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').toggle();
-            });
-    
-            $('#link-form').submit(function(e) {
+
+            $('#link-form').submit(function (e) {
                 e.preventDefault(); // Prevent default form submission
                 var barId = $(this).data('bar-id');
                 var linkValue = $('#link').val();
                 var updateLinkUrl = `/bar/${barId}/update-link`;
-                
+
                 $.ajax({
                     url: updateLinkUrl,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ link: linkValue }),
-                    success: function(response) {
+                    success: function (response) {
                         alert('Link updated successfully');
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         alert('Error updating link');
                     }
                 });
             });
 
 
-    
+
             // Button click event handlers for increment/decrement actions
-            $('#zakken-minus, #zakken-plus, #munten-minus, #munten-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
+            $('#zakken-minus, #zakken-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
                 e.preventDefault();
                 var idParts = this.id.split('-');
                 var field = idParts[0] + '_gekregen';
@@ -142,7 +216,7 @@
                 if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald';
                 updateBar(field, increment);
             });
-    
+
             // Show/hide Kg van zak dynamically
             function toggleKgVanZakVisibility() {
                 var volleZakkenValue = $('#volle_zakken_opgehaaldInput').val();
@@ -152,10 +226,10 @@
                     $('#kgVanZakContainer').hide();
                 }
             }
-    
+
             $('#volle_zakken_opgehaaldInput').on('input', toggleKgVanZakVisibility);
             toggleKgVanZakVisibility(); // Call on document ready to ensure correct initial state
-    
+
             // Function to update bar details and log changes
             function updateBar(field, increment) {
                 var input = $('#' + field + 'Input');
@@ -176,7 +250,7 @@
                     }
                 });
             }
-    
+
             // Logging function
             function logChangeToServer(barId, field, oldValue, newValue) {
                 $.ajax({
@@ -200,7 +274,71 @@
             }
         });
     </script>
-    
+
+    <script>
+        $(document).ready(function () {
+            $('#toggleSidebar').click(function () {
+                // Toggle the visibility of the sidebar with a slide animation
+                $('.sidebar').slideToggle();
+            });
+        });
+    </script>
+
+    <script>
+        // Get the modal
+        var modal = document.getElementById('noteModal');
+
+        // Get the button that opens the modal
+        var btn = document.getElementById("noteBtn");
+
+        // Get the <span> element that closes the modal
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal 
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+<script>
+    // Get the modal
+    var showNotesModal = document.getElementById('showNotesModal');
+
+    // Get the button that opens the modal
+    var showNotesBtn = document.getElementById("showNotesBtn");
+
+    // Get the <span> element that closes the modal
+    var span = showNotesModal.getElementsByClassName("close")[0];
+
+    // When the user clicks the button, open the modal 
+    showNotesBtn.onclick = function() {
+        showNotesModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        showNotesModal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == showNotesModal) {
+            showNotesModal.style.display = "none";
+        }
+    }
+</script>
 
 
 </body>

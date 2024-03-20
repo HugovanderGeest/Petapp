@@ -5,73 +5,88 @@
     <title>Change Log</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-
     <style>
-            .user-changes {
-                display: none;
-                margin-top: -15px;
-                overflow-x: auto; /* Enables horizontal scrolling */
-            }
+        /* Existing styles from your code */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
 
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                min-width: 600px; /* Ensures table does not get too squished */
-            }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
 
-            th, td {
-                border: 1px solid #ddd;
-                padding: 8px;
-                text-align: left;
-            }
+        th {
+            background-color: #f2f2f2;
+        }
 
-            th {
-                background-color: #f2f2f2;
-            }
+        tr:nth-child(even) {background-color: #f9f9f9;}
 
-            tr:nth-child(even) {background-color: #f9f9f9;}
-
-            .content-container {
-                width: 95%; /* Adjusted for overall container width */
-                max-width: 1200px; /* Optional: Sets a max width for the container */
-                margin: 20px auto; /* Centers the container */
-                padding: 20px;
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-                overflow-y: auto; /* Enables vertical scrolling if needed */
-                max-height: 90vh;
-            }
-
-            .user-changes-toggle {
-                cursor: pointer;
-            color: white;
-            background-color: rgb(27, 80, 255);
-            border-radius: 15px 15px 0px 0px;
-            font-weight: bold;
+        .content-container {
+            width: 95%;
+            max-width: 1200px;
+            margin: 20px auto;
             padding: 20px;
-            margin-top: 20px;
-            }
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 90vh;
+        }
 
-            h1 {
-                color: black;
-            }
+        /* New styles for tabs */
+        .tab {
+            cursor: pointer;
+            padding: 10px 20px;
+            margin-right: 10px;
+            background: #eee;
+            display: inline-block;
+            border-radius: 5px 5px 0 0;
+        }
 
+
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-top: none;
+        }
+
+        .tab-content.active {   
+            display: block;
+            background-color: rgb(247, 247, 247);
+        }
+
+        .user-changes-container p, .bar-changes-container p {
+            color: black !important;
+            font-size: 30px;
+            margin-top: 40px;
+        }
     </style>
 </head>
 <body>
-
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
     <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
 
-
     <div class="content-container">
         <h1>Log</h1>
-        {% for user, changes in changes_grouped_by_user.items() %}
-        <div class="user-changes-container">
-            <p class="user-changes-toggle">{{ user.username }}</p>
-            <div class="user-changes">
+
+        <!-- Tabs for switching views -->
+        <div id="tabs">
+            <div class="tab " data-target="userChanges">Per gebruiker</div>
+            <div class="tab" data-target="barChanges">Per bar</div>
+        </div>
+
+ <!-- User Changes View -->
+        <div id="userChanges" class="tab-content active">
+            {% for user, changes in changes_grouped_by_user.items() %}
+            <div class="user-changes-container">
+                <p>Door: {{ user.username }}</p>
                 <table>
                     <tr>
                         <th>Bar</th>
@@ -90,18 +105,61 @@
                     </tr>
                     {% endfor %}
                 </table>
+                <h4>Total Changes: {{ changes|length }}</h4>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
+
+
+<!-- Bar Changes View -->
+        <div id="barChanges" class="tab-content">
+            {% for bar_name, changes in changes_grouped_by_bar.items() %}
+            <div class="bar-changes-container">
+                <p>Bar: {{ bar_name }}</p>
+                <table>
+                    <tr>
+                        <th>User</th>
+                        <th>Wat</th>
+                        <th>Van</th>
+                        <th>Naar</th>
+                        <th>Om</th>
+                    </tr>
+                    {% for change in changes %}
+                    <tr>
+                        <td>{{ change.user.username }}</td>
+                        <td>{{ change.field }}</td>
+                        <td>{{ change.old_value }}</td>
+                        <td>{{ change.new_value }}</td>
+                        <td>{{ change.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+                <h4>Total Changes: {{ changes|length }}</h4>
+            </div>
+            {% endfor %}
+        </div>
+        
     </div>
 
     <script>
-        document.querySelectorAll('.user-changes-toggle').forEach(function(toggle) {
-            toggle.addEventListener('click', function() {
-                var changes = this.nextElementSibling;
-                changes.style.display = changes.style.display === 'none' ? 'block' : 'none';
+        // Tab switching functionality
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.getAttribute('data-target');
+    
+                document.querySelectorAll('.tab-content').forEach(function(content) {
+                    if (content.getAttribute('id') === target) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
             });
         });
     </script>
+    
+
 </body>
 </html>

@@ -17,27 +17,67 @@
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
-    <div class="gear-icon-container"> <i id="toggleAssignLocation" class="fa fa-cog"></i></div>
+    <div class="gear-icon-container"> <i id="toggleSidebar" class="fa fa-bars"></i></div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">
-        {{ message }}
-    </div>
-    {% endfor %}
-    {% endif %}
+        {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
     {% endwith %}
 
-    <div class="cube user-dashboard-cube">
-        <h2 class="cube-titel">Links</h2>
-        <a class="links" href="{{ url_for('change_log') }}">Log</a>
-        <a class="links" href="{{ url_for('index') }}">Start</a>
+    <div class="sidebar" style="display: none;">
+        <!-- BEGIN: Changed the initial display to none -->
+        <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
+        {% if current_user.is_admin %}
+        <h3>Admin</h3>
+        {% else %}
+        <h3>Controleur</h3>
+        {% endif %}
+        <h2 class="side-titel">Links</h2>
+
+        <a href="#">
+            <div class="active side-link">
+                <i class="fas fa-user"></i>
+            <p>Admin</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('change_log') }}">
+            <div class="side-link">
+            <i class="fas fa-book"></i>
+            <p>Log</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('index') }}">
+            <div class="side-link">
+            <i class="fas fa-play"></i>
+            <p>Start</p>
+            </div>
+        </a>
+        <div class="side-bottom">
+
+            <div class="line"></div>
+    
+            <a href="{{ url_for('index') }}">
+                <div class="side-link">
+                <i class="fas fa-arrow-left"></i>
+                <p>Log-uit</p>
+            </div>
+            </a>
+        </div>
     </div>
 
+
     <div class="cube-container">
+        <!-- BEGIN: Removed the form-to-toggle class -->
         <div class="login-form">
-            <form method="POST" class="loginForm form-to-toggle">
+            <form method="POST">
+                <!-- END: Removed the form-to-toggle class -->
                 <h2 class="cube-titel">Maak gebruiker aan</h2>
                 {{ form.hidden_tag() }}
                 {{ form.username.label }} {{ form.username() }} <br><br>
@@ -46,7 +86,7 @@
                 {{ form.submit() }}
             </form>
             <div class="list-section ">
-                <h2>Users</h2>
+                <h2>Gebruikers</h2>
                 <ul>
                     {% for user in users %}
                     <li>
@@ -59,7 +99,7 @@
         </div>
 
         <div class="login-form">
-            <form method="POST" class="loginForm form-to-toggle">
+            <form method="POST">
                 <h2 class="cube-titel">Maak Locatie aan</h2>
                 {{ location_form.hidden_tag() }}
                 <p>
@@ -69,7 +109,7 @@
                 <p>{{ location_form.submit() }}</p>
             </form>
             <div class="list-section">
-                <h2>Locations</h2>
+                <h2>Locaties</h2>
                 <ul>
                     {% for location in locations %}
                     <li><a
@@ -85,19 +125,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#toggleAssignLocation').click(function () {
-                $('#assignLocationList').slideToggle();
-            });
-        });
-    </script>
-    <script>
-        $(document).ready(function () {
-            // Hide the forms initially
-            $('.form-to-toggle').hide();
-
-            $('#toggleAssignLocation').click(function () {
-                // Toggle the visibility of the forms when the gear icon is clicked
-                $('.form-to-toggle').toggle();
+            $('#toggleSidebar').click(function () {
+                // Toggle the visibility of the sidebar with a slide animation
+                $('.sidebar').slideToggle();
             });
         });
     </script>

@@ -13,7 +13,7 @@
         <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo">
         <div class="login-form">
             <h2>Welcome, {{ username }}</h2>
-            {% if location_name != 'No location assigned' %}
+            {% if location_name != 'Je hebt nog geen locatie' %}
             <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}">{{ location_name }}</a>
             {% else %}
             {{ location_name }}

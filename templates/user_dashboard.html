@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>User Dashboard</title>
+    <title>User: {{ user.username }}</title>
 </head>
 
 <body>
@@ -15,24 +15,23 @@
 <!-- User Information and Remove User Form -->
 <div class="cube user-dashboard-cube"
     style="  background-color: white; width:  auto; padding: 20px; margin: 20px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); text-align: center;">
-    <h1>User Dashboard</h1>
-    <p>Username: {{ user.username }}</p>
-    <p>Location: {{ user.location.name if user.location else 'Not Assigned' }}</p>
-    <p>Admin Status: {{ 'Yes' if user.is_admin else 'No' }}</p> <!-- Display Admin Status -->
+    <h1>User</h1>
+    <p >Gebruikersnaam: <br> {{ user.username }}</p>
+    <p>Locatie: <br> {{ user.location.name if user.location else 'Geen' }}</p>
+    <p>Admin: <br> {{ 'Ja' if user.is_admin else 'Nee' }}</p> <!-- Display Admin Status -->
 
     <!-- Remove User Form -->
     <form method="POST" action="{{ url_for('delete_user', id=user.id) }}" style="margin-top: 20px;">
-        <input type="submit" value="Remove User"
-            onclick="return confirm('Are you sure you want to delete this user?');">
+        <input type="submit" value="Verwijder gebruiker"
+            onclick="return confirm('Weet je dat zeker?');">
+    </form>
+
+    <form method="POST" action="{{ url_for('assign_location', user_id=user.id) }}">
+        {{ form.hidden_tag() }} <br>
+        <div>{{ form.location.label }} <br> {{ form.location() }}</div> <br>
+        <div>{{ form.submit() }}</div>
     </form>
 </div>
-
-<!-- Assign Location Form -->
-<form method="POST" action="{{ url_for('assign_location', user_id=user.id) }}">
-    {{ form.hidden_tag() }} <br>
-    <div>{{ form.location.label }} <br> {{ form.location() }}</div> <br>
-    <div>{{ form.submit() }}</div>
-</form>
 
 </body>
 </html>

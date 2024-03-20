@@ -19,7 +19,7 @@
         height: 350px;
     }
 
-    .logo { 
+    .logo {
         width: 150px;
         /* Adjust the size of your logo as needed */
         margin-bottom: 30px;
@@ -50,8 +50,89 @@
         width: 200%;
     }
 
-    
+    .sidebar {
+        height: 100vh;
+        background-color: white;
+        color: white;
+        width: 10vw;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        border-radius: 0px 15px 0px 0px;
+        padding: 20px;
+        z-index: 1;
+        display: block;
+        overflow: hidden;
+    }
 
+    @media (max-width: 600px) {
+        .sidebar {
+            width: 100vw;
+            overflow: hidden;
+        }
+    }
+
+    .sidebar h2 {
+        margin-top: 100px;
+        color: #4A4B4C;
+    }
+
+    .sidebar h3 {
+        margin: 0px 0px 20px 0px;
+        font-size: 20px;
+        color: #777778;
+        font-weight: 100;
+    }
+
+    .side-link {
+        background-color: #ffff;
+        padding: 20px;
+        border-radius: 20px;
+        padding: 20px 500px 20px 20px;
+        transition: 0.2s ease-in-out;
+        display: flex; 
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .sidebar a {
+        text-decoration: none;
+    }
+
+    .side-link p {
+        text-decoration: none;
+        text-align: left;
+        font-weight: 100;
+        margin: 0px;
+        margin-left: 20px;
+        color: #4A4B4C;
+        width: 50px;
+    }
+
+    .side-link i {
+        color: #4A4B4C;
+        text-decoration: none;
+        font-size: 30px;
+
+    }
+
+    .side-link:hover{
+        background-color: #a2baff;
+        color: white;
+        text-decoration: none;
+    }
+
+    .line {
+        padding: 1px 300px;
+        background-color: #dff3ff;
+        margin-left: -50px;
+        margin-bottom: 30px;
+    }
+
+    .side-bottom {
+        position: absolute;
+        bottom: 0;
+    }
 
     #zakken-minus,
     #zakken-plus,
@@ -68,16 +149,6 @@
         border-radius: 15px;
         overflow: hidden;
         color: blue;
-    }
-
-    #link-form,
-    #zakken-minus,
-    #zakken-plus,
-    #munten-minus,
-    #munten-plus,
-    #volleZakken-minus,
-    #volleZakken-plus {
-        display: none;
     }
 
     #link-form {
@@ -110,18 +181,19 @@
 
     .input-group-form button {
         width: 80px;
-      } 
+    }
 
     .back-button {
         position: fixed;
         top: 10px;
         left: 10px;
         background-color: transparent;
-        color: #1220B0;
+        color: #2E52BB;
         text-decoration: none;
         padding: 10px 20px;
         border-radius: 5px;
         font-size: 30px;
+        z-index: 1000;
     }
 
     .back-button:hover {
@@ -129,8 +201,8 @@
         color: #f8f9fa;
     }
 
-    
-    
+
+
 
     #link {
         width: 100%;
@@ -143,15 +215,20 @@
 
 
     .input-group-form {
-        display: flex; /* Enables flexbox layout */
-        flex-direction: row; /* Aligns children horizontally */
-        gap: 10px; /* Adjusts the gap between each item */
-        width: auto; /* Adjusts the width to fit content or as needed */
-        border-radius: 20px; /* Keeps your rounded corners */
+        display: flex;
+        /* Enables flexbox layout */
+        flex-direction: row;
+        /* Aligns children horizontally */
+        gap: 10px;
+        /* Adjusts the gap between each item */
+        width: auto;
+        /* Adjusts the width to fit content or as needed */
+        border-radius: 20px;
+        /* Keeps your rounded corners */
         color: rgba(128, 128, 128, 0.274);
         margin: 3px 0px 20px 0px;
     }
-    
+
 
     .meer label {
         font-size: 20px;
@@ -168,14 +245,15 @@
         border-radius: 20px;
     }
 
- .kg_zak {
-    border: none;
-    font-size: 40px;
-    text-align: left !important;
-    width: 200px !important;
-    overflow: auto;
-    text-align: center;
-    border-radius: 20px;}
+    .kg_zak {
+        border: none;
+        font-size: 40px;
+        text-align: left !important;
+        width: 200px !important;
+        overflow: auto;
+        text-align: center;
+        border-radius: 20px;
+    }
 
     .login-form input[type="text"],
     .login-form input[type="password"] {
@@ -202,218 +280,254 @@
     #gear-icon {
         font-size: 30px;
 
-}
+    }
 
-.alert {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    padding: 10px;
-    z-index: 1000;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
-    max-width: 300px;
-    color: #fff;
-    animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
+    .alert {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        padding: 10px;
+        z-index: 1000;
+        border-radius: 5px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        max-width: 300px;
+        color: #fff;
+        animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
 
-}
+    }
 
-@keyframes fadeIn {
-    0% {opacity: 0;}
-    100% {opacity: 1;}
-}
+    .active {
+        background-color: #4e73df;
+    }
 
-@keyframes fadeOut {
-    0% {opacity: 1;}
-    100% {opacity: 0;}
-}
+    .active p, .active i {
+        color: white;
+    }
 
+    @keyframes fadeIn {
+        0% {
+            opacity: 0;
+        }
 
-.alert-success {
-    background-color: #28a745;
-}
+        100% {
+            opacity: 1;
+        }
+    }
 
-.alert-error {
-    background-color: #dc3545;
-}
+    @keyframes fadeOut {
+        0% {
+            opacity: 1;
+        }
 
-.alert-info {
-    background-color: #17a2b8;
-}
-
-.logo2 {
-    position: absolute;
-  top: 10px;
-  width: 90px;
-  position: fixed;
-}
-    
-/* Additional CSS for gear icon and form transition */
-.gear-icon-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
-    font-size: 24px; /* Adjust size as needed */
-    color: #141AAC; /* Adjust color as needed */
-    font-size: 30px;
-    padding: 10px 20px;
-    margin-top: -10px;
-    margin-right: -10px;
-}
-
-.gear-icon-container:hover {
-    background-color: #333;
-    color: #f8f9fa;
-    padding: 10px 20px;
-    border-radius: 5px;
-}
-
-/* Improved form styles for a cleaner look */
-.form-container {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 280px;
-    margin: 0 auto;
-    transition: all 0.3s ease-in-out; /* Smooth transition for toggling form */
-}
-
-.form-input {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border 0.3s ease-in-out;
-}
-
-.form-input:focus {
-    border-color: #007bff;
-}
-
-#link-form {
-    width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-}
-
-#formContainer {
-    position: absolute;
-    bottom: 0px;
-    height: 110px;
-  }
-
-.submit-button {
-    background-color: #76C9FB;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease-in-out;
-}
-
-.submit-button:hover {
-    background-color: #76C9FB;
-}
-
-.error-text {
-    color: white;
-    margin-top: 10px;
-    text-align: center;
-    font-size: 0.9em;
-}
-
-/* Hide/Show Transition for the form */
-.hide {
-    display: none;
-}
+        100% {
+            opacity: 0;
+        }
+    }
 
 
-.submit-button:hover {
-    background-color: #0069d9;
-}
+    .alert-success {
+        background-color: #28a745;
+    }
 
-/* List container styling */
-.bars-list {
-    display: flex; /* Use flexbox to layout children */
-    flex-wrap: wrap; /* Allow items to wrap to next line on small screens */
-    gap: 10px; /* Space between items */
-    justify-content: center; /* Center items horizontally */
-    list-style: none;
-    padding: 0;
-    margin-top: -120px; /* Space for form when it's visible */
-}
+    .alert-error {
+        background-color: #dc3545;
+    }
 
-/* List item styling */
-.bars-list li {
-    /* No bottom margin needed since flexbox handles spacing */
-}
+    .alert-info {
+        background-color: #17a2b8;
+    }
 
-/* List item link styling */
-.bars-list li a {
-    background-color: #007bff;
-    color: white;
-    display: flex; /* Use flex to center content */
-    justify-content: center; /* Center text horizontally */
-    align-items: center; /* Center text vertically */
-    padding: 20px 15px;
-    text-decoration: none;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-    min-width: 100px; /* Minimum width for each item */
-    text-align: center;
-    font-size: 20px;
-}
+    .logo2 {
+        position: absolute;
+        top: 10px;
+        width: 90px;
+        position: fixed;
+        z-index: 1000;
+        
+    }
 
-.list-section {
-    background-color: white;
-  padding: 5px 20px 20px 20px;
-  border-radius: 15px;
-  width: 300px;
-}
+    /* Additional CSS for gear icon and form transition */
+    .gear-icon-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        cursor: pointer;
+        font-size: 24px;
+        /* Adjust size as needed */
+        color: #2E52BB;
+        /* Adjust color as needed */
+        font-size: 30px;
+        padding: 10px 20px;
+        margin-top: -10px;
+        margin-right: -10px;
+        z-index: 1000;
+    }
 
-.list-section li {
-    color: #4E73DF;
-}
+    .gear-icon-container:hover {
+        background-color: #333;
+        color: #f8f9fa;
+        padding: 10px 20px;
+        border-radius: 5px;
+    }
 
-.list-section a, .links {
-    font-size: 19px;
-  line-height: 3;
-  text-decoration: none;
-  color: white;
-  padding: 10px;
-  background-color: #4E73DF;
-  border-radius: 10px;
-  min-width: 100px;
-  text-align: center;
-  transition: 0.2s ease-in-out;
-  margin-bottom: 10px;
- }
+    /* Improved form styles for a cleaner look */
+    .form-container {
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        max-width: 280px;
+        margin: 0 auto;
+        transition: all 0.3s ease-in-out;
+        /* Smooth transition for toggling form */
+    }
 
- .list-section a:hover, .links:hover {
-    background-color: #3658A4;
-    color: white;
-    text-decoration: none;
-    outline: none;
- }
+    .form-input {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 10px;
+        margin-bottom: 10px;
+        width: 100%;
+        box-sizing: border-box;
+        transition: border 0.3s ease-in-out;
+    }
 
- 
+    .form-input:focus {
+        border-color: #007bff;
+    }
 
-.bars-list li a:hover, .bars-list li a:focus {
-    background-color: #0056b3;
-    color: white;
-    text-decoration: none;
-    outline: none;
-}
+    #link-form {
+        width: 100%;
+        padding: 15px;
+        font-size: 18px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+
+    #formContainer {
+        position: absolute;
+        bottom: 0px;
+        height: 110px;
+    }
+
+    .submit-button {
+        background-color: #76C9FB;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.3s ease-in-out;
+    }
+
+    .submit-button:hover {
+        background-color: #76C9FB;
+    }
+
+    .error-text {
+        color: white;
+        margin-top: 10px;
+        text-align: center;
+        font-size: 0.9em;
+    }
+
+    /* Hide/Show Transition for the form */
+    .hide {
+        display: none;
+    }
+
+
+    .submit-button:hover {
+        background-color: #0069d9;
+    }
+
+    /* List container styling */
+    .bars-list {
+        display: flex;
+        /* Use flexbox to layout children */
+        flex-wrap: wrap;
+        /* Allow items to wrap to next line on small screens */
+        gap: 10px;
+        /* Space between items */
+        justify-content: center;
+        /* Center items horizontally */
+        list-style: none;
+        padding: 0;
+        margin-top: -120px;
+        /* Space for form when it's visible */
+    }
+
+    /* List item styling */
+    .bars-list li {
+        /* No bottom margin needed since flexbox handles spacing */
+    }
+
+    /* List item link styling */
+    .bars-list li a {
+        background-color: #007bff;
+        color: white;
+        display: flex;
+        /* Use flex to center content */
+        justify-content: center;
+        /* Center text horizontally */
+        align-items: center;
+        /* Center text vertically */
+        padding: 20px 15px;
+        text-decoration: none;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+        min-width: 100px;
+        /* Minimum width for each item */
+        text-align: center;
+        font-size: 20px;
+    }
+
+    .list-section {
+        background-color: white;
+        padding: 5px 20px 20px 20px;
+        border-radius: 15px;
+        width: 300px;
+    }
+
+    .list-section li {
+        color: #4E73DF;
+    }
+
+    .list-section a,
+    .links {
+        font-size: 19px;
+        line-height: 3;
+        text-decoration: none;
+        color: white;
+        padding: 10px;
+        background-color: #4E73DF;
+        border-radius: 10px;
+        min-width: 100px;
+        text-align: center;
+        transition: 0.2s ease-in-out;
+        margin-bottom: 10px;
+    }
+
+    .list-section a:hover,
+    .links:hover {
+        background-color: #3658A4;
+        color: white;
+        text-decoration: none;
+        outline: none;
+    }
+
+
+
+    .bars-list li a:hover,
+    .bars-list li a:focus {
+        background-color: #0056b3;
+        color: white;
+        text-decoration: none;
+        outline: none;
+    }
 
 
     .login-form input[type="submit"]:hover {
@@ -535,20 +649,16 @@
             /* Makes sure padding doesn't affect the width */
         }
 
-        .cube-container {
-            margin-top: 100px;
-        }
-
         .cube.user-dashboard-cube {
             width: 300px;
             background-color: white;
-          }
+        }
     }
 
     .cube-titel {
         margin: 0px 0px 30px 0px;
         font-size: 23px;
-      }
+    }
 
 
     .cube-container {
@@ -630,12 +740,21 @@
         }
     }
 
+    #bar_note {
+        width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+    }
+
 
     .gray {
         background-color: lightblue;
-  overflow: hidden;
-  padding: 16px;
-  border-radius: 20px;
+        overflow: hidden;
+        padding: 16px;
+        border-radius: 20px;
     }
 
     #loading-icon {
@@ -650,48 +769,53 @@
         box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
         margin: 20px auto;
     }
-    
+
     .change-log-list {
         list-style-type: none;
         padding: 0;
     }
-    
+
     .change-log-item {
         border-bottom: 1px solid #eee;
         padding-bottom: 10px;
         margin-bottom: 10px;
     }
-    
+
     .change-log-item:last-child {
         border-bottom: none;
     }
-    
+
     .change-log-item p {
         margin: 5px 0;
         font-size: 16px;
         color: #333;
     }
-    
+
     .cube-container {
-        background-color: #fff; /* Light background for the form */
-        border-radius: 10px; /* Rounded corners */
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+        background-color: #fff;
+        /* Light background for the form */
+        border-radius: 10px;
+        /* Rounded corners */
+        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        /* Subtle shadow for depth */
         width: fit-content;
-        margin: auto; /* Center the form */
+        margin: auto;
+        /* Center the form */
     }
 
     .bottom-boy {
         position: absolute;
         bottom: 0;
-    } 
-    
+    }
+
     .cube {
         padding: 20px;
         display: flex;
         flex-direction: column;
-        align-items: center; /* Center content */
+        align-items: center;
+        /* Center content */
     }
-    
+
     #toggleDetailsButton {
         z-index: 1000;
     }
@@ -700,42 +824,122 @@
         display: flex;
         flex-direction: column;
         align-items: flex-start;
-        margin-bottom: 25px; /* Increased spacing between fields */
+        margin-bottom: 25px;
+        /* Increased spacing between fields */
         width: 100%;
     }
-    
+
     .input-group label {
-        margin-bottom: 10px; /* Slightly more space between label and input */
-        font-size: 18px; /* Larger font size for better visibility on small screens */
+        margin-bottom: 10px;
+        /* Slightly more space between label and input */
+        font-size: 18px;
+        /* Larger font size for better visibility on small screens */
         color: #333;
     }
-    
+
     .input-group input[type="number"] {
-        width: 100%; /* Full width to maximize touch target */
-        padding: 15px; /* Larger padding for a bigger touch area */
-        font-size: 18px; /* Larger font size for easier reading */
+        width: 100%;
+        /* Full width to maximize touch target */
+        padding: 15px;
+        /* Larger padding for a bigger touch area */
+        font-size: 18px;
+        /* Larger font size for easier reading */
         border: 1px solid #ccc;
         border-radius: 5px;
         box-sizing: border-box;
     }
-    
+
     input[type="submit"] {
-        padding: 15px 20px; /* Larger padding for a bigger button */
-        font-size: 18px; /* Larger font size for readability and easier tapping */
-        margin-top: 10px; /* More space above the submit button */
+        padding: 15px 20px;
+        /* Larger padding for a bigger button */
+        font-size: 18px;
+        /* Larger font size for readability and easier tapping */
+        margin-top: 10px;
+        /* More space above the submit button */
         width: 100%;
     }
-    
+
     @media (max-width: 600px) {
         .cube-container {
-            width: 90%; /* Allows some margin on small screens */
+            width: 90%;
+            margin-top: 100px;
         }
-    
+
         .input-group input[type="number"],
         input[type="submit"] {
             /* Ensures that font size and padding adjustments are not too large for very small devices */
-            font-size: 16px; /* Slightly smaller font size for extremely small screens */
-            padding: 12px; /* Adjust padding to fit smaller screens */
+            font-size: 16px;
+            /* Slightly smaller font size for extremely small screens */
+            padding: 12px;
+            /* Adjust padding to fit smaller screens */
         }
     }
-    
+
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    bottom: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  }
+  
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 10px; /* Optional: Rounded corners */
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    max-width: 500px;
+  }
+
+  .modal-content h2  {
+    width: 80%;
+    margin-left: 20px;
+  }
+
+  #noteBtn, #showNotesBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 30px;
+    font-size: 30px;
+  }
+  
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  /* Add Zoom Animation */
+  .modal-content {
+    animation-name: zoom;
+    animation-duration: 0.6s;
+  }
+  
+  @keyframes zoom {
+    from {transform: scale(0)} 
+    to {transform: scale(1)}
+  }
+  

@@ -235,8 +235,10 @@ def login():
                 return redirect(url_for('admin'))
             return redirect(url_for('dashboard'))
         else:
-            flash('Invalid username or password', 'error')
+            flash('Verkeerd Naam of wachtwoord, vraag een admin om hulp', 'error')  # Flash a message if login fails
+            return redirect(url_for('index'))  # Redirect back to the index page
     return render_template('login.html')
+
 
 
 @app.route('/log_activity', methods=['POST'])

@@ -140,7 +140,7 @@
 
             <h2>Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
 
-            <form method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}">
+            <form method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}" id="myForm">
                 <div class="input-group">
                     <label for="zakken_gekregen">Zakken gekregen:</label>
                     <input type="number" name="zakken_gekregen" id="zakken_gekregen">
@@ -157,7 +157,14 @@
                 <input type="submit" value="Stuur">
             </form>
 
-
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          
 
             <i id="noteBtn" class="fas fa-file "></i>
             <!-- The Modal -->

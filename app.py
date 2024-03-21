@@ -434,8 +434,10 @@ def update_bar_details(bar_id):
         kg_van_zak_input = int(kg_van_zak_input)
         bar.kg_van_zak += kg_van_zak_input  # Add the input value to the existing total
 
+    flash('Verstuurd', 'success')  # 'success' is the category
+
     db.session.commit()
-    flash('Bar details updated successfully!', 'success')
+    flash('Verstuurd', 'success')
     return redirect(url_for('bar', bar_id=bar_id))
 
 @app.route('/bar/<int:bar_id>/leave_note', methods=['POST'])

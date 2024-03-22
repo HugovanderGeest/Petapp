@@ -237,9 +237,6 @@ def login():
         else:
             flash('Verkeerd Naam of wachtwoord, vraag een admin om hulp', 'error')  # Flash a message if login fails
             return redirect(url_for('index'))  # Redirect back to the index page
-    return render_template('login.html')
-
-
 
 @app.route('/log_activity', methods=['POST'])
 def log_activity():

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>All Bar Check-Ins</title>
+</head>
+<body>
+    <body>
+        <div class="location-filters">
+            <form action="{{ url_for('check_ins') }}" method="get">
+                <select name="location_id" onchange="this.form.submit()">
+                    <option value="">Select a Location</option>
+                    {% for location in locations %}
+                        <option value="{{ location.id }}">{{ location.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    
+        <div class="bars-container">
+            {% for bar in bars %}
+                <div class="bar-item">
+                    <h3>Bar: {{ bar.name }} bij {{ bar.location.name }}</h3>
+                    <p>Last checked in: {{ bar.last_checked_in | time_since }}</p>
+                    <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+                        <button type="submit">Check In</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+    </html>
+</body>
+</html>

@@ -144,9 +144,10 @@ class Bar(db.Model):
     note = db.Column(db.String, nullable=True)  # Add this line to include a note field
     change_log = db.Column(db.String, default="", nullable=True)
     activity_log = db.relationship('ActivityLog', backref='bar', lazy=True)
+    last_checked_in = db.Column(db.DateTime, nullable=True)
 
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(120), nullable=False)
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
@@ -176,26 +177,32 @@ class ActivityLog(db.Model):
 def admin():
     form = UserForm()
     location_form = LocationForm()
-    users = User.query.all()  # Fetch all users
-    user = None  # Initialize user variable
     if form.validate_on_submit():
-        # Check if a location is selected before creating a user
-        # And handle the 'is_admin' field from the form
+        # Creating the user as before
         user = User(
             username=form.username.data,
             password=form.password.data,
             location_id=form.location.data.id if form.location.data else None,
-            is_admin=form.is_admin.data  # Capture the is_admin boolean from the form
+            is_admin=form.is_admin.data
         )
         db.session.add(user)
         db.session.commit()
-        flash('User created successfully!', 'success')  # Provide feedback to the admin
+        flash('User created successfully!', 'success')
+        return redirect(url_for('admin'))  # Redirect back to the admin page to refresh the list of users
+
+    # Moved the users query after the if block for form validation.
+    # This ensures it runs after a new user is added, thus including the new user in the query result.
+    users = User.query.all()
+
+    # Handling location form submission remains unchanged
     if location_form.validate_on_submit():
         location = Location(name=location_form.name.data)
         db.session.add(location)
         db.session.commit()
-        flash('Location created successfully!', 'success')  # Provide feedback for location creation
-    locations = Location.query.all()  # Fetch all locations
+        flash('Location created successfully!', 'success')
+
+    locations = Location.query.all()
+    # Now 'users' includes any new user added by the form submission.
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
 
 
@@ -237,6 +244,20 @@ def login():
         else:
             flash('Verkeerd Naam of wachtwoord, vraag een admin om hulp', 'error')  # Flash a message if login fails
             return redirect(url_for('index'))  # Redirect back to the index page
+    # Return a login template if the method is not POST or no valid conditions are met
+    return render_template('login.html')
+
+
+@app.route('/check_ins')
+def check_ins():
+    location_id = request.args.get('location_id')
+    if location_id:
+        bars = Bar.query.filter_by(location_id=location_id).all()
+    else:
+        bars = Bar.query.all()
+    
+    locations = Location.query.all()  # Fetch all locations to display as filter options
+    return render_template('check_ins.html', bars=bars, locations=locations)
 
 @app.route('/log_activity', methods=['POST'])
 def log_activity():
@@ -264,6 +285,28 @@ def log_activity():
 
     return jsonify({'success': 'Activity logged successfully'}), 200
 
+@app.template_filter('time_since')
+def time_since(dt, default="just now"):
+    now = datetime.utcnow()
+    diff = now - dt if dt else None
+
+    if diff is None:
+        return default
+
+    periods = [
+        (diff.days // 365, "year", "years"),
+        (diff.days // 30, "month", "months"),
+        (diff.days, "day", "days"),
+        (diff.seconds // 3600, "hour", "hours"),
+        (diff.seconds // 60, "minute", "minutes"),
+        (diff.seconds, "second", "seconds"),
+    ]
+
+    for period, singular, plural in periods:
+        if period:
+            return f"{period} {singular if period == 1 else plural} ago"
+
+    return default
 
 @app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
@@ -412,30 +455,63 @@ def update_bar(bar_id):
         return jsonify({field: new_value})
     else:
         return jsonify({'error': 'Invalid field or increment value'}), 400
+    
+@app.route('/bar/<int:bar_id>/check_in', methods=['POST'])
+@login_required
+def check_in_bar(bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+    bar.last_checked_in = datetime.utcnow()  # Assuming you have a 'last_checked_in' column in your Bar model
+    db.session.commit()
+    flash('Successfully checked in.', 'success')
+    return redirect(url_for('bar', bar_id=bar_id))
+
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
 def update_bar_details(bar_id):
     bar = Bar.query.get_or_404(bar_id)
 
+    # Fetch current values to compare and log changes later
+    old_zakken_gekregen = bar.zakken_gekregen
+    old_volle_zakken_opgehaald = bar.volle_zakken_opgehaald
+    old_kg_van_zak = bar.kg_van_zak
+
+    # Update values from form
     zakken_gekregen = request.form.get('zakken_gekregen')
-    if zakken_gekregen.isdigit():  # Checks if the input is a digit, thus not empty and a valid number
+    if zakken_gekregen.isdigit():
         bar.zakken_gekregen += int(zakken_gekregen)
 
     volle_zakken_opgehaald = request.form.get('volle_zakken_opgehaald')
-    if volle_zakken_opgehaald.isdigit():  # And for volle_zakken_opgehaald
+    if volle_zakken_opgehaald.isdigit():
         bar.volle_zakken_opgehaald += int(volle_zakken_opgehaald)
 
-    # If you've added a "kg van zak" field, handle it similarly:
     kg_van_zak_input = request.form.get('kg_van_zak')
     if kg_van_zak_input and kg_van_zak_input.isdigit():
-        kg_van_zak_input = int(kg_van_zak_input)
-        bar.kg_van_zak += kg_van_zak_input  # Add the input value to the existing total
-
-    flash('Verstuurd', 'success')  # 'success' is the category
+        bar.kg_van_zak += int(kg_van_zak_input)
 
     db.session.commit()
+
+    # Log changes
+    if old_zakken_gekregen != bar.zakken_gekregen:
+        log_change(current_user.id, bar_id, 'zakken_gekregen', old_zakken_gekregen, bar.zakken_gekregen)
+    if old_volle_zakken_opgehaald != bar.volle_zakken_opgehaald:
+        log_change(current_user.id, bar_id, 'volle_zakken_opgehaald', old_volle_zakken_opgehaald, bar.volle_zakken_opgehaald)
+    if old_kg_van_zak != bar.kg_van_zak:
+        log_change(current_user.id, bar_id, 'kg_van_zak', old_kg_van_zak, bar.kg_van_zak)
+
     flash('Verstuurd', 'success')
     return redirect(url_for('bar', bar_id=bar_id))
+
+def log_change(user_id, bar_id, field, old_value, new_value):
+    change_log = ChangeLog(
+        user_id=user_id,
+        bar_id=bar_id,
+        field=field,
+        old_value=str(old_value),
+        new_value=str(new_value),
+        timestamp=datetime.utcnow()
+    )
+    db.session.add(change_log)
+    db.session.commit()
 
 @app.route('/bar/<int:bar_id>/leave_note', methods=['POST'])
 def leave_note_for_bar(bar_id):
@@ -489,7 +565,7 @@ def submit_link():
     bar = Bar.query.get(bar_id)
     if bar:
         bar.link = link
-        db.session.commit()
+        db.session.commit() 
     return redirect(url_for('bar', bar_id=bar_id))
 
 @app.route('/dashboard', methods=['GET'])

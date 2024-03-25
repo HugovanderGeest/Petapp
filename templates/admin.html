@@ -85,13 +85,12 @@
                 {{ form.is_admin.label }} {{ form.is_admin() }} <br><br>
                 {{ form.submit() }}
             </form>
-            <div class="list-section ">
+            <div class="list-section">
                 <h2>Gebruikers</h2>
-                <ul>
+                <ul id="userList">
                     {% for user in users %}
-                    <li>
-                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}?user_id=1&from_admin=true">{{
-                            user.username }}</a>
+                    <li id="user-{{ user.id }}">
+                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
                     </li>
                     {% endfor %}
                 </ul>
@@ -131,6 +130,27 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('#createUserForm').submit(function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                $.ajax({
+                    url: '/path/to/your/user/creation/route', // Update with your route
+                    type: 'POST',
+                    data: $(this).serialize(), // Serialize form data
+                    success: function(response) {
+                        // Assuming response contains user data, e.g., { id: 123, username: "newUser" }
+                        $('#userList').append(`<li id="user-${response.id}"><a href="/user_dashboard/${response.id}">${response.username}</a></li>`);
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle errors (optional)
+                        console.error("Error creating user:", status, error);
+                    }
+                });
+            });
+        });
+        </script>
+        
 </body>
 
 </html>

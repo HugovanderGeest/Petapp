@@ -157,6 +157,11 @@
                 <input type="submit" value="Stuur">
             </form>
 
+            <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+                <input type="submit" value="Check In">
+            </form>
+            
+
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}

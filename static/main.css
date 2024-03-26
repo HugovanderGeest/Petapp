@@ -54,10 +54,10 @@
         height: 100vh;
         background-color: white;
         color: white;
-        width: 10vw;
+        width: 15vw;
         position: absolute;
         bottom: 0;
-        left: 0;
+        right: 0;
         border-radius: 0px 15px 0px 0px;
         padding: 20px;
         z-index: 1;
@@ -71,6 +71,17 @@
             overflow: hidden;
         }
     }
+
+    form.check-in {
+        position: absolute;
+        top: 100px;
+        box-sizing: border-box;
+        background-color: transparent; }
+
+        input.check-button {
+            padding: 50px;
+            font-size: 30px !important;
+        }
 
     .sidebar h2 {
         margin-top: 100px;
@@ -908,9 +919,6 @@
   }
 
   #noteBtn, #showNotesBtn {
-    position: absolute;
-    top: 0;
-    right: 0;
     padding: 30px;
     font-size: 30px;
   }
@@ -1001,4 +1009,92 @@
     .bar-item {
         width: 80%; /* Make bar items take more space on smaller screens */
     }
+}
+
+/* Lightbox styles */
+.lightbox-modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.9);
+}
+
+.lightbox-content {
+    position: relative;
+    margin: 10% auto;
+    padding: 20px;
+    width: 80%;
+    max-width: 700px;
+}
+
+.lightbox-photo {
+    width: 100%;
+    max-width: 650px;
+    margin: auto;
+    display: block;
+}
+
+.close-lightbox {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    color: #f1f1f1;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Styles for the container wrapping photo items */
+.photos-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px; /* Adjust the space between photos */
+    padding: 20px;
+}
+
+/* Styles for individual photo items */
+.photo-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 200px;
+    height: 200px;
+    overflow: hidden; /* Ensures the content fits within the specified dimensions */
+    background-color: #fff; /* Light background for contrast */
+    border-radius: 10px; /* Rounded corners for a softer look */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    padding: 10px; /* Spacing around content */
+}
+
+.photo-item img {
+    max-width: 100%;
+    max-height: 140px; /* Adjust height to leave space for text */
+    object-fit: cover; /* Ensures the photo covers the area, might crop some parts */
+    cursor: pointer;
+    transition: transform 0.2s ease; /* Smooth transform transition */
+    border-radius: 5px; /* Slightly rounded corners for the images */
+}
+
+.photo-item img:hover {
+    transform: scale(1.1); /* Slightly enlarges the photo on hover */
+}
+
+/* Enhanced text styling */
+.photo-item p {
+    color: #333; /* Darker text for readability */
+    font-size: 14px; /* Smaller font size for subtlety */
+    margin-top: 5px; /* Space between image and text */
+    text-align: center; /* Center-align text */
+}
+
+/* Specific styling for the upload date to differentiate it */
+.photo-item p:first-child {
+    color: #666; /* Lighter color for less emphasis */
+    font-size: 12px; /* Even smaller font size */
 }

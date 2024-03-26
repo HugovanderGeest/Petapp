@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+
+    <title>View Photos</title>
+</head>
+<body>
+    <div class="photos-container">
+        {% for photo in photos %}
+            <div class="photo-item">
+            <img src="{{ url_for('uploaded_photos', filename=photo.filename) }}" alt="Photo" style="width: 100px; cursor: pointer;">
+            <p>Uploaded at: {{ photo.uploaded_at }}</p>
+            <p>Bar: {{ photo.bar.name }}</p>
+        </div>
+    {% endfor %}
+</div>
+
+    <div id="lightboxModal" class="lightbox-modal">
+        <span class="close-lightbox" onclick="closeModal()">&times;</span>
+        <img class="lightbox-content" id="lightboxPhoto">
+    </div>
+
+    <script>
+        // Function to open the modal and display the clicked image
+        function openModal(src) {
+            document.getElementById('lightboxModal').style.display = "block";
+            document.getElementById('lightboxPhoto').src = src;
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('lightboxModal').style.display = "none";
+        }
+
+        // Add click event to images
+        document.querySelectorAll('.photo-item img').forEach(img => {
+            img.onclick = () => openModal(img.src);
+        });
+    </script>
+</body>
+</html>

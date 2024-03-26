@@ -56,6 +56,23 @@
                 <p>Start</p>
             </div>
         </a>
+
+        <a href="{{ url_for('view_photos') }}">
+                <div class="side-link">
+                    <i class="fas fa-images"></i>
+                    <p>Photos</p>
+                </div>
+            </a>
+
+
+        
+        <a href="{{ url_for('check_ins') }}">
+            <div class="side-link">
+            <i class="fas fa-check"></i>
+            <p>Check</p>
+            </div>
+        </a>
+
         <div class="side-bottom">
 
             <div class="line"></div>
@@ -70,6 +87,10 @@
     </div>
 
     {% endif %}
+
+    <form class="check-in"  action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+        <input class="check-button"  type="submit" value="Check In">
+    </form>
 
     <div class="cube-container bottom-boy" style="display: none;">
         <div class="cube user-cube">
@@ -117,7 +138,6 @@
                                 <p>No notes have been left for this bar.</p>
                             {% endif %}
                         </div>
-
                     </div>
 
                 
@@ -134,6 +154,7 @@
     </div>
 
     <div class="cube-container bottom-boy">
+
         <div class="cube user-cube">
 
             <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
@@ -155,12 +176,7 @@
                 </div>
 
                 <input type="submit" value="Stuur">
-            </form>
-
-            <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
-                <input type="submit" value="Check In">
-            </form>
-            
+            </form>            
 
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -169,9 +185,25 @@
               {% endfor %}
             {% endif %}
           {% endwith %}
-          
+
+          <i id="photoIcon" class="fas fa-images" style="cursor: pointer;"></i>
+
+                    <!-- The Modal -->
+            <div id="photoModal" class="modal">
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Upload Photo</h2>
+                    <form action="{{ url_for('upload_photo', bar_id=bar.id) }}" method="post" enctype="multipart/form-data">
+                        <input type="file" name="photo">
+                        <input type="submit" value="Upload Photo">
+                    </form>
+                </div>
+            </div>
+
 
             <i id="noteBtn" class="fas fa-file "></i>
+
             <!-- The Modal -->
             <div id="noteModal" class="modal">
 
@@ -348,6 +380,34 @@
     window.onclick = function(event) {
         if (event.target == showNotesModal) {
             showNotesModal.style.display = "none";
+        }
+    }
+</script>
+
+<script>
+    // Get the modal
+    var photoModal = document.getElementById('photoModal');
+
+    // Get the button that opens the modal
+    var photoBtn = document.getElementById('photoIcon');
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[1]; // Assuming this is the second close button on your page
+
+    // When the user clicks the button, open the modal 
+    photoBtn.onclick = function() {
+        photoModal.style.display = "block";
+    }
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function() {
+        photoModal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == photoModal) {
+            photoModal.style.display = "none";
         }
     }
 </script>

@@ -4,6 +4,8 @@ from flask_wtf import FlaskForm
 import os
 import logging
 import datetime
+from werkzeug.utils import secure_filename
+from PIL import Image
 from datetime import datetime
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, URL
@@ -24,6 +26,13 @@ login_manager.login_view = 'login'  # Specify the login view
 app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['GOOGLE_MAPS_API_KEY'] = 'AIzaSyDjyGyXUa6Wnapxt-7HOity5K4Ydnb--2w'
+app.config['UPLOAD_FOLDER'] = 'photos'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 db = SQLAlchemy(app)
 
@@ -69,6 +78,17 @@ class ChangeLog(db.Model):
 
     def __repr__(self):
         return f'<ChangeLog {self.field} - Old Value: {self.old_value}, New Value: {self.new_value}, Timestamp: {self.timestamp}>'
+
+class BarPhoto(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(255), nullable=False)
+    uploaded_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
+    bar = db.relationship('Bar', backref=db.backref('photos', lazy=True))
+
+    def __repr__(self):
+        return f'<BarPhoto {self.filename} - Bar ID: {self.bar_id}>'
+
 
 
 class LocationForm(FlaskForm):
@@ -204,6 +224,49 @@ def admin():
     locations = Location.query.all()
     # Now 'users' includes any new user added by the form submission.
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
+
+@app.route('/bar/<int:bar_id>/upload_photo', methods=['POST'])
+@login_required
+def upload_photo(bar_id):
+    if 'photo' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['photo']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        # Open the image using Pillow
+        image = Image.open(file)
+        # Optionally, resize the image here if you want to ensure images are of a uniform size
+        # image = image.resize((800, 600))
+        # Compress and save the image
+        image.save(filepath, optimize=True, quality=85)  # Adjust quality for your needs
+        
+        # Proceed with adding a record for the photo in the database, etc.
+        new_photo = BarPhoto(filename=filename, bar_id=bar_id)
+        db.session.add(new_photo)
+        db.session.commit()
+
+        flash('Photo uploaded and compressed successfully!')
+        return redirect(url_for('bar', bar_id=bar_id))
+    else:
+        flash('File type not allowed')
+        return redirect(request.url)
+
+@app.route('/photos')
+def view_photos():
+    photos = BarPhoto.query.all()
+    return render_template('photos.html', photos=photos)
+
+
+@app.route('/photos/<filename>')
+def uploaded_photos(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 
 
 @login_manager.user_loader
@@ -359,6 +422,16 @@ def location(user_id, location_id):
         return redirect(url_for('bar', bar_id=bar_number))
 
     return render_template('location.html', location=location, bars=bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
+
+@app.template_filter('hours_since')
+def hours_since(dt):
+    if dt is None:
+        return float('inf')  # Return infinity if there's no last check-in time
+    now = datetime.utcnow()
+    diff = now - dt
+    hours = diff.total_seconds() / 3600
+    return hours
+
 
 @app.route('/log_change', methods=['POST'])
 @login_required  # Ensures only logged-in users can log changes

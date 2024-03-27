@@ -198,7 +198,6 @@ def admin():
     form = UserForm()
     location_form = LocationForm()
     if form.validate_on_submit():
-        # Creating the user as before
         user = User(
             username=form.username.data,
             password=form.password.data,
@@ -208,13 +207,10 @@ def admin():
         db.session.add(user)
         db.session.commit()
         flash('User created successfully!', 'success')
-        return redirect(url_for('admin'))  # Redirect back to the admin page to refresh the list of users
-
-    # Moved the users query after the if block for form validation.
-    # This ensures it runs after a new user is added, thus including the new user in the query result.
+        return redirect(url_for('admin'))
+    
     users = User.query.all()
 
-    # Handling location form submission remains unchanged
     if location_form.validate_on_submit():
         location = Location(name=location_form.name.data)
         db.session.add(location)
@@ -222,8 +218,11 @@ def admin():
         flash('Location created successfully!', 'success')
 
     locations = Location.query.all()
-    # Now 'users' includes any new user added by the form submission.
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
+
+
+
+from PIL import Image, ExifTags
 
 @app.route('/bar/<int:bar_id>/upload_photo', methods=['POST'])
 @login_required
@@ -241,8 +240,26 @@ def upload_photo(bar_id):
         
         # Open the image using Pillow
         image = Image.open(file)
+        
+        # Fix orientation if needed
+        try:
+            for orientation in ExifTags.TAGS.keys():
+                if ExifTags.TAGS[orientation]=='Orientation':
+                    break
+            exif=dict(image._getexif().items())
+            if exif[orientation] == 3:
+                image=image.rotate(180, expand=True)
+            elif exif[orientation] == 6:
+                image=image.rotate(270, expand=True)
+            elif exif[orientation] == 8:
+                image=image.rotate(90, expand=True)
+        except (AttributeError, KeyError, IndexError):
+            # cases: image don't have getexif
+            pass
+
         # Optionally, resize the image here if you want to ensure images are of a uniform size
         # image = image.resize((800, 600))
+        
         # Compress and save the image
         image.save(filepath, optimize=True, quality=85)  # Adjust quality for your needs
         
@@ -311,6 +328,32 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/change_password/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def change_password(user_id):
+    # Ensure the current user is the one whose password is being changed or is an admin
+    if current_user.id != user_id and not current_user.is_admin:
+        flash("You are not authorized to perform this action.", "error")
+        return redirect(url_for('dashboard'))
+
+    user = User.query.get_or_404(user_id)
+
+    if request.method == 'POST':
+        new_password = request.form.get('new_password')
+        confirm_password = request.form.get('confirm_password')
+
+        if new_password != confirm_password:
+            flash("Passwords do not match.", "error")
+            return redirect(url_for('dashboard'))
+
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+        flash("Password updated successfully!", "success")
+        return redirect(url_for('dashboard'))
+
+    return render_template('dashboard.html', user=user)
+
+
 @app.route('/check_ins')
 def check_ins():
     location_id = request.args.get('location_id')
@@ -319,7 +362,7 @@ def check_ins():
     else:
         bars = Bar.query.all()
     
-    locations = Location.query.all()  # Fetch all locations to display as filter options
+    locations = Location.query.all()  
     return render_template('check_ins.html', bars=bars, locations=locations)
 
 @app.route('/log_activity', methods=['POST'])

@@ -73,15 +73,28 @@
     }
 
     form.check-in {
-        position: absolute;
-        top: 100px;
-        box-sizing: border-box;
-        background-color: transparent; }
+            box-sizing: border-box;
+            background-color: transparent;
+            z-index: 2;
+            padding: 10px 20px;
+            position: absolute;
+            border-radius: 20px;
+            color: black;
+            text-decoration: none;
+            font-size: 20px;
+            top: -85px;
+            width: 110%;
+    }
 
         input.check-button {
             padding: 50px;
             font-size: 30px !important;
+            border-radius: 15px 15px 0px 0px !important;
         }
+
+    .rond {
+        border-radius: 0px 0px 15px 15px !important;
+    }
 
     .sidebar h2 {
         margin-top: 100px;
@@ -189,6 +202,7 @@
         font-size: 20px;
         top: -36px;
     }
+    
 
     .input-group-form button {
         width: 80px;
@@ -583,8 +597,13 @@
         height: auto;
         /* Keep the aspect ratio of the image */
         animation: floatAnimation 6s ease-in-out infinite;
-        z-index: -1;
+        z-index: 1;
         /* Ensure it stays in the background */
+    }
+
+    #movingImage {
+        width: 600px;
+        margin-bottom: -80px;
     }
 
     /* Make sure the floating image does not interfere with the form */
@@ -918,9 +937,25 @@
     margin-left: 20px;
   }
 
-  #noteBtn, #showNotesBtn {
+ #showNotesBtn {
     padding: 30px;
     font-size: 30px;
+  }
+
+  .center-nav {
+    display: flex; 
+    justify-content: space-around;
+  }
+
+  .center-nav i {
+    font-size: 30px;
+    cursor: pointer;
+    padding: 0px 30px;
+  }
+
+  .center-nav a {
+    text-decoration: none;
+    color: black;
   }
   
   
@@ -1025,11 +1060,13 @@
 }
 
 .lightbox-content {
-    position: relative;
-    margin: 10% auto;
     padding: 20px;
-    width: 80%;
-    max-width: 700px;
+    max-height: 90vh;
+    max-width: 90vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .lightbox-photo {
@@ -1063,8 +1100,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 200px;
-    height: 200px;
+    width: 300px;
+    height: 300px;
     overflow: hidden; /* Ensures the content fits within the specified dimensions */
     background-color: #fff; /* Light background for contrast */
     border-radius: 10px; /* Rounded corners for a softer look */
@@ -1074,7 +1111,7 @@
 
 .photo-item img {
     max-width: 100%;
-    max-height: 140px; /* Adjust height to leave space for text */
+    max-height: 80%; /* Adjust height to leave space for text */
     object-fit: cover; /* Ensures the photo covers the area, might crop some parts */
     cursor: pointer;
     transition: transform 0.2s ease; /* Smooth transform transition */
@@ -1097,4 +1134,62 @@
 .photo-item p:first-child {
     color: #666; /* Lighter color for less emphasis */
     font-size: 12px; /* Even smaller font size */
+}
+
+input[type="text"], input[type="password"], input[type="submit"] {
+    font-size: 16px;
+}
+
+/* Table Container */
+.table-container {
+    padding: 20px;
+    border-radius: 10px; /* Matches your container border-radius */
+    margin: 20px 0; /* Spacing around the table container */
+    width: 90%;
+}
+
+/* Table Basic Styling */
+.custom-table {
+    width: 100%; /* Full width of its container */
+    border-collapse: collapse; /* Collapse borders for a clean look */
+    margin-top: 20px; /* Space from any content above */
+    background-color: white;
+}
+
+.custom-table th,
+.custom-table td {
+    text-align: left; /* Aligns text to the left */
+    padding: 12px; /* Padding inside cells */
+    border-bottom: 1px solid #ccc; /* Border for each cell */
+}
+
+/* Table Header Styling */
+.custom-table th {
+    background-color: #4E73DE; /* Header background color */
+    color: white; /* Text color for headers */
+    font-size: 16px; /* Slightly larger font size for headers */
+}
+
+.form-container {
+    transition: max-height 0.5s ease-out;
+    overflow: hidden;
+    max-height: 0;
+}
+
+
+/* Table Body Styling */
+.custom-table tbody tr:nth-child(odd) {
+    background-color: #f2f2f2; /* Zebra striping for rows */
+}
+
+.custom-table tbody tr:hover {
+    background-color: #ddd; /* Hover effect for table rows */
+}
+
+/* Responsive adjustments for the table */
+@media (max-width: 600px) {
+    .table-container {
+        width: 90%; /* Adjust the table container width on smaller screens */
+        overflow-x: auto; /* Enable horizontal scrolling on small devices */
+    }
 }

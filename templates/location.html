@@ -13,9 +13,8 @@
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
     {% if from_admin %}
-    <i id="gear-icon" class="fa fa-cog gear-icon-container"></i>
 
-    <div id="formContainer" class="form-container">
+    <div id="formContainer">
         <form id="barLinkForm" method="POST">
             <input type="text" name="bar_name" class="form-input" placeholder="Bar Name" required>
             <input type="submit" value="Add Bar" class="submit-button">
@@ -51,10 +50,6 @@
     <script>
         $(document).ready(function () {
             // Toggle form visibility when the gear icon is clicked
-            $('#gear-icon').click(function () {
-                $('#formContainer').toggle(); // This toggles the visibility of the form
-            });
-    
             // Handle form submission
             $('#barLinkForm').submit(function (e) {
                 e.preventDefault();

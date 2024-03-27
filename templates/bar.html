@@ -88,10 +88,6 @@
 
     {% endif %}
 
-    <form class="check-in"  action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
-        <input class="check-button"  type="submit" value="Check In">
-    </form>
-
     <div class="cube-container bottom-boy" style="display: none;">
         <div class="cube user-cube">
 
@@ -155,9 +151,11 @@
 
     <div class="cube-container bottom-boy">
 
-        <div class="cube user-cube">
+        <div class="cube rond user-cube">
 
-            <a href="{{ bar.link }}" class="btn btn-primary">Ga naar bar</a>
+            <form class="check-in"  action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+                <input class="check-button"  type="submit" value="Check In">
+            </form>
 
             <h2>Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
 
@@ -186,8 +184,12 @@
             {% endif %}
           {% endwith %}
 
-          <i id="photoIcon" class="fas fa-images" style="cursor: pointer;"></i>
 
+        <div class="center-nav">
+            <i id="photoIcon" class="fas fa-images" style="cursor: pointer;"></i>
+           <i id="noteBtn" class="fas fa-file "></i>
+           <a href="{{ bar.link }}"><i class="fas fa-map-marker-alt"></i></a>
+        </div>
                     <!-- The Modal -->
             <div id="photoModal" class="modal">
                 <!-- Modal content -->
@@ -201,8 +203,6 @@
                 </div>
             </div>
 
-
-            <i id="noteBtn" class="fas fa-file "></i>
 
             <!-- The Modal -->
             <div id="noteModal" class="modal">

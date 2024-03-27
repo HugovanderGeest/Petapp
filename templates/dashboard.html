@@ -13,12 +13,27 @@
         <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo">
         <div class="login-form">
             <h2>Welcome, {{ username }}</h2>
+            <h4>Dit is jouw profiel, vanuit hier kan je inzien waar jij ingedeeld staat het komendne evenement, ook kan je vanaf hier aangeven dat je zakken hebt opgehaald door op de locatie hier onder te drukken</h4>
             {% if location_name != 'Je hebt nog geen locatie' %}
             <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id if user.location else 0) }}">{{ location_name }}</a>
             {% else %}
             {{ location_name }}
             {% endif %}
         </div>
+
+        <div class="password-change-form">
+            <h3>Change Password</h3>
+            <form action="{{ url_for('change_password', user_id=user.id) }}" method="post">
+                <label for="new_password">New Password:</label>
+                <input type="password" id="new_password" name="new_password" required>
+                
+                <label for="confirm_password">Confirm New Password:</label>
+                <input type="password" id="confirm_password" name="confirm_password" required>
+                
+                <button type="submit">Change Password</button>
+            </form>
+        </div>
+        
     </div>
 </body>
 

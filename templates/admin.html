@@ -88,8 +88,13 @@
     </div>
 
 
+
+
     <div class="cube-container">
-        <!-- BEGIN: Removed the form-to-toggle class -->
+        <!-- <button class="toggle-button">+</button>
+
+        <div class="form-container" style="display: none;"> -->
+
         <div class="login-form">
             <form method="POST">
                 <!-- END: Removed the form-to-toggle class -->
@@ -100,7 +105,7 @@
                 {{ form.is_admin.label }} {{ form.is_admin() }} <br><br>
                 {{ form.submit() }}
             </form>
-            <div class="list-section">
+            <!-- <div class="list-section">
                 <h2>Gebruikers</h2>
                 <ul id="userList">
                     {% for user in users %}
@@ -109,8 +114,10 @@
                     </li>
                     {% endfor %}
                 </ul>
-            </div>
+            </div> -->
+            
         </div>
+
 
         <div class="login-form">
             <form method="POST">
@@ -122,7 +129,7 @@
                 </p>
                 <p>{{ location_form.submit() }}</p>
             </form>
-            <div class="list-section">
+            <!-- <div class="list-section">
                 <h2>Locaties</h2>
                 <ul>
                     {% for location in locations %}
@@ -131,11 +138,47 @@
                             location.name }}</a></li>
                     {% endfor %}
                 </ul>
-            </div>
+            </div> -->
         </div>
 
-    </div>
+        </div>
+        
 
+        <div class="table-container">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th id="username-header" onclick="sortTable('username')">Gebruikersnaam</th>
+                        <th id="location-header" onclick="sortTable('location')">Locatie</th>
+                        <th id="admin-header" onclick="sortTable('admin')">Admin</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>
+                            <li id="user-{{ user.id }}">
+                                <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
+                            </li>
+                        </td>
+                        <td>
+                            {% if user.location %}
+                            <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}?user_id=1&from_admin=true">
+                                {{ user.location.name }}
+                            </a>
+                            {% else %}
+                            Geen
+                            {% endif %}
+                        </td>
+                        <td>{{ 'Ja' if user.is_admin else 'Nee' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -165,6 +208,63 @@
             });
         });
         </script>
+        
+        <script>
+            function sortTable(column) {
+                var table, rows, switching, i, x, y, shouldSwitch;
+                table = document.querySelector(".custom-table tbody"); // Focus on tbody only
+                switching = true;
+                while (switching) {
+                    switching = false;
+                    rows = table.rows;
+                    for (i = 0; i < (rows.length - 1); i++) { // Adjusted loop to account for tbody rows only
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[column === 'username' ? 0 : column === 'location' ? 1 : 2];
+                        y = rows[i + 1].getElementsByTagName("TD")[column === 'username' ? 0 : column === 'location' ? 1 : 2];
+                        if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) { // Using innerText for comparison
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                    if (shouldSwitch) {
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                    }
+                }
+            }
+
+
+        </script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.toggle-button').click(function() {
+            var formContainer = $(this).next('.form-container');
+            // Debugging output
+            console.log(formContainer.length); // Should log 1 if the form container is correctly selected
+            
+            var isOpen = formContainer.css('max-height') !== '0px';
+            console.log('Is open:', isOpen); // Debugging: Check if detected as open
+            
+            if (isOpen) {
+                formContainer.css('max-height', 0);
+                $(this).text('+');
+            } else {
+                formContainer.css('max-height', 'none');
+                var scrollHeight = formContainer.prop('scrollHeight');
+                console.log('Scroll Height:', scrollHeight); // Should log a positive number
+                
+                formContainer.css('max-height', 0); // Ensure CSS transition can occur
+                setTimeout(() => {
+                    formContainer.css('max-height', scrollHeight + 'px');
+                    $(this).text('-');
+                }, 10);
+            }
+        });
+    });
+</script>
+
+
         
 </body>
 

@@ -10,8 +10,8 @@
 
 <body>
 
-    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
-        <img id="loading-icon" src="{{ url_for('static', filename='path_to_your_cup.png') }}" alt="Loading...">
+    <div id="loading" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000;">
+        <img id="loading-icon" src="{{ url_for('static', filename='cup.png') }}" alt="Loading...">
     </div>
 
     <img src="{{ url_for('static', filename='cup.png') }}" alt="Floating Cup" class="floating-cup">

@@ -91,61 +91,50 @@
 
 
     <div class="cube-container">
-        <!-- <button class="toggle-button">+</button>
 
-        <div class="form-container" style="display: none;"> -->
+        <div class="formenzo"> 
+            <div class="login-form" id="userForm" style="display: none;">
+                <form method="POST">
+                    <h2 class="cube-titel">Maak gebruiker aan</h2>
+                    {{ form.hidden_tag() }}
+                    {{ form.username.label }} {{ form.username() }} <br><br>
+                    {{ form.password.label }} {{ form.password() }} <br><br>
+                    {{ form.is_admin.label }} {{ form.is_admin() }} <br><br>
+                    {{ form.submit() }}
+                </form>
+            </div>
 
-        <div class="login-form">
-            <form method="POST">
-                <!-- END: Removed the form-to-toggle class -->
-                <h2 class="cube-titel">Maak gebruiker aan</h2>
-                {{ form.hidden_tag() }}
-                {{ form.username.label }} {{ form.username() }} <br><br>
-                {{ form.password.label }} {{ form.password() }} <br><br>
-                {{ form.is_admin.label }} {{ form.is_admin() }} <br><br>
-                {{ form.submit() }}
-            </form>
-            <!-- <div class="list-section">
-                <h2>Gebruikers</h2>
-                <ul id="userList">
-                    {% for user in users %}
-                    <li id="user-{{ user.id }}">
-                        <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </div> -->
-            
-        </div>
+            <div class="login-form" id="locationForm" style="display: none;">
+                <form method="POST">
+                    <h2 class="cube-titel">Maak Locatie aan</h2>
+                    {{ location_form.hidden_tag() }}
+                    <p>
+                        {{ location_form.name.label }}<br>
+                        {{ location_form.name(size=20) }}
+                    </p>
+                    <p>{{ location_form.submit() }}</p>
+                </form>
+            </div>
 
 
-        <div class="login-form">
-            <form method="POST">
-                <h2 class="cube-titel">Maak Locatie aan</h2>
-                {{ location_form.hidden_tag() }}
-                <p>
-                    {{ location_form.name.label }}<br>
-                    {{ location_form.name(size=20) }}
-                </p>
-                <p>{{ location_form.submit() }}</p>
-            </form>
-            <!-- <div class="list-section">
-                <h2>Locaties</h2>
-                <ul>
-                    {% for location in locations %}
-                    <li><a
-                            href="{{ url_for('location', user_id=user.id if user else 0, location_id=location.id if location else 0) }}?user_id=1&from_admin=true">{{
-                            location.name }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div> -->
         </div>
 
         </div>
         
+        <div class="plus-icon" onclick="toggleForms()" >
+            <i class="fas fa-plus"></i>
+        </div>
+
 
         <div class="table-container">
             <table class="custom-table">
+            <div class="search-container"></div>
+                <form action="{{ url_for('admin') }}" method="get">
+                    <input type="text" id="userSearchInput" onkeyup="sortUsers()" placeholder="Zoeke...">
+                    
+                    <!-- <button class="zoeken" type="submit">Zoeken</button> -->
+                </form>
+                
                 <thead>
                     <tr>
                         <th id="username-header" onclick="sortTable('username')">Gebruikersnaam</th>
@@ -157,9 +146,11 @@
                     {% for user in users %}
                     <tr>
                         <td>
-                            <li id="user-{{ user.id }}">
+                            <div class="user-info">
+                                <!-- Use the user's profile picture if available, otherwise default to stock.png -->
+                                <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}" alt="Profile Picture" class="user-profile-pic">
                                 <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
-                            </li>
+                            </div>
                         </td>
                         <td>
                             {% if user.location %}
@@ -174,6 +165,8 @@
                     </tr>
                     {% endfor %}
                 </tbody>
+                
+                
             </table>
         </div>
     </div>
@@ -264,7 +257,75 @@
     });
 </script>
 
+<script>
+function toggleForms() {
+    var userForm = document.getElementById('userForm');
+    var locationForm = document.getElementById('locationForm');
+    var formenzo = document.querySelector('.formenzo');
+    var overlay = document.getElementById('overlay');
 
+    // Check if overlay exists, if not, create it
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'overlay';
+        overlay.className = 'overlay';
+        document.body.appendChild(overlay);
+    }
+
+    // Toggle forms display
+    userForm.style.display = userForm.style.display === 'none' ? 'block' : 'none';
+    locationForm.style.display = locationForm.style.display === 'none' ? 'block' : 'none';
+
+    // If either form is visible, show overlay and apply z-index to formenzo
+    if (userForm.style.display === 'block' || locationForm.style.display === 'block') {
+        overlay.style.display = 'block';
+        formenzo.classList.add('formenzo-active');
+    } else {
+        overlay.style.display = 'none';
+        formenzo.classList.remove('formenzo-active');
+    }
+
+    // When overlay is clicked, hide forms and remove overlay
+    overlay.onclick = function() {
+        userForm.style.display = 'none';
+        locationForm.style.display = 'none';
+        overlay.style.display = 'none';
+        formenzo.classList.remove('formenzo-active');
+    }
+}
+
+</script>
+
+<script>
+    function sortUsers() {
+        // Get the input field and its value (convert it to lowercase for case-insensitive comparison)
+        var input = document.getElementById("userSearchInput");
+        var filter = input.value.toLowerCase();
+        var table = document.querySelector(".custom-table tbody"); // Adjust selector as necessary
+        var tr = table.getElementsByTagName("tr");
+        
+        // Loop through all table rows, and hide those who don't match the search query
+        for (var i = 0; i < tr.length; i++) {
+            var tdUsername = tr[i].getElementsByTagName("td")[0]; // Username column
+            var tdLocation = tr[i].getElementsByTagName("td")[1]; // Location column
+            
+            if (tdUsername || tdLocation) {
+                // Get text content from both columns
+                var txtValueUsername = tdUsername ? tdUsername.textContent || tdUsername.innerText : "";
+                var txtValueLocation = tdLocation ? tdLocation.textContent || tdLocation.innerText : "";
+                
+                // Check if the row should be displayed based on the search query
+                if (txtValueUsername.toLowerCase().indexOf(filter) > -1 || txtValueLocation.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
+                }
+            }       
+        }
+    }
+    </script>
+    
+    
         
 </body>
 

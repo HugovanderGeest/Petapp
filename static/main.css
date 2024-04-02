@@ -1,991 +1,1399 @@
-    body {
-        font-family: 'Arial', sans-serif;
-        background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
-        margin: 0;
-        padding: 0;
-        display: flex;
-        height: 100vh;
-        align-items: center;
-        flex-wrap: wrap;
-        justify-content: center;
-    }
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Light.ttf') format('truetype');
+    font-weight: 300;
+    /* Light */
+    font-style: normal;
+}
 
-    .login-container {
-        text-align: center;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        height: 350px;
-    }
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Regular.ttf') format('truetype');
+    font-weight: 400;
+    /* Regular - assuming you have this variant */
+    font-style: normal;
+}
 
-    .logo {
-        width: 150px;
-        /* Adjust the size of your logo as needed */
-        margin-bottom: 30px;
-    }
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Medium.ttf') format('truetype');
+    font-weight: 500;
+    /* Medium */
+    font-style: normal;
+}
 
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Bold.ttf') format('truetype');
+    font-weight: 700;
+    /* Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Roboto';
+    src: url('/static/fonts/Roboto-Black.ttf') format('truetype');
+    font-weight: 900;
+    /* Black */
+    font-style: normal;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+
+.login-container {
+    text-align: center;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 350px;
+}
+
+.bigger {
+    height: 70vh;
+    position: absolute !important;
+    top: 70vh;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 93% !important;
+    border-radius: 50px;
+    overflow-x: hidden;
+}
+
+.blij {
+    height: 200px !important; 
+}
+
+.logo {
+    width: 150px;
+    /* Adjust the size of your logo as needed */
+    margin-bottom: 30px;
+}
+
+.formenzo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-wrap: wrap;
+    z-index: 3;
+}
+
+.plus-icon {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #4e73df;
+    color: white;
+    padding: 25px;
+    font-size: 20px;
+    border-radius: 50px;
+    box-shadow: #b1b1b1 0px 0px 10px;
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+.formenzo-active {
+    z-index: 1000;
+}
+
+/* Styles for form elements inside the password change form */
+.password-change-form form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px; /* Space between form elements */
+    padding: 20px;
+}
+
+.password-change-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333; /* Adjust the color to fit your design */
+    font-size: 16px; /* Adjust the font size as needed */
+}
+
+.password-change-form input[type="password"] {
+    width: calc(100% - 20px); /* Full width minus padding */
+    padding: 10px;
+    margin-bottom: 10px; /* Space below each input */
+    border: 1px solid #ccc; /* Light grey border */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Text size */
+}
+
+.password-change-form button[type="submit"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #4e73df; /* Your button color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px; /* Button text size */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.password-change-form button[type="submit"]:hover {
+    background-color: #3658a4; /* Darker shade for hover effect */
+}
+
+.naame {
+    width: 100% !important;
+}
+
+
+.naame h2 {
+    width: 100%;
+    font-size: 70px;
+    margin-top: 10px;
+}
+
+.naame h3 {
+    margin-top: -50px;
+    color: gray;
+    font-weight: 400;
+}
+
+.naame h4 {
+    margin-top: 50px;
+    color: rgb(0, 0, 0);
+    font-weight: 400;
+    margin-bottom: 50px;
+}
+
+.naame a {
+    background-color: #4e73df;
+    text-decoration: none;
+    color: white;
+    padding: 15px;
+    border-radius: 20px;
+    font-size: 15px;
+}
+
+.naame p {
+    font-size: 20px;
+    margin: 0;
+    margin-bottom: 30px;
+}
+
+.naame h5 {
+    font-size: 30px;
+    font-weight: 900px;
+    margin: 0;
+
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+}
+.user-info img {
+    width: 40px; /* Example size */
+    height: 40px; /* Maintain aspect ratio */
+    border-radius: 50%; /* Circular pictures */
+    margin-right: 10px;
+}
+
+.naame form {
+    width: 60vw !important;
+}
+
+.plus-icon:hover {
+    background-color: #3658a4;
+    transform: scale(1.05);
+}
+
+.login-form form {
+    margin: 0 auto;
+    height: 320px;
+    margin-bottom: 20px;
+    width: 310px;
+
+}
+
+@media (max-width: 600px) {
     .login-form form {
-        width: 300px;
-        margin: 0 auto;
-        height: 320px;
-        margin-bottom: 20px;
+        height: 370px;
     }
+}
 
-    @media (max-width: 600px) {
-        .login-form form {
-            height: 350px;
-            width: 340px;
-        }
-    }
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
 
-    .input-group {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 10px;
-    }
+.meer {
+    width: 200%;
+}
 
-    .meer {
-        width: 200%;
-    }
+.sidebar {
+    height: 100vh;
+    background-color: white;
+    color: white;
+    width: 15vw;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 0px 15px 0px 0px;
+    padding: 20px;
+    z-index: 6;
+    display: block;
+    overflow: hidden;
+}
 
+@media (max-width: 600px) {
     .sidebar {
-        height: 100vh;
-        background-color: white;
-        color: white;
-        width: 15vw;
-        position: absolute;
-        bottom: 0;
-        right: 0;
-        border-radius: 0px 15px 0px 0px;
-        padding: 20px;
-        z-index: 1;
-        display: block;
-        overflow: hidden;
-    }
-
-    @media (max-width: 600px) {
-        .sidebar {
-            width: 100vw;
-            overflow: hidden;
-        }
-    }
-
-    form.check-in {
-            box-sizing: border-box;
-            background-color: transparent;
-            z-index: 2;
-            padding: 10px 20px;
-            position: absolute;
-            border-radius: 20px;
-            color: black;
-            text-decoration: none;
-            font-size: 20px;
-            top: -85px;
-            width: 110%;
-    }
-
-        input.check-button {
-            padding: 50px;
-            font-size: 30px !important;
-            border-radius: 15px 15px 0px 0px !important;
-        }
-
-    .rond {
-        border-radius: 0px 0px 15px 15px !important;
-    }
-
-    .sidebar h2 {
-        margin-top: 100px;
-        color: #4A4B4C;
-    }
-
-    .sidebar h3 {
-        margin: 0px 0px 20px 0px;
-        font-size: 20px;
-        color: #777778;
-        font-weight: 100;
-    }
-
-    .side-link {
-        background-color: #ffff;
-        padding: 20px;
-        border-radius: 20px;
-        padding: 20px 500px 20px 20px;
-        transition: 0.2s ease-in-out;
-        display: flex; 
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
-    .sidebar a {
-        text-decoration: none;
-    }
-
-    .side-link p {
-        text-decoration: none;
-        text-align: left;
-        font-weight: 100;
-        margin: 0px;
-        margin-left: 20px;
-        color: #4A4B4C;
-        width: 50px;
-    }
-
-    .side-link i {
-        color: #4A4B4C;
-        text-decoration: none;
-        font-size: 30px;
-
-    }
-
-    .side-link:hover{
-        background-color: #a2baff;
-        color: white;
-        text-decoration: none;
-    }
-
-    .line {
-        padding: 1px 300px;
-        background-color: #dff3ff;
-        margin-left: -50px;
-        margin-bottom: 30px;
-    }
-
-    .side-bottom {
-        position: absolute;
-        bottom: 0;
-    }
-
-    #zakken-minus,
-    #zakken-plus,
-    #munten-minus,
-    #munten-plus,
-    #volleZakken-minus,
-    #volleZakken-plus {
-        padding: 10px 20px;
-        text-align: center;
-        font-size: 50px;
-        background-color: transparent;
-        border: none;
-        background-color: rgba(128, 128, 128, 0.274);
-        border-radius: 15px;
-        overflow: hidden;
-        color: blue;
-    }
-
-    #link-form {
-        padding: 20px;
-        margin: 20px;
-    }
-
-    .titel-bar {
-        color: black;
-        margin-top: 50px;
         width: 90vw;
-        font-size: 40px;
-        background: rgb(118, 201, 251);
-        background: radial-gradient(circle, rgba(118, 201, 251, 1) 0%, rgba(12, 252, 255, 0) 100%);
-        border-radius: 20px;
+        overflow: hidden;
+        padding-left: 100px;
         overflow: hidden;
     }
+}
 
-    .btn.btn-primary {
-        padding: 10px 20px;
-        margin: 15px;
-        position: absolute;
-        background-color: #76C9FB;
-        border-radius: 20px;
-        color: black;
-        text-decoration: none;
-        font-size: 20px;
-        top: -36px;
+
+/* Style for the search input field */
+#userSearchInput {
+    padding: 10px;
+    border: 1px solid #ccc;
+    /* Light grey border */
+    border-radius: 5px;
+    /* Rounded corners */
+    box-sizing: border-box;
+    /* Include padding and border in the element's width */
+    width: 100%;
+    /* Full width */
+}
+
+.zoeken {
+    padding: 12px 20px;
+    background-color: #4e73df;
+    border-radius: 5px;
+    border: none;
+    color: white;
+    margin: 5px;
+}
+
+#userSearchInput {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+    background-size: 13px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+
+.primary-nav {
+    align-items: center;
+    height: 50px;
+    left: 0px;
+    padding: 15px;
+    width: 100%;
+    margin: 0px;
+    background-color: darkgray;
+    display: inline;
+    position: fixed;
+    top: 70px;
+    z-index: 3;
+    font-weight: bold;
+}
+
+.search-container {
+    align-items: center;
+    display: flex;
+    justify-content: left;
+}
+
+form .no-submit {
+    width: 180px;
+    align-items: center;
+    color: white;
+    right: 0;
+    display: flex;
+    padding: 2px;
+    border: 1px solid currentColor;
+    border-radius: 5px;
+    margin: 0 0;
+}
+
+input.no-submit {
+    border: 1px solid white;
+    width: 100%;
+    padding: 9px 4px 9px 4px;
+    /* You can use your image but having cleaner code is better, so I suggest saving the file and just linking it*/
+    /*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3C!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --%3E%3Cpath d='M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z'/%3E%3C/svg%3E") ;*/
+    background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+    background-size: 13px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+}
+
+li {
+    background-color: #4e73df;
+    padding: 10px;
+    text-decoration: none;
+    color: #4e73df;
+    border-radius: 15px;
+
+}
+
+li a {
+    text-decoration: none;
+    color: white;
+}
+
+td a {
+    text-decoration: none;
+}
+
+input[type="search"] {
+    border: none;
+    background-color: transparent;
+    margin: 0;
+    padding: 7px 8px 7px 30px;
+    font-size: 16px;
+    color: inherit;
+    border: 1px solid black;
+    border-radius: inherit;
+}
+
+input[type="search"]::placeholder {
+    color: white;
+}
+
+input[type="search"]:focus {
+    box-shadow: 0 0 3px 0 #3f69a8;
+    border-color: #3f69a8;
+    outline: none;
+}
+
+
+form.check-in {
+    box-sizing: border-box;
+    background-color: transparent;
+    z-index: 2;
+    padding: 10px 20px;
+    position: absolute;
+    border-radius: 20px;
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+    top: -85px;
+    width: 110%;
+}
+
+input.check-button {
+    padding: 50px;
+    font-size: 30px !important;
+    border-radius: 15px 15px 0px 0px !important;
+}
+
+.rond {
+    border-radius: 0px 0px 15px 15px !important;
+}
+
+.sidebar h2 {
+    margin-top: 100px;
+    color: #4A4B4C;
+}
+
+.sidebar h3 {
+    margin: 0px 0px 20px 0px;
+    font-size: 20px;
+    color: #777778;
+    font-weight: 100;
+}
+
+.side-link {
+    background-color: #ffff;
+    padding: 20px;
+    border-radius: 20px;
+    padding: 20px 500px 20px 20px;
+    transition: 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.sidebar a {
+    text-decoration: none;
+}
+
+.side-link p {
+    text-decoration: none;
+    text-align: left;
+    font-weight: 100;
+    margin: 0px;
+    margin-left: 20px;
+    color: #4A4B4C;
+    width: 50px;
+}
+
+.side-link i {
+    color: #4A4B4C;
+    text-decoration: none;
+    font-size: 30px;
+
+}
+
+.side-link:hover {
+    background-color: #a2baff;
+    color: white;
+    text-decoration: none;
+}
+
+.line {
+    padding: 1px 300px;
+    background-color: #dff3ff;
+    margin-left: -50px;
+    margin-bottom: 30px;
+}
+
+.side-bottom {
+    position: absolute;
+    bottom: 0;
+}
+
+#zakken-minus,
+#zakken-plus,
+#munten-minus,
+#munten-plus,
+#volleZakken-minus,
+#volleZakken-plus {
+    padding: 10px 20px;
+    text-align: center;
+    font-size: 50px;
+    background-color: transparent;
+    border: none;
+    background-color: rgba(128, 128, 128, 0.274);
+    border-radius: 15px;
+    overflow: hidden;
+    color: blue;
+}
+
+#link-form {
+    padding: 20px;
+    margin: 20px;
+}
+
+.titel-bar {
+    color: black;
+    margin-top: 50px;
+    width: 90vw;
+    font-size: 40px;
+    background: rgb(118, 201, 251);
+    background: radial-gradient(circle, rgba(118, 201, 251, 1) 0%, rgba(12, 252, 255, 0) 100%);
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.btn.btn-primary {
+    padding: 10px 20px;
+    margin: 15px;
+    position: absolute;
+    background-color: #76C9FB;
+    border-radius: 20px;
+    color: black;
+    text-decoration: none;
+    font-size: 20px;
+    top: -36px;
+}
+
+
+.input-group-form button {
+    width: 80px;
+}
+
+.back-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    background-color: transparent;
+    color: #2E52BB;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 30px;
+    z-index: 1000;
+}
+
+.back-button:hover {
+    background-color: #333;
+    color: #f8f9fa;
+}
+
+
+
+
+#link {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+
+.input-group-form {
+    display: flex;
+    /* Enables flexbox layout */
+    flex-direction: row;
+    /* Aligns children horizontally */
+    gap: 10px;
+    /* Adjusts the gap between each item */
+    width: auto;
+    /* Adjusts the width to fit content or as needed */
+    border-radius: 20px;
+    /* Keeps your rounded corners */
+    color: rgba(128, 128, 128, 0.274);
+    margin: 3px 0px 20px 0px;
+}
+
+
+.meer label {
+    font-size: 20px;
+}
+
+#zakken_gekregenInput,
+#munten_gekregenInput,
+#volle_zakken_opgehaaldInput {
+    border: none;
+    font-size: 40px;
+    width: 60px !important;
+    overflow: auto;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.kg_zak {
+    border: none;
+    font-size: 40px;
+    text-align: left !important;
+    width: 200px !important;
+    overflow: auto;
+    text-align: center;
+    border-radius: 20px;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    /* Makes sure padding doesn't affect the width */
+}
+
+.login-form input[type="submit"] {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4e73df;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#gear-icon {
+    font-size: 30px;
+
+}
+
+.alert {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px;
+    z-index: 1000;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+    max-width: 300px;
+    color: #fff;
+    animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
+
+}
+
+.active {
+    background-color: #4e73df;
+}
+
+.active p,
+.active i {
+    color: white;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
     }
-    
 
-    .input-group-form button {
-        width: 80px;
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
     }
 
-    .back-button {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background-color: transparent;
-        color: #2E52BB;
-        text-decoration: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 30px;
-        z-index: 1000;
+    100% {
+        opacity: 0;
+    }
+}
+
+
+.alert-success {
+    background-color: #28a745;
+}
+
+.alert-error {
+    background-color: #dc3545;
+}
+
+.alert-info {
+    background-color: #17a2b8;
+}
+
+.logo2 {
+    position: absolute;
+    top: 10px;
+    width: 90px;
+    position: fixed;
+    z-index: 1000;
+
+}
+
+/* Additional CSS for gear icon and form transition */
+.gear-icon-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    cursor: pointer;
+    font-size: 24px;
+    /* Adjust size as needed */
+    color: #2E52BB;
+    /* Adjust color as needed */
+    font-size: 30px;
+    padding: 10px 20px;
+    margin-top: -10px;
+    margin-right: -10px;
+    z-index: 1000;
+}
+
+.gear-icon-container:hover {
+    background-color: #333;
+    color: #f8f9fa;
+    padding: 10px 20px;
+    border-radius: 5px;
+}
+
+/* Improved form styles for a cleaner look */
+.form-container {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 280px;
+    margin: 0 auto;
+    transition: all 0.3s ease-in-out;
+    /* Smooth transition for toggling form */
+}
+
+.form-input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    margin-bottom: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border 0.3s ease-in-out;
+}
+
+.form-input:focus {
+    border-color: #007bff;
+}
+
+#link-form {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#formContainer {
+    position: absolute;
+    bottom: 0px;
+    height: 110px;
+}
+
+.submit-button {
+    background-color: #76C9FB;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.submit-button:hover {
+    background-color: #76C9FB;
+}
+
+.error-text {
+    color: white;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.9em;
+}
+
+/* Hide/Show Transition for the form */
+.hide {
+    display: none;
+}
+
+
+.submit-button:hover {
+    background-color: #0069d9;
+}
+
+/* List container styling */
+.bars-list {
+    display: flex;
+    /* Use flexbox to layout children */
+    flex-wrap: wrap;
+    /* Allow items to wrap to next line on small screens */
+    gap: 10px;
+    /* Space between items */
+    justify-content: center;
+    /* Center items horizontally */
+    list-style: none;
+    padding: 0;
+    margin-top: -120px;
+    /* Space for form when it's visible */
+}
+
+/* List item styling */
+.bars-list li {
+    /* No bottom margin needed since flexbox handles spacing */
+}
+
+/* List item link styling */
+.bars-list li a {
+    background-color: #007bff;
+    color: white;
+    display: flex;
+    /* Use flex to center content */
+    justify-content: center;
+    /* Center text horizontally */
+    align-items: center;
+    /* Center text vertically */
+    padding: 20px 15px;
+    text-decoration: none;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s ease;
+    min-width: 100px;
+    /* Minimum width for each item */
+    text-align: center;
+    font-size: 20px;
+}
+
+.list-section {
+    background-color: white;
+    padding: 5px 20px 20px 20px;
+    border-radius: 15px;
+    width: 300px;
+}
+
+.list-section li {
+    color: #4E73DF;
+}
+
+.list-section a,
+.links {
+    font-size: 19px;
+    line-height: 3;
+    text-decoration: none;
+    color: white;
+    padding: 10px;
+    background-color: #4E73DF;
+    border-radius: 10px;
+    min-width: 100px;
+    text-align: center;
+    transition: 0.2s ease-in-out;
+    margin-bottom: 10px;
+}
+
+.list-section a:hover,
+.links:hover {
+    background-color: #3658A4;
+    color: white;
+    text-decoration: none;
+    outline: none;
+}
+
+
+
+.bars-list li a:hover,
+.bars-list li a:focus {
+    background-color: #0056b3;
+    color: white;
+    text-decoration: none;
+    outline: none;
+}
+
+
+.login-form input[type="submit"]:hover {
+    background-color: #3658a4;
+    /* Darker shade for hover effect */
+}
+
+/* Placeholder styling */
+::placeholder {
+    color: #888;
+}
+
+/* Focus styling */
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+    outline: none;
+    border-color: #4e73df;
+    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.25);
+}
+
+
+@keyframes floatAnimation {
+    0% {
+        transform: translate(0, 0);
     }
 
-    .back-button:hover {
-        background-color: #333;
-        color: #f8f9fa;
+    50% {
+        transform: translate(30px, -50px);
     }
 
+    100% {
+        transform: translate(0, 0);
+    }
+}
 
+.floating-cup {
+    position: fixed;
+    top: 10%;
+    left: 10%;
+    width: 100px;
+    /* Set the width as desired */
+    height: auto;
+    /* Keep the aspect ratio of the image */
+    animation: floatAnimation 6s ease-in-out infinite;
+    z-index: 1;
+    /* Ensure it stays in the background */
+}
 
+#movingImage {
+    width: 600px;
+    margin-bottom: -80px;
+}
 
-    #link {
-        width: 100%;
-        padding: 15px;
-        font-size: 18px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
+/* Make sure the floating image does not interfere with the form */
+.login-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Existing styles ... */
+
+/* Dashboard specific styles */
+h1 {
+    color: #fff;
+    /* Adjust color as needed */
+    font-size: 2em;
+    /* Adjust size as needed */
+    text-align: center;
+    margin-bottom: 0.5em;
+}
+
+form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    display: inline-block;
+    /* Center form on the page */
+}
+
+form label,
+form select,
+form input[type="submit"] {
+    font-size: 1em;
+}
+
+.form-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-container .button-container {
+    width: 20%;
+}
+
+form select {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+}
+
+form input[type="submit"] {
+    padding: 0.5em 1em;
+    border: none;
+    border-radius: 5px;
+    background-color: #4e73df;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form input[type="submit"]:hover {
+    background-color: #3658a4;
+}
+
+/* Additional responsive adjustments as needed */
+@media (max-width: 600px) {
+    h1 {
+        font-size: 1.5em;
     }
 
-
-    .input-group-form {
-        display: flex;
-        /* Enables flexbox layout */
-        flex-direction: row;
-        /* Aligns children horizontally */
-        gap: 10px;
-        /* Adjusts the gap between each item */
-        width: auto;
-        /* Adjusts the width to fit content or as needed */
-        border-radius: 20px;
-        /* Keeps your rounded corners */
-        color: rgba(128, 128, 128, 0.274);
-        margin: 3px 0px 20px 0px;
-    }
-
-
-    .meer label {
-        font-size: 20px;
-    }
-
-    #zakken_gekregenInput,
-    #munten_gekregenInput,
-    #volle_zakken_opgehaaldInput {
-        border: none;
-        font-size: 40px;
-        width: 60px !important;
-        overflow: auto;
-        text-align: center;
-        border-radius: 20px;
-    }
-
-    .kg_zak {
-        border: none;
-        font-size: 40px;
-        text-align: left !important;
-        width: 200px !important;
-        overflow: auto;
-        text-align: center;
-        border-radius: 20px;
-    }
-
-    .login-form input[type="text"],
-    .login-form input[type="password"] {
-        width: 100%;
-        padding: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
+    form {
         box-sizing: border-box;
         /* Makes sure padding doesn't affect the width */
     }
 
-    .login-form input[type="submit"] {
-        width: 100%;
-        padding: 15px;
-        border: none;
-        border-radius: 5px;
-        background-color: #4e73df;
-        color: white;
-        font-size: 18px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    #gear-icon {
-        font-size: 30px;
-
-    }
-
-    .alert {
-        position: fixed;
-        bottom: 20px;
-        left: 20px;
-        padding: 10px;
-        z-index: 1000;
-        border-radius: 5px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        max-width: 300px;
-        color: #fff;
-        animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
-
-    }
-
-    .active {
-        background-color: #4e73df;
-    }
-
-    .active p, .active i {
-        color: white;
-    }
-
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-
-        100% {
-            opacity: 1;
-        }
-    }
-
-    @keyframes fadeOut {
-        0% {
-            opacity: 1;
-        }
-
-        100% {
-            opacity: 0;
-        }
-    }
-
-
-    .alert-success {
-        background-color: #28a745;
-    }
-
-    .alert-error {
-        background-color: #dc3545;
-    }
-
-    .alert-info {
-        background-color: #17a2b8;
-    }
-
-    .logo2 {
-        position: absolute;
-        top: 10px;
-        width: 90px;
-        position: fixed;
-        z-index: 1000;
-        
-    }
-
-    /* Additional CSS for gear icon and form transition */
-    .gear-icon-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        cursor: pointer;
-        font-size: 24px;
-        /* Adjust size as needed */
-        color: #2E52BB;
-        /* Adjust color as needed */
-        font-size: 30px;
-        padding: 10px 20px;
-        margin-top: -10px;
-        margin-right: -10px;
-        z-index: 1000;
-    }
-
-    .gear-icon-container:hover {
-        background-color: #333;
-        color: #f8f9fa;
-        padding: 10px 20px;
-        border-radius: 5px;
-    }
-
-    /* Improved form styles for a cleaner look */
-    .form-container {
-        background-color: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        max-width: 280px;
-        margin: 0 auto;
-        transition: all 0.3s ease-in-out;
-        /* Smooth transition for toggling form */
-    }
-
-    .form-input {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 10px;
-        margin-bottom: 10px;
-        width: 100%;
-        box-sizing: border-box;
-        transition: border 0.3s ease-in-out;
-    }
-
-    .form-input:focus {
-        border-color: #007bff;
-    }
-
-    #link-form {
-        width: 100%;
-        padding: 15px;
-        font-size: 18px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-
-    #formContainer {
-        position: absolute;
-        bottom: 0px;
-        height: 110px;
-    }
-
-    .submit-button {
-        background-color: #76C9FB;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-        width: 100%;
-        transition: background-color 0.3s ease-in-out;
-    }
-
-    .submit-button:hover {
-        background-color: #76C9FB;
-    }
-
-    .error-text {
-        color: white;
-        margin-top: 10px;
-        text-align: center;
-        font-size: 0.9em;
-    }
-
-    /* Hide/Show Transition for the form */
-    .hide {
-        display: none;
-    }
-
-
-    .submit-button:hover {
-        background-color: #0069d9;
-    }
-
-    /* List container styling */
-    .bars-list {
-        display: flex;
-        /* Use flexbox to layout children */
-        flex-wrap: wrap;
-        /* Allow items to wrap to next line on small screens */
-        gap: 10px;
-        /* Space between items */
-        justify-content: center;
-        /* Center items horizontally */
-        list-style: none;
-        padding: 0;
-        margin-top: -120px;
-        /* Space for form when it's visible */
-    }
-
-    /* List item styling */
-    .bars-list li {
-        /* No bottom margin needed since flexbox handles spacing */
-    }
-
-    /* List item link styling */
-    .bars-list li a {
-        background-color: #007bff;
-        color: white;
-        display: flex;
-        /* Use flex to center content */
-        justify-content: center;
-        /* Center text horizontally */
-        align-items: center;
-        /* Center text vertically */
-        padding: 20px 15px;
-        text-decoration: none;
-        border-radius: 5px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s ease;
-        min-width: 100px;
-        /* Minimum width for each item */
-        text-align: center;
-        font-size: 20px;
-    }
-
-    .list-section {
-        background-color: white;
-        padding: 5px 20px 20px 20px;
-        border-radius: 15px;
+    .cube.user-dashboard-cube {
         width: 300px;
+        background-color: white;
     }
+}
 
-    .list-section li {
-        color: #4E73DF;
-    }
-
-    .list-section a,
-    .links {
-        font-size: 19px;
-        line-height: 3;
-        text-decoration: none;
-        color: white;
-        padding: 10px;
-        background-color: #4E73DF;
-        border-radius: 10px;
-        min-width: 100px;
-        text-align: center;
-        transition: 0.2s ease-in-out;
-        margin-bottom: 10px;
-    }
-
-    .list-section a:hover,
-    .links:hover {
-        background-color: #3658A4;
-        color: white;
-        text-decoration: none;
-        outline: none;
-    }
+.cube-titel {
+    margin: 0px 0px 30px 0px;
+    font-size: 23px;
+}
 
 
-
-    .bars-list li a:hover,
-    .bars-list li a:focus {
-        background-color: #0056b3;
-        color: white;
-        text-decoration: none;
-        outline: none;
-    }
-
-
-    .login-form input[type="submit"]:hover {
-        background-color: #3658a4;
-        /* Darker shade for hover effect */
-    }
-
-    /* Placeholder styling */
-    ::placeholder {
-        color: #888;
-    }
-
-    /* Focus styling */
-    .login-form input[type="text"]:focus,
-    .login-form input[type="password"]:focus {
-        outline: none;
-        border-color: #4e73df;
-        box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.25);
-    }
+.cube-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    /* Adjust the space between cubes as needed */
+    justify-content: center;
+}
 
 
-    @keyframes floatAnimation {
-        0% {
-            transform: translate(0, 0);
-        }
+.cube {
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 20px;
+}
 
-        50% {
-            transform: translate(30px, -50px);
-        }
+.user-cube,
+.location-cube {
+    width: calc(33vw - 20px);
+    /* Adjust width to be 33% of the viewport width minus gap */
+    box-sizing: border-box;
+}
 
-        100% {
-            transform: translate(0, 0);
-        }
-    }
-
-    .floating-cup {
-        position: fixed;
-        top: 10%;
-        left: 10%;
-        width: 100px;
-        /* Set the width as desired */
-        height: auto;
-        /* Keep the aspect ratio of the image */
-        animation: floatAnimation 6s ease-in-out infinite;
-        z-index: 1;
-        /* Ensure it stays in the background */
-    }
-
-    #movingImage {
-        width: 600px;
-        margin-bottom: -80px;
-    }
-
-    /* Make sure the floating image does not interfere with the form */
-    .login-container {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* Existing styles ... */
-
-    /* Dashboard specific styles */
-    h1 {
-        color: #fff;
-        /* Adjust color as needed */
-        font-size: 2em;
-        /* Adjust size as needed */
-        text-align: center;
-        margin-bottom: 0.5em;
-    }
-
-    form {
-        background: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        display: inline-block;
-        /* Center form on the page */
-    }
-
-    form label,
-    form select,
-    form input[type="submit"] {
-        font-size: 1em;
-    }
-
-    .form-container {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .form-container .button-container {
-        width: 20%;
-    }
-
-    form select {
-        padding: 0.5em;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        background-color: #f8f8f8;
-    }
-
-    form input[type="submit"] {
-        padding: 0.5em 1em;
-        border: none;
-        border-radius: 5px;
-        background-color: #4e73df;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-    }
-
-    form input[type="submit"]:hover {
-        background-color: #3658a4;
-    }
-
-    /* Additional responsive adjustments as needed */
-    @media (max-width: 600px) {
-        h1 {
-            font-size: 1.5em;
-        }
-
-        form {
-            box-sizing: border-box;
-            /* Makes sure padding doesn't affect the width */
-        }
-
-        .cube.user-dashboard-cube {
-            width: 300px;
-            background-color: white;
-        }
-    }
-
-    .cube-titel {
-        margin: 0px 0px 30px 0px;
-        font-size: 23px;
-    }
-
-
-    .cube-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-        /* Adjust the space between cubes as needed */
-        justify-content: center;
-        position: relative;
-    }
-
-
-    .cube {
-        padding: 20px;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        margin-right: 20px;
-    }
+@media (max-width: 600px) {
 
     .user-cube,
     .location-cube {
-        width: calc(33vw - 20px);
-        /* Adjust width to be 33% of the viewport width minus gap */
+        width: 100vw;
+        /* Full viewport width on smaller screens, adjusting for any potential padding/margins */
         box-sizing: border-box;
-    }
-
-    @media (max-width: 600px) {
-
-        .user-cube,
-        .location-cube {
-            width: 100vw;
-            /* Full viewport width on smaller screens, adjusting for any potential padding/margins */
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-    }
-
-
-
-    .users-list-cube,
-    .locations-list-cube {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    @media (max-width: 600px) {
-
-        .user-cube,
-        .location-cube {
-            width: 100%;
-            /* Full width on smaller screens */
-        }
-    }
-
-    /*Responsive adjustments */
-    @media (max-width: 400px) {
-        .login-form form {
-            width: 95%;
-        }
-    }
-
-    @media screen and (max-width: 480px) {
-        .login-container {
-            width: 85vw;
-            /* Set width to 100% of the viewport width */
-        }
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-
-    #bar_note {
-        width: 100%;
-  padding: 15px;
-  font-size: 18px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-    }
-
-
-    .gray {
-        background-color: lightblue;
-        overflow: hidden;
-        padding: 16px;
-        border-radius: 20px;
-    }
-
-    #loading-icon {
-        animation: spin 2s linear infinite;
-    }
-
-    .content-container {
-        width: 80%;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-        margin: 20px auto;
-    }
-
-    .change-log-list {
-        list-style-type: none;
+        margin: 0;
         padding: 0;
     }
+}
 
-    .change-log-item {
-        border-bottom: 1px solid #eee;
-        padding-bottom: 10px;
-        margin-bottom: 10px;
+
+
+.users-list-cube,
+.locations-list-cube {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+
+    .user-cube,
+    .location-cube {
+        width: 100%;
+        /* Full width on smaller screens */
+    }
+}
+
+/* #profilePic {
+        width: 200px;
+        height: 200px;
+        cursor: pointer;
+        border-radius: 200px;
+        position: relative;
+        bottom: 100px;
+        object-fit: cover;
+        box-shadow: #888888 0px 0px 10px 1px;
+    }
+     */
+
+#profilePic {
+    position: absolute;
+    top: 0%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: 100vw;
+    height: 50vh;
+    object-fit: cover;
+    opacity: 0.9;
+    cursor: pointer;
+
+}
+
+.bottom-navbar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: linear-gradient(145deg, #6e8efb, #4E73DF);
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: space-around;
+    padding: 15px 0;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    z-index: 1002; /* Ensure it's above other content */
+}
+
+.nav-item {
+    text-decoration: none;
+    color: #fff;
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.nav-item i {
+    display: block;
+    margin: 0 auto;
+    font-size: 24px; /* Slightly larger icons */
+    transition: color 0.2s;
+}
+
+.nav-item span {
+    display: block;
+    font-size: 14px; /* More readable text size */
+    margin-top: 4px; /* Adjusted spacing for clarity */
+}
+
+.nav-item:hover, .nav-item:focus {
+    transform: translateY(-5px); /* Subtle lift effect */
+    color: #FFFF; /* Highlight text on hover/focus */
+}
+
+.nav-item:active {
+    transform: scale(0.95); /* Pressed effect */
+}
+
+/* Optional: Highlight the active/current page's nav item */
+.nav-item.active i {
+    color: #FFFFFF; /* Bright color for active icon */
+}
+
+
+
+
+
+@media screen and (max-width: 480px) {
+    .login-container {
+        width: 85vw;
+        /* Set width to 100% of the viewport width */
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
     }
 
-    .change-log-item:last-child {
-        border-bottom: none;
+    100% {
+        transform: rotate(360deg);
     }
+}
 
-    .change-log-item p {
-        margin: 5px 0;
-        font-size: 16px;
-        color: #333;
-    }
+#bar_note {
+    width: 100%;
+    padding: 15px;
+    font-size: 18px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
 
+
+.gray {
+    background-color: lightblue;
+    overflow: hidden;
+    padding: 16px;
+    border-radius: 20px;
+}
+
+#loading-icon {
+    animation: ease-in-out 1s linear infinite;
+    width: 100px;
+}
+
+.content-container {
+    width: 80%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+}
+
+.change-log-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.change-log-item {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+
+.change-log-item:last-child {
+    border-bottom: none;
+}
+
+.change-log-item p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.cube-container {
+    background-color: #fff;
+    /* Light background for the form */
+    border-radius: 10px;
+    /* Rounded corners */
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+    width: fit-content;
+    margin: auto;
+    /* Center the form */
+}
+
+.bottom-boy {
+    position: absolute;
+    bottom: 0;
+}
+
+.cube {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* Center content */
+}
+
+#toggleDetailsButton {
+    z-index: 1000;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* Increased spacing between fields */
+    width: 100%;
+}
+
+.input-group label {
+    margin-bottom: 10px;
+    /* Slightly more space between label and input */
+    font-size: 18px;
+    /* Larger font size for better visibility on small screens */
+    color: #333;
+}
+
+.input-group input[type="number"] {
+    width: 100%;
+    /* Full width to maximize touch target */
+    padding: 15px;
+    /* Larger padding for a bigger touch area */
+    font-size: 18px;
+    /* Larger font size for easier reading */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+input[type="submit"] {
+    padding: 15px 20px;
+    /* Larger padding for a bigger button */
+    font-size: 18px;
+    /* Larger font size for readability and easier tapping */
+    margin-top: 10px;
+    /* More space above the submit button */
+    width: 100%;
+}
+
+@media (max-width: 600px) {
     .cube-container {
-        background-color: #fff;
-        /* Light background for the form */
-        border-radius: 10px;
-        /* Rounded corners */
-        box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        /* Subtle shadow for depth */
-        width: fit-content;
-        margin: auto;
-        /* Center the form */
+        width: 90%;
+        margin-top: 100px;
     }
 
-    .bottom-boy {
-        position: absolute;
-        bottom: 0;
-    }
-
-    .cube {
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        /* Center content */
-    }
-
-    #toggleDetailsButton {
-        z-index: 1000;
-    }
-
-    .input-group {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        /* Increased spacing between fields */
-        width: 100%;
-    }
-
-    .input-group label {
-        margin-bottom: 10px;
-        /* Slightly more space between label and input */
-        font-size: 18px;
-        /* Larger font size for better visibility on small screens */
-        color: #333;
-    }
-
-    .input-group input[type="number"] {
-        width: 100%;
-        /* Full width to maximize touch target */
-        padding: 15px;
-        /* Larger padding for a bigger touch area */
-        font-size: 18px;
-        /* Larger font size for easier reading */
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-
+    .input-group input[type="number"],
     input[type="submit"] {
-        padding: 15px 20px;
-        /* Larger padding for a bigger button */
-        font-size: 18px;
-        /* Larger font size for readability and easier tapping */
-        margin-top: 10px;
-        /* More space above the submit button */
-        width: 100%;
+        /* Ensures that font size and padding adjustments are not too large for very small devices */
+        font-size: 16px;
+        /* Slightly smaller font size for extremely small screens */
+        padding: 12px;
+        /* Adjust padding to fit smaller screens */
     }
-
-    @media (max-width: 600px) {
-        .cube-container {
-            width: 90%;
-            margin-top: 100px;
-        }
-
-        .input-group input[type="number"],
-        input[type="submit"] {
-            /* Ensures that font size and padding adjustments are not too large for very small devices */
-            font-size: 16px;
-            /* Slightly smaller font size for extremely small screens */
-            padding: 12px;
-            /* Adjust padding to fit smaller screens */
-        }
-    }
+}
 
 .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
     left: 0;
     bottom: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-  }
-  
-  /* Modal Content/Box */
-  .modal-content {
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0);
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto;
+    /* 15% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
-    border-radius: 10px; /* Optional: Rounded corners */
+    width: 80%;
+    /* Could be more or less, depending on screen size */
+    border-radius: 10px;
+    /* Optional: Rounded corners */
     position: absolute;
     bottom: 0;
     right: 0;
     left: 0;
     max-width: 500px;
-  }
+}
 
-  .modal-content h2  {
+.modal-content h2 {
     width: 80%;
     margin-left: 20px;
-  }
+}
 
- #showNotesBtn {
+#showNotesBtn {
     padding: 30px;
     font-size: 30px;
-  }
+}
 
-  .center-nav {
-    display: flex; 
+.center-nav {
+    display: flex;
     justify-content: space-around;
-  }
+}
 
-  .center-nav i {
+.center-nav i {
     font-size: 30px;
     cursor: pointer;
     padding: 0px 30px;
-  }
+}
 
-  .center-nav a {
+.center-nav a {
     text-decoration: none;
     color: black;
-  }
-  
-  
-  /* The Close Button */
-  .close {
+}
+
+
+/* The Close Button */
+.close {
     color: #aaa;
     float: right;
     font-size: 28px;
     font-weight: bold;
-  }
-  
-  .close:hover,
-  .close:focus {
+}
+
+.close:hover,
+.close:focus {
     color: black;
     text-decoration: none;
     cursor: pointer;
-  }
-  
-  /* Add Zoom Animation */
-  .modal-content {
+}
+
+/* Add Zoom Animation */
+.modal-content {
     animation-name: zoom;
     animation-duration: 0.6s;
-  }
-  
-  @keyframes zoom {
-    from {transform: scale(0)} 
-    to {transform: scale(1)}
-  }
-  
-  /* Style for the container of the bar list */
+}
+
+@keyframes zoom {
+    from {
+        transform: scale(0)
+    }
+
+    to {
+        transform: scale(1)
+    }
+}
+
+/* Style for the container of the bar list */
 .bars-container {
     display: flex;
     flex-wrap: wrap;
@@ -1005,7 +1413,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 200px; /* Adjust based on your preference */
+    width: 200px;
+    /* Adjust based on your preference */
 }
 
 /* Style for the Check In button in each bar item */
@@ -1029,11 +1438,18 @@
     margin-bottom: 20px;
 }
 
+@media (max-width: 768px) {
+    .location-filters {
+        margin-top: 100px;
+    }
+}
+
 .location-filters select {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
 }
+
 /* Adjustments to ensure your layout works nicely on all screen sizes */
 @media (max-width: 768px) {
     .bars-container {
@@ -1042,7 +1458,8 @@
     }
 
     .bar-item {
-        width: 80%; /* Make bar items take more space on smaller screens */
+        width: 80%;
+        /* Make bar items take more space on smaller screens */
     }
 }
 
@@ -1091,7 +1508,8 @@
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 20px; /* Adjust the space between photos */
+    gap: 20px;
+    /* Adjust the space between photos */
     padding: 20px;
 }
 
@@ -1102,72 +1520,109 @@
     align-items: center;
     width: 300px;
     height: 300px;
-    overflow: hidden; /* Ensures the content fits within the specified dimensions */
-    background-color: #fff; /* Light background for contrast */
-    border-radius: 10px; /* Rounded corners for a softer look */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
-    padding: 10px; /* Spacing around content */
+    overflow: hidden;
+    /* Ensures the content fits within the specified dimensions */
+    background-color: #fff;
+    /* Light background for contrast */
+    border-radius: 10px;
+    /* Rounded corners for a softer look */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    /* Subtle shadow for depth */
+    padding: 10px;
+    /* Spacing around content */
 }
 
 .photo-item img {
     max-width: 100%;
-    max-height: 80%; /* Adjust height to leave space for text */
-    object-fit: cover; /* Ensures the photo covers the area, might crop some parts */
+    max-height: 80%;
+    /* Adjust height to leave space for text */
+    object-fit: cover;
+    /* Ensures the photo covers the area, might crop some parts */
     cursor: pointer;
-    transition: transform 0.2s ease; /* Smooth transform transition */
-    border-radius: 5px; /* Slightly rounded corners for the images */
+    transition: transform 0.2s ease;
+    /* Smooth transform transition */
+    border-radius: 5px;
+    /* Slightly rounded corners for the images */
 }
 
 .photo-item img:hover {
-    transform: scale(1.1); /* Slightly enlarges the photo on hover */
+    transform: scale(1.1);
+    /* Slightly enlarges the photo on hover */
 }
 
 /* Enhanced text styling */
 .photo-item p {
-    color: #333; /* Darker text for readability */
-    font-size: 14px; /* Smaller font size for subtlety */
-    margin-top: 5px; /* Space between image and text */
-    text-align: center; /* Center-align text */
+    color: #333;
+    /* Darker text for readability */
+    font-size: 14px;
+    /* Smaller font size for subtlety */
+    margin-top: 5px;
+    /* Space between image and text */
+    text-align: center;
+    /* Center-align text */
 }
 
 /* Specific styling for the upload date to differentiate it */
 .photo-item p:first-child {
-    color: #666; /* Lighter color for less emphasis */
-    font-size: 12px; /* Even smaller font size */
+    color: #666;
+    /* Lighter color for less emphasis */
+    font-size: 12px;
+    /* Even smaller font size */
 }
 
-input[type="text"], input[type="password"], input[type="submit"] {
+input[type="text"],
+input[type="password"],
+input[type="submit"] {
     font-size: 16px;
 }
 
 /* Table Container */
 .table-container {
     padding: 20px;
-    border-radius: 10px; /* Matches your container border-radius */
-    margin: 20px 0; /* Spacing around the table container */
+    /* Matches your container border-radius */
+    margin: 20px 0;
+    /* Spacing around the table container */
     width: 90%;
+    /* Adjust the table container width on smaller screens */
+    overflow-x: auto;
+    /* Enable horizontal scrolling on small devices */
+    position: absolute;
+    top: 50px;
+    z-index: 1;
 }
 
 /* Table Basic Styling */
 .custom-table {
-    width: 100%; /* Full width of its container */
-    border-collapse: collapse; /* Collapse borders for a clean look */
-    margin-top: 20px; /* Space from any content above */
+    width: 100%;
+    /* Full width of its container */
+    border-collapse: collapse;
+    /* Collapse borders for a clean look */
+    margin-top: 20px;
+    /* Space from any content above */
     background-color: white;
+    text-decoration: none;
+
 }
 
 .custom-table th,
 .custom-table td {
-    text-align: left; /* Aligns text to the left */
-    padding: 12px; /* Padding inside cells */
-    border-bottom: 1px solid #ccc; /* Border for each cell */
+    text-align: left;
+    /* Aligns text to the left */
+    padding: 12px;
+    /* Padding inside cells */
+    border-bottom: 1px solid #ccc;
+    /* Border for each cell */
+    text-decoration: none;
 }
 
 /* Table Header Styling */
 .custom-table th {
-    background-color: #4E73DE; /* Header background color */
-    color: white; /* Text color for headers */
-    font-size: 16px; /* Slightly larger font size for headers */
+    background-color: #4E73DE;
+    /* Header background color */
+    color: white;
+    /* Text color for headers */
+    font-size: 16px;
+    text-decoration: none;
 }
 
 .form-container {
@@ -1179,17 +1634,11 @@ input[type="text"], input[type="password"], input[type="submit"] {
 
 /* Table Body Styling */
 .custom-table tbody tr:nth-child(odd) {
-    background-color: #f2f2f2; /* Zebra striping for rows */
+    background-color: #f2f2f2;
+    /* Zebra striping for rows */
 }
 
 .custom-table tbody tr:hover {
-    background-color: #ddd; /* Hover effect for table rows */
-}
-
-/* Responsive adjustments for the table */
-@media (max-width: 600px) {
-    .table-container {
-        width: 90%; /* Adjust the table container width on smaller screens */
-        overflow-x: auto; /* Enable horizontal scrolling on small devices */
-    }
+    background-color: #ddd;
+    /* Hover effect for table rows */
 }

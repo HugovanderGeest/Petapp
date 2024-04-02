@@ -13,7 +13,6 @@
 <body>
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
-    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
     {% if from_admin %}
     <script>
         $(document).ready(function () {
@@ -87,6 +86,24 @@
     </div>
 
     {% endif %}
+
+    <div class="bottom-navbar">
+        <a href="javascript:history.back()" class="nav-item"><i class="fas fa-arrow-left"></i><span>Terug</span></a>
+        <!-- Photo icon with text -->
+        <a href="javascript:void(0);" class="nav-item" id="photoIcon" onclick="document.getElementById('photoModal').style.display='block'">
+            <i class="fas fa-images"></i><span>Photos</span>
+        </a>
+        <!-- Note icon with text -->
+        <a href="javascript:void(0);" class="nav-item" id="noteBtn" onclick="document.getElementById('noteModal').style.display='block'">
+            <i class="fas fa-file "></i><span>Notes</span>
+        </a>
+        <!-- Map marker link with text -->
+        <a href="{{ bar.link }}" class="nav-item">
+            <i class="fas fa-map-marker-alt"></i><span>Location</span>
+        </a>
+    </div>
+    
+    
 
     <div class="cube-container bottom-boy" style="display: none;">
         <div class="cube user-cube">

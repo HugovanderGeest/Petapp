@@ -25,12 +25,12 @@
 
     <div class="sidebar" style="display: none;">
         <!-- BEGIN: Changed the initial display to none -->
-        <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
-        {% if current_user.is_admin %}
-        <h3>Admin</h3>
-        {% else %}
-        <h3>Controleur</h3>
-        {% endif %}
+            <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
+                {% if current_user.is_admin %}
+                    <h3>Admin</h3>
+                    {% else %}
+                <h3>Controleur</h3>
+            {% endif %}
         <h2 class="side-titel">Links</h2>
 
         <a href="{{ url_for('admin') }}">
@@ -88,9 +88,11 @@
                     <option value="">Select a Location</option>
                     {% for location in locations %}
                         <option value="{{ location.id }}">{{ location.name }}</option>
-                    {% endfor %}
+                        {% endfor %}
+
                 </select>
             </form>
+
         </div>
     
         <div class="bars-container">
@@ -98,7 +100,8 @@
             {% set hours_since_checkin = bar.last_checked_in | hours_since %}
             <div class="bar-item" 
                  style="background-color: 
-                        {% if hours_since_checkin > 2 %}red; color: white;
+                        {% if hours_since_checkin is none or hours_since_checkin < 0.1 %}white;
+                        {% elif hours_since_checkin > 2 %}red; color: white;
                         {% elif hours_since_checkin > 1 %}orange; color: white;
                         {% else %}white;
                         {% endif %}">

@@ -27,6 +27,7 @@ app.config['SECRET_KEY'] = 'your-secret-key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['GOOGLE_MAPS_API_KEY'] = 'AIzaSyDjyGyXUa6Wnapxt-7HOity5K4Ydnb--2w'
 app.config['UPLOAD_FOLDER'] = 'photos'
+app.config['UPLOAD_FOLDER'] = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 def allowed_file(filename):
@@ -47,6 +48,7 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
     location = db.relationship('Location', backref=db.backref('users', lazy=True))
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
+    profile_picture = db.Column(db.String(255), nullable=True)
 
     def __init__(self, username, password, location_id=None, group=None, badges=0, is_admin=False):
         self.username = username
@@ -197,6 +199,8 @@ class ActivityLog(db.Model):
 def admin():
     form = UserForm()
     location_form = LocationForm()
+    search_query = request.args.get('search', '')  # Get the search query from request arguments
+
     if form.validate_on_submit():
         user = User(
             username=form.username.data,
@@ -208,8 +212,16 @@ def admin():
         db.session.commit()
         flash('User created successfully!', 'success')
         return redirect(url_for('admin'))
-    
-    users = User.query.all()
+
+    if search_query:
+        # Adjust this filter to match your User and Location model relationships and fields
+        users = User.query.filter(
+            User.username.ilike('%{}%'.format(search_query)) | 
+            User.location.has(Location.name.ilike('%{}%'.format(search_query))) | 
+            (User.is_admin == (search_query.lower() in ['true', 'yes', '1', 'admin']))
+        ).all()
+    else:
+        users = User.query.all()
 
     if location_form.validate_on_submit():
         location = Location(name=location_form.name.data)
@@ -218,8 +230,7 @@ def admin():
         flash('Location created successfully!', 'success')
 
     locations = Location.query.all()
-    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations)
-
+    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, search_query=search_query)
 
 
 from PIL import Image, ExifTags
@@ -284,6 +295,35 @@ def view_photos():
 def uploaded_photos(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+@app.route('/user/<int:user_id>/upload_profile_picture', methods=['POST'])
+@login_required
+def upload_profile_picture(user_id):
+    if 'profile_picture' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+    file = request.files['profile_picture']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        profile_folder = os.path.join('static', 'uploads', str(user_id))  # Adjusted path to 'uploads' directory within 'static'
+        if not os.path.exists(profile_folder):
+            os.makedirs(profile_folder)
+        filepath = os.path.join(profile_folder, filename)
+        file.save(filepath)
+        
+        # The relative path for storing in the database
+        static_file_path = os.path.join('uploads', str(user_id), filename)
+        
+        # Update the user profile with the new image path
+        user = User.query.get(user_id)
+        if user:
+            user.profile_picture = static_file_path  # Store the relative path
+            db.session.commit()
+            return jsonify({'message': 'Profile picture uploaded successfully!', 'image_url': url_for('static', filename=static_file_path)}), 200
+        else:
+            return jsonify({'error': 'User not found.'}), 404
+        
+    return jsonify({'error': 'File type not allowed'}), 400
 
 
 @login_manager.user_loader
@@ -309,6 +349,11 @@ def delete_user(id):
     # Redirect to the admin page
     return redirect(url_for('admin'))
 
+@app.route('/uploads/<path:filename>')
+def serve_user_profile_picture(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -326,7 +371,6 @@ def login():
             return redirect(url_for('index'))  # Redirect back to the index page
     # Return a login template if the method is not POST or no valid conditions are met
     return render_template('login.html')
-
 
 @app.route('/change_password/<int:user_id>', methods=['GET', 'POST'])
 @login_required
@@ -474,7 +518,6 @@ def hours_since(dt):
     diff = now - dt
     hours = diff.total_seconds() / 3600
     return hours
-
 
 @app.route('/log_change', methods=['POST'])
 @login_required  # Ensures only logged-in users can log changes
@@ -688,11 +731,12 @@ def submit_link():
 def dashboard():
     if current_user.is_authenticated:
         username = current_user.username
-        location_name = current_user.location.name if current_user.location else 'No location assigned'
-        return render_template('dashboard.html', username=username, location_name=location_name, user=current_user)
+        location_name = current_user.location.name if current_user.location else 'Nog geen werklocatie ingesteld'
+        # Generate the path for the current user's profile picture if it exists
+        profile_picture_path = url_for('static', filename='uploads/' + current_user.profile_picture) if current_user.profile_picture else None
+        return render_template('dashboard.html', username=username, location_name=location_name, profile_picture=profile_picture_path, user=current_user)
     else:
         return redirect(url_for('login'))
-
 
 @app.route('/assign_location/<int:user_id>', methods=['GET', 'POST'])
 def assign_location(user_id):

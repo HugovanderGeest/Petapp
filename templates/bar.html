@@ -33,7 +33,6 @@
         {% else %}
         <h3>Controleur</h3>
         {% endif %}
-        <h2 class="side-titel">Links</h2>
 
         <a href="{{ url_for('admin') }}">
             <div class="side-link">
@@ -63,8 +62,6 @@
                 </div>
             </a>
 
-
-        
         <a href="{{ url_for('check_ins') }}">
             <div class="side-link">
             <i class="fas fa-check"></i>
@@ -105,13 +102,13 @@
     
     
 
-    <div class="cube-container bottom-boy" style="display: none;">
+    <!--<div class="cube-container bottom-boy" style="display: none;">
         <div class="cube user-cube">
 
-            <h2>Bar {{ bar.name }} op {{ bar.location.name }}</h2>
+            <h2>Bar {{ bar.name }} op {{ bar.location.name }}</h2> -->
 
 
-            <form method="POST">
+            <!-- <form method="POST">
                 <div class="meer">
                     <label for="zakkenInput">Zakken gekregen:</label>
                     <div class="input-group-form">
@@ -138,10 +135,9 @@
                     </div>
                 </div>
                 <i id="showNotesBtn" class="fas fa-file" style="cursor: pointer;"></i>
-                    <!-- Modal for displaying notes -->
+                   Modal for displaying notes 
                     <div id="showNotesModal" class="modal">
 
-                        <!-- Modal content -->
                         <div class="modal-content">
                             <span class="close">&times;</span>
                             <h2>Notes for Bar {{ bar.name }}:</h2>
@@ -161,10 +157,10 @@
                         <input type="submit" value="Submit">
                     </form>
                 </div>
-            </form>
-        </div>
+            </form> -->
+        <!-- </div>
     </div>
-    </div>
+    </div> -->
 
     <div class="cube-container bottom-boy">
 
@@ -177,36 +173,47 @@
             <h2>Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
 
             <form method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}" id="myForm">
-                <div class="input-group">
+                <!-- <div class="input-group">
                     <label for="zakken_gekregen">Zakken gekregen:</label>
                     <input type="number" name="zakken_gekregen" id="zakken_gekregen">
-                </div>
-                <div class="input-group">
+                </div> -->
+                <!-- <div class="input-group">
                     <label for="volle_zakken_opgehaald">Volle zakken opgehaald:</label>
                     <input type="number" name="volle_zakken_opgehaald" id="volle_zakken_opgehaald">
+                </div> -->
+                <div id="zakkenFieldsContainer">
+                <div id="zakkenFields">
+                    <div class="zakkenField" data-index="0">
+                        <label>Zak 1 in KG:</label>
+                        <input type="number" name="zakken[0].kg" required>
+                        <button type="button" class="removeZak">Remove</button>
+                    </div>
                 </div>
+            </div>
+                <button type="button" id="addZak">+ Zakken</button>
+                
+
                 <div class="input-group meer" id="kgVanZakContainer">
                     <label for="kg_van_zakInput">Totaal KG van zakken:</label>
                     <input type="number" id="kg_van_zakInput" name="kg_van_zak" style=" -moz-appearance: textfield;">
                 </div>
 
-                <input type="submit" value="Stuur">
+
+                <input class="bottom-stuur" type="submit" value="Stuur">
+
             </form>            
 
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-              {% endfor %}
-            {% endif %}
-          {% endwith %}
 
 
-        <div class="center-nav">
+
+
+
+
+        <!-- <div class="center-nav">
             <i id="photoIcon" class="fas fa-images" style="cursor: pointer;"></i>
            <i id="noteBtn" class="fas fa-file "></i>
            <a href="{{ bar.link }}"><i class="fas fa-map-marker-alt"></i></a>
-        </div>
+        </div> -->
                     <!-- The Modal -->
             <div id="photoModal" class="modal">
                 <!-- Modal content -->
@@ -428,6 +435,37 @@
         }
     }
 </script>
+
+
+<script>
+    $(document).ready(function() {
+        let zakIndex = 0;
+    
+        $('#addZak').click(function() {
+            zakIndex++;
+            $('#zakkenFields').append(`
+                <div class="zakkenField" data-index="${zakIndex}">
+                    <label>Zak ${zakIndex + 1} in KG:</label>
+                    <input type="number" name="zakken[${zakIndex}].kg" required>
+                    <button type="button" class="removeZak">Remove</button>
+                </div>
+            `);
+        });
+    
+        $('body').on('click', '.removeZak', function() {
+            $(this).parent('.zakkenField').remove();
+        });
+    });
+    </script>
+    
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+  {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+{% endwith %}
 
 
 </body>

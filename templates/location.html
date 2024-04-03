@@ -10,8 +10,12 @@
 
 <body>
 
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
-    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+    <div class="search-container location-bar">
+        <form action="" method="get"> <!-- You may need to adjust the action attribute -->
+            <input type="text" id="barSearchInput" onkeyup="searchBars()" placeholder="Search bars...">
+        </form>
+    </div>
+
     {% if from_admin %}
 
     <div id="formContainer">
@@ -34,14 +38,15 @@
         <li>
             <!-- Conditionally render the URL based on the user's admin status -->
             {% if current_user.is_admin %}
-                <a href="{{ url_for('bar', bar_id=bar.id, user_id=current_user.id, from_admin=true) }}" class="bar-button">{{ bar.name }}</a>
+            <a href="{{ url_for('bar', bar_id=bar.id, user_id=current_user.id, from_admin=true) }}"
+                class="bar-button">{{ bar.name }}</a>
             {% else %}
-                <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
+            <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
             {% endif %}
         </li>
         {% endfor %}
     </ul>
-    
+
 
     </div>
 
@@ -60,7 +65,6 @@
                     success: function (response) {
                         $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
                         $('#errorText').text('');
-                        $('#formContainer').slideUp(); // Optionally hide form after success
                     },
                     error: function (response) {
                         $('#errorText').text('Error: The bar could not be added.');
@@ -69,13 +73,34 @@
             });
         });
     </script>
-    
+
     <script>
         success: function(response) {
             // Make sure `response` actually includes `bar_id`
             $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
         }
     </script>
+
+    <script>
+        function searchBars() {
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById("barSearchInput");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("barsList");
+            li = ul.getElementsByTagName("li");
+        
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+        </script>
+    
 
 </body>
 

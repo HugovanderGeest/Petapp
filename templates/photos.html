@@ -9,6 +9,68 @@
     <title>View Photos</title>
 </head>
 <body>
+
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
+    <div class="gear-icon-container"> <i id="toggleSidebar" class="fa fa-bars"></i></div>
+
+    <div class="sidebar" style="display: none;">
+        <!-- BEGIN: Changed the initial display to none -->
+            <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
+                {% if current_user.is_admin %}
+                    <h3>Admin</h3>
+                    {% else %}
+                <h3>Controleur</h3>
+            {% endif %}
+
+        <a href="{{ url_for('admin') }}">
+            <div class="side-link">
+                <i class="fas fa-user"></i>
+            <p>Admin</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('change_log') }}">
+            <div class="side-link">
+            <i class="fas fa-book"></i>
+            <p>Log</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('check_ins') }}">
+            <div class=" side-link">
+            <i class="fas fa-check"></i>
+            <p>Check</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('view_photos') }}">
+            <div class=" active side-link">
+                <i class="fas fa-images"></i>
+                <p>Photos</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('index') }}">
+            <div class="side-link">
+            <i class="fas fa-play"></i>
+            <p>Start</p>
+            </div>
+        </a>
+
+        <div class="side-bottom">
+
+            <div class="line"></div>
+    
+            <a href="{{ url_for('index') }}">
+                <div class="side-link">
+                <i class="fas fa-arrow-left"></i>
+                <p>Log-uit</p>
+            </div>
+            </a>
+        </div>
+    </div>
+
     <div class="photos-container">
         {% for photo in photos %}
             <div class="photo-item">
@@ -41,5 +103,15 @@
             img.onclick = () => openModal(img.src);
         });
     </script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#toggleSidebar').click(function () {
+            // Toggle the visibility of the sidebar with a slide animation
+            $('.sidebar').slideToggle();
+        });
+    });
+</script>
 </body>
 </html>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Change Log</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
@@ -10,7 +11,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            max-width: 500px;
         }
 
         th, td {
@@ -35,6 +36,7 @@
             box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
             overflow-y: auto;
             max-height: 90vh;
+            max-width: 500px;
         }
 
         /* New styles for tabs */
@@ -92,10 +94,9 @@
         {% else %}
         <h3>Controleur</h3>
         {% endif %}
-        <h2 class="side-titel">Links</h2>
 
         <a href="{{ url_for('admin') }}">
-            <div class="side-link">
+            <div class=" side-link">
                 <i class="fas fa-user"></i>
             <p>Admin</p>
             </div>
@@ -109,12 +110,19 @@
         </a>
 
         <a href="{{ url_for('check_ins') }}">
-            <div class=" side-link">
+            <div class="side-link">
             <i class="fas fa-check"></i>
             <p>Check</p>
             </div>
         </a>
 
+        <a href="{{ url_for('view_photos') }}">
+            <div class="side-link">
+                <i class="fas fa-images"></i>
+                <p>Photos</p>
+            </div>
+        </a>
+        
         <a href="{{ url_for('index') }}">
             <div class="side-link">
             <i class="fas fa-play"></i>
@@ -137,14 +145,44 @@
 
     <div class="content-container">
         <h1>Log</h1>
+        
+        <!-- Zakken KG Log Section -->
+            {% for bar_id, bar_name, total_kg in zakken_kg_logs_grouped %}
+                <div class="bar-log-container">
+                    <h2>{{ bar_name }} Logs</h2>
+                    <h3>Totaal: {{ total_kg }} Kg</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>KG</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for log, username, bar_name in detailed_logs_by_bar[bar_id] %}
+                            <tr>
+                                <td>{{ username }}</td>
+                                <td>{{ log.kg_submitted }}</td>
+                                <td>{{ log.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="3">No entries found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endfor %}
 
-        <!-- Tabs for switching views -->
+
+        <!-- Tabs for switching views
         <div id="tabs">
             <div class="tab " data-target="userChanges">Per gebruiker</div>
             <div class="tab" data-target="barChanges">Per bar</div>
         </div>
 
- <!-- User Changes View -->
         <div id="userChanges" class="tab-content active">
             {% for user, changes in changes_grouped_by_user.items() %}
             <div class="user-changes-container">
@@ -173,7 +211,6 @@
         </div>
 
 
-<!-- Bar Changes View -->
         <div id="barChanges" class="tab-content">
             {% for bar_name, changes in changes_grouped_by_bar.items() %}
             <div class="bar-changes-container">
@@ -201,7 +238,7 @@
             {% endfor %}
         </div>
         
-    </div>
+    </div> -->
 
     <script>
         // Tab switching functionality

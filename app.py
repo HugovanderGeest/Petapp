@@ -91,6 +91,15 @@ class BarPhoto(db.Model):
     def __repr__(self):
         return f'<BarPhoto {self.filename} - Bar ID: {self.bar_id}>'
 
+class ZakkenKGLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    kg_submitted = db.Column(db.Integer, nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<ZakkenKGLog bar_id={self.bar_id}, user_id={self.user_id}, kg_submitted={self.kg_submitted}, timestamp={self.timestamp}>'
 
 
 class LocationForm(FlaskForm):
@@ -546,27 +555,64 @@ def log_change():
 
 @app.route('/change_log')
 def change_log():
-    # Fetch all changes with bar names and user names
+    # Fetch all changes with bar names and user names for ChangeLog entries
     changes_with_bar_names = db.session.query(
         ChangeLog, Bar.name.label('bar_name')
     ).join(Bar, ChangeLog.bar_id == Bar.id).all()
 
-    # Group changes by user (existing logic)
+    # Group changes by user
     changes_grouped_by_user = {}
     for change, bar_name in changes_with_bar_names:
         user_changes = changes_grouped_by_user.setdefault(change.user, [])
         user_changes.append((change, bar_name))
 
-    # New logic to group changes by bar
+    # Group changes by bar
     changes_grouped_by_bar = {}
     for change, bar_name in changes_with_bar_names:
         bar_changes = changes_grouped_by_bar.setdefault(bar_name, [])
         bar_changes.append(change)
 
-    # Pass both dictionaries to the template
+    # New logic to group ZakkenKGLog entries by bars and calculate totals for each bar
+    zakken_kg_logs_grouped = db.session.query(
+        ZakkenKGLog.bar_id, Bar.name, db.func.sum(ZakkenKGLog.kg_submitted).label('total_kg')
+    ).join(Bar, ZakkenKGLog.bar_id == Bar.id)\
+     .group_by(ZakkenKGLog.bar_id, Bar.name)\
+     .order_by(Bar.name).all()
+
+    # Fetching detailed logs for each bar separately
+    detailed_logs_by_bar = {}
+    for bar_id, _, _ in zakken_kg_logs_grouped:
+        detailed_logs = db.session.query(
+            ZakkenKGLog,
+            User.username,
+            Bar.name.label('bar_name')
+        ).join(User, ZakkenKGLog.user_id == User.id)\
+         .join(Bar, ZakkenKGLog.bar_id == Bar.id)\
+         .filter(ZakkenKGLog.bar_id == bar_id)\
+         .order_by(ZakkenKGLog.timestamp.desc()).all()
+        detailed_logs_by_bar[bar_id] = detailed_logs
+
+    # Fetch ZakkenKGLog entries with user and bar names, ordered by timestamp
+    # This is kept for backward compatibility if needed elsewhere in the template
+    zakken_kg_logs = db.session.query(
+        ZakkenKGLog,
+        User.username,
+        Bar.name.label('bar_name')
+    ).join(User, ZakkenKGLog.user_id == User.id)\
+     .join(Bar, ZakkenKGLog.bar_id == Bar.id)\
+     .order_by(ZakkenKGLog.timestamp.desc()).all()
+
+    # Calculate the total KG submitted (across all bars, for backward compatibility)
+    total_kg_submitted = sum(log.kg_submitted for log, _, _ in zakken_kg_logs)
+
+    # Pass all fetched data, including the new grouped data and the totals for each bar, to the template
     return render_template('change_log.html', 
                            changes_grouped_by_user=changes_grouped_by_user, 
-                           changes_grouped_by_bar=changes_grouped_by_bar)
+                           changes_grouped_by_bar=changes_grouped_by_bar,
+                           zakken_kg_logs=zakken_kg_logs,  # Original, comprehensive list of logs
+                           total_kg_submitted=total_kg_submitted,  # Total across all bars
+                           zakken_kg_logs_grouped=zakken_kg_logs_grouped,  # New, grouped by bars with totals
+                           detailed_logs_by_bar=detailed_logs_by_bar)  # Detailed logs for each bar
 
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
@@ -627,38 +673,47 @@ def check_in_bar(bar_id):
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
 def update_bar_details(bar_id):
+    # Ensure the user is authenticated
+    if not current_user.is_authenticated:
+        flash('You need to be logged in to perform this action.', 'error')
+        return redirect(url_for('login'))
+
     bar = Bar.query.get_or_404(bar_id)
 
-    # Fetch current values to compare and log changes later
-    old_zakken_gekregen = bar.zakken_gekregen
-    old_volle_zakken_opgehaald = bar.volle_zakken_opgehaald
-    old_kg_van_zak = bar.kg_van_zak
+    try:
+        # Process form data
+        zakken_kg_submissions = []
+        for key, value in request.form.items():
+            if key.startswith('zakken[') and key.endswith('].kg') and value.isdigit():
+                kg = int(value)
+                zakken_kg_submissions.append(kg)
+                # Create and add each ZakkenKGLog entry to the session
+                log_entry = ZakkenKGLog(bar_id=bar_id, user_id=current_user.id, kg_submitted=kg)
+                db.session.add(log_entry)
 
-    # Update values from form
-    zakken_gekregen = request.form.get('zakken_gekregen')
-    if zakken_gekregen.isdigit():
-        bar.zakken_gekregen += int(zakken_gekregen)
+        db.session.commit()
 
-    volle_zakken_opgehaald = request.form.get('volle_zakken_opgehaald')
-    if volle_zakken_opgehaald.isdigit():
-        bar.volle_zakken_opgehaald += int(volle_zakken_opgehaald)
+        # For debugging: Print or log the processed submissions
+        print(f"Processed zakken KG submissions for bar {bar_id}: {zakken_kg_submissions}")
 
-    kg_van_zak_input = request.form.get('kg_van_zak')
-    if kg_van_zak_input and kg_van_zak_input.isdigit():
-        bar.kg_van_zak += int(kg_van_zak_input)
+        # Feedback to user
+        flash(f'Successfully submitted {len(zakken_kg_submissions)} zakken KG entries for bar {bar.name}.', 'success')
 
-    db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        print(e)  # For debugging: print the exception to the console or log it.
+        flash('An error occurred while processing your submission. Please try again.', 'error')
 
-    # Log changes
-    if old_zakken_gekregen != bar.zakken_gekregen:
-        log_change(current_user.id, bar_id, 'zakken_gekregen', old_zakken_gekregen, bar.zakken_gekregen)
-    if old_volle_zakken_opgehaald != bar.volle_zakken_opgehaald:
-        log_change(current_user.id, bar_id, 'volle_zakken_opgehaald', old_volle_zakken_opgehaald, bar.volle_zakken_opgehaald)
-    if old_kg_van_zak != bar.kg_van_zak:
-        log_change(current_user.id, bar_id, 'kg_van_zak', old_kg_van_zak, bar.kg_van_zak)
-
-    flash('Verstuurd', 'success')
     return redirect(url_for('bar', bar_id=bar_id))
+
+
+@app.route('/zakken_kg_log')
+def zakken_kg_log():
+    # Assuming you have admin check and login requirement
+    logs = ZakkenKGLog.query.order_by(ZakkenKGLog.timestamp.desc()).all()
+    return render_template('change_log.html', zakken_kg_logs=logs)
+
+
 
 def log_change(user_id, bar_id, field, old_value, new_value):
     change_log = ChangeLog(

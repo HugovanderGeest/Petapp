@@ -48,8 +48,33 @@ body {
     align-items: center;
     flex-wrap: wrap;
     justify-content: center;
+    overflow-x: hidden;
 }
 
+.location-bar {
+    position: absolute;
+    top: 20px;
+}
+
+.location-bar form {
+    width: 90vw;
+    background-color: transparent;
+}
+
+#barSearchInput {
+    width: 80vw;
+    font-size: 20px;
+    border-radius: 10px;
+    border: none;
+    padding: 20px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
+    background-repeat: no-repeat;
+    padding-left: 30px;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    padding-left: 50px;
+  }
 
 .login-container {
     text-align: center;
@@ -791,20 +816,22 @@ input.check-button {
 }
 
 /* List container styling */
-.bars-list {
-    display: flex;
-    /* Use flexbox to layout children */
-    flex-wrap: wrap;
-    /* Allow items to wrap to next line on small screens */
-    gap: 10px;
-    /* Space between items */
-    justify-content: center;
-    /* Center items horizontally */
-    list-style: none;
-    padding: 0;
-    margin-top: -120px;
-    /* Space for form when it's visible */
-}
+
+    .bars-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        list-style: none;
+        padding: 0;
+        margin-top: -120px; /* Adjust if needed to accommodate the new padding */
+        padding-top: 300px; /* Added space at the top inside the scrollable area */
+        padding-bottom: 300px; /* Added space at the bottom inside the scrollable area */
+        max-height: 70vh; /* Adjust based on your needs */
+        overflow-y: auto;
+    }
+    
+
 
 /* List item styling */
 .bars-list li {
@@ -1101,8 +1128,7 @@ form input[type="submit"]:hover {
     display: flex;
     justify-content: space-around;
     padding: 15px 0;
-    border-top-left-radius: 20px;
-    border-top-right-radius: 20px;
+
     z-index: 1002; /* Ensure it's above other content */
 }
 
@@ -1227,7 +1253,6 @@ form input[type="submit"]:hover {
 
 .bottom-boy {
     position: absolute;
-    bottom: 0;
 }
 
 .cube {
@@ -1283,7 +1308,6 @@ input[type="submit"] {
 @media (max-width: 600px) {
     .cube-container {
         width: 90%;
-        margin-top: 100px;
     }
 
     .input-group input[type="number"],
@@ -1641,4 +1665,108 @@ input[type="submit"] {
 .custom-table tbody tr:hover {
     background-color: #ddd;
     /* Hover effect for table rows */
+}
+
+/* Enhanced Styling for Input Fields Within Zakken Form */
+.new-zakken-field input[type="number"] {
+    flex-grow: 1;
+    margin-right: 10px;
+    padding: 10px;
+    border: 2px solid #CED4DA;
+    border-radius: 5px;
+    font-size: 16px;
+    color: #495057;
+    background-color: #FFF;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+.new-zakken-field input[type="number"]:focus {
+    border-color: #80BDFF;
+    outline: 0;
+    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+}
+
+/* Consistent Styling for All Buttons (Add More & Remove) */
+#addZak, .new-zakken-field button.removeZak {
+    padding: 8px 16px;
+    font-size: 16px;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease-in-out;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+/* Hover and Active States for Buttons */
+#addZak:hover, .new-zakken-field button.removeZak:hover {
+    filter: brightness(90%);
+}
+
+#addZak:active, .new-zakken-field button.removeZak:active {
+    transform: scale(0.98);
+}
+
+/* Further Button Customization */
+#addZak {
+    background-color: #4E73DF;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin-top: 20px;
+    font-size: 25px;
+}
+
+.new-zakken-field button.removeZak {
+    background-color: #DC3545;
+    color: #FFF;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.new-zakken-field button.removeZak:hover {
+    background-color: #C82333;
+}
+
+.zakkenField input {
+    padding: 20px;
+    width: 60vw;
+    border-radius: 20px;
+    border: #4E73DF 5px solid;
+    font-size: 30px;
+}
+
+.zakkenField button {
+    margin-bottom: 20px;
+    margin-top: 10px;
+    background-color: #f44336;
+    padding: 10px;
+    border: none;
+    color: white;
+    border-radius: 10px;
+}
+
+.zakkenField label {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.bottom-stuur {
+    position: fixed;
+    bottom: 75px;
+    left: 0;
+    font-size: 30px !important;
+    height: 70px;
+    padding-bottom: 100px;
+    border-radius: 0 !important;
+    background-color: #04AA6D !important;
+}
+
+#zakkenFieldsContainer {
+    max-height: 500px; /* Adjust based on the available space and desired appearance */
+    overflow-y: auto; /* Enables vertical scrolling if content overflows */
+    padding: 10px; /* Optional: Adds some spacing inside the container */
+    border-radius: 5px; /* Optional: Rounds the corners of the scrollable container */
+    margin-bottom: 20px; /* Ensures spacing between the container and anything below it */
 }

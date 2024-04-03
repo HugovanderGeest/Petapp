@@ -69,11 +69,15 @@ body {
     padding: 20px;
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
     background-repeat: no-repeat;
-    padding-left: 30px;
     background-size: 20px;
     background-repeat: no-repeat;
     background-position: 10px center;
     padding-left: 50px;
+    max-width: 500px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 
 .login-container {
@@ -429,7 +433,7 @@ form.check-in {
     text-decoration: none;
     font-size: 20px;
     top: -85px;
-    width: 110%;
+    width: 500px;
 }
 
 input.check-button {
@@ -829,6 +833,7 @@ input.check-button {
         padding-bottom: 300px; /* Added space at the bottom inside the scrollable area */
         max-height: 70vh; /* Adjust based on your needs */
         overflow-y: auto;
+        max-width: 500px;
     }
     
 
@@ -1130,6 +1135,7 @@ form input[type="submit"]:hover {
     padding: 15px 0;
 
     z-index: 1002; /* Ensure it's above other content */
+    max-width: 500px;
 }
 
 .nav-item {
@@ -1246,9 +1252,10 @@ form input[type="submit"]:hover {
     /* Rounded corners */
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     /* Subtle shadow for depth */
-    width: fit-content;
+    width: 500px;
     margin: auto;
     /* Center the form */
+
 }
 
 .bottom-boy {
@@ -1260,6 +1267,7 @@ form input[type="submit"]:hover {
     display: flex;
     flex-direction: column;
     align-items: center;
+    max-width: 500px;
     /* Center content */
 }
 
@@ -1598,7 +1606,7 @@ input[type="text"],
 input[type="password"],
 input[type="submit"] {
     font-size: 16px;
-}
+}   
 
 /* Table Container */
 .table-container {
@@ -1613,7 +1621,7 @@ input[type="submit"] {
     position: absolute;
     top: 50px;
     z-index: 1;
-    max-height: 500px;
+    max-width: 500px;
 }
 
 /* Table Basic Styling */
@@ -1732,7 +1740,6 @@ input[type="submit"] {
 
 .zakkenField input {
     padding: 20px;
-    width: 60vw;
     border-radius: 20px;
     border: #4E73DF 5px solid;
     font-size: 30px;
@@ -1756,12 +1763,14 @@ input[type="submit"] {
 .bottom-stuur {
     position: fixed;
     bottom: 75px;
-    left: 0;
+    left: 50%; 
+    transform: translateX(-50%); 
     font-size: 30px !important;
     height: 70px;
     padding-bottom: 100px;
     border-radius: 0 !important;
     background-color: #04AA6D !important;
+    width: 500px !important;
 }
 
 #zakkenFieldsContainer {

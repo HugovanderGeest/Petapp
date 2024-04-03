@@ -5,7 +5,7 @@ import os
 import logging
 import datetime
 from werkzeug.utils import secure_filename
-from PIL import Image
+from PIL import Image, ExifTags
 from datetime import datetime
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, URL
@@ -176,13 +176,13 @@ class Bar(db.Model):
     change_log = db.Column(db.String, default="", nullable=True)
     activity_log = db.relationship('ActivityLog', backref='bar', lazy=True)
     last_checked_in = db.Column(db.DateTime, nullable=True)
-
+    last_checked_in_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    last_checked_in_user = db.relationship('User', foreign_keys=[last_checked_in_user_id], backref='checked_in_bars')
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
-
     location = db.relationship('Location', backref=db.backref('bars', lazy=True))
 
     def __init__(self, name, location_id, zakken=0, bekers=0):
@@ -665,7 +665,8 @@ def update_bar(bar_id):
 @login_required
 def check_in_bar(bar_id):
     bar = Bar.query.get_or_404(bar_id)
-    bar.last_checked_in = datetime.utcnow()  # Assuming you have a 'last_checked_in' column in your Bar model
+    bar.last_checked_in = datetime.utcnow()
+    bar.last_checked_in_user_id = current_user.id  # Save the user who checked in
     db.session.commit()
     flash('Successfully checked in.', 'success')
     return redirect(url_for('bar', bar_id=bar_id))

@@ -60,12 +60,6 @@
             </div>
         </a>
 
-        <a href="{{ url_for('index') }}">
-            <div class="side-link">
-            <i class="fas fa-play"></i>
-            <p>Start</p>
-            </div>
-        </a>
 
         <div class="side-bottom">
 
@@ -106,11 +100,18 @@
                         {% endif %}">
                 <h3>Bar: {{ bar.name }} bij {{ bar.location.name }}</h3>
                 <p>Last checked in: {{ bar.last_checked_in | time_since }}</p>
-                <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+                {% if bar.last_checked_in_user %}
+                <p>Checked in by: <a href="{{ url_for('user_dashboard', user_id=bar.last_checked_in_user.id) }}">{{ bar.last_checked_in_user.username }}</a></p>                {% else %}
+                <p>Checked in by: N/A</p>
+                {% endif %}
+                <!-- Optional: Uncomment if you want to enable manual check-in -->
+                <!-- <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
                     <button type="submit">Check In</button>
-                </form>
+                </form> -->
             </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
+        
         
         
         </div>

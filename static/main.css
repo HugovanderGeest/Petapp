@@ -476,7 +476,7 @@ input.check-button {
     margin: 0px;
     margin-left: 20px;
     color: #4A4B4C;
-    width: 50px;
+    width: 100px;
 }
 
 .side-link i {
@@ -1613,6 +1613,7 @@ input[type="submit"] {
     position: absolute;
     top: 50px;
     z-index: 1;
+    max-height: 500px;
 }
 
 /* Table Basic Styling */

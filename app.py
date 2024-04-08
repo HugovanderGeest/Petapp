@@ -10,11 +10,13 @@ from datetime import datetime
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.validators import DataRequired, URL
 from wtforms_sqlalchemy.fields import QuerySelectField
-from flask import send_from_directory
 from werkzeug.security import generate_password_hash, check_password_hash
 import requests
+import pandas as pd
 from flask import current_app
 from wtforms import SelectField, Form
+from flask import send_from_directory
+from flask import Flask, send_from_directory
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_login import current_user
@@ -242,8 +244,6 @@ def admin():
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, search_query=search_query)
 
 
-from PIL import Image, ExifTags
-
 @app.route('/bar/<int:bar_id>/upload_photo', methods=['POST'])
 @login_required
 def upload_photo(bar_id):
@@ -299,6 +299,27 @@ def view_photos():
     photos = BarPhoto.query.all()
     return render_template('photos.html', photos=photos)
 
+@app.route('/export_zakken_kg_logs')
+def export_zakken_kg_logs():
+    # Query your data; this is just an example, adjust it according to your actual data
+    logs = ZakkenKGLog.query.all()
+    # Convert log data into a list of dictionaries for easier DataFrame creation
+    data = [{
+            "User ID": log.user_id, 
+            "Bar ID": log.bar_id, 
+            "KG Submitted": log.kg_submitted, 
+            "Timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+        } for log in logs]
+    # Convert list of dictionaries into a pandas DataFrame
+    df = pd.DataFrame(data)
+    # Define the file path; consider using os.path or similar for more complex paths
+    directory = os.path.join(app.root_path, 'static')
+    filepath = os.path.join(directory, 'zakken_kg_logs.xlsx')
+    # Write the DataFrame to an Excel file
+    df.to_excel(filepath, index=False)
+    
+    # Corrected send_from_directory call
+    return send_from_directory(directory=directory, path='zakken_kg_logs.xlsx', as_attachment=True, download_name='zakken_kg_logs.xlsx')
 
 @app.route('/photos/<filename>')
 def uploaded_photos(filename):
@@ -334,6 +355,12 @@ def upload_profile_picture(user_id):
         
     return jsonify({'error': 'File type not allowed'}), 400
 
+
+@app.route('/download')
+def download_file():
+    directory = '/path/to/your/files'  # Make sure to use your actual file directory
+    filename = 'example.xlsx'  # Replace with your actual file name
+    return send_from_directory(directory, filename, as_attachment=True, download_name='custom_filename.xlsx')
 
 @login_manager.user_loader
 def load_user(user_id):

@@ -62,7 +62,7 @@ body {
 }
 
 #barSearchInput {
-    width: 80vw;
+    width: 90vw;
     font-size: 20px;
     border-radius: 10px;
     border: none;
@@ -308,16 +308,36 @@ body {
 
 /* Style for the search input field */
 #userSearchInput {
-    padding: 10px;
-    border: 1px solid #ccc;
-    /* Light grey border */
-    border-radius: 5px;
-    /* Rounded corners */
-    box-sizing: border-box;
-    /* Include padding and border in the element's width */
-    width: 100%;
-    /* Full width */
+    width: 90vw;
+    font-size: 20px;
+    border-radius: 10px;
+    border: none;
+    padding: 20px;
+      padding-left: 20px;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
+    background-repeat: no-repeat;
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    padding-left: 50px;
+    max-width: 500px;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -10%);
 }
+
+.custom-table {
+    border-radius: 10px;
+}
+
+.download-knop {
+    background-color: #4e73df;
+    padding: 20px;
+    border-radius: 15px;
+    color: white;
+    text-decoration: none;
+  }
 
 .zoeken {
     padding: 12px 20px;
@@ -331,8 +351,8 @@ body {
 #userSearchInput {
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
     background-repeat: no-repeat;
-    padding-left: 30px;
-    background-size: 13px;
+    padding-left: 50px;
+    background-size: 20px;
     background-repeat: no-repeat;
     background-position: 10px center;
 }
@@ -433,7 +453,7 @@ form.check-in {
     text-decoration: none;
     font-size: 20px;
     top: -85px;
-    width: 500px;
+    width: 430px;
 }
 
 input.check-button {
@@ -1742,7 +1762,7 @@ input[type="submit"] {
     padding: 20px;
     border-radius: 20px;
     border: #4E73DF 5px solid;
-    font-size: 30px;
+    font-size: 20px;
 }
 
 .zakkenField button {

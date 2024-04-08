@@ -123,13 +123,6 @@
             </div>
         </a>
         
-        <a href="{{ url_for('index') }}">
-            <div class="side-link">
-            <i class="fas fa-play"></i>
-            <p>Start</p>
-            </div>
-        </a>
-
         <div class="side-bottom">
 
             <div class="line"></div>
@@ -144,8 +137,12 @@
     </div>
 
     <div class="content-container">
+
         <h1>Log</h1>
-        
+        <a class="download-knop" href="{{ url_for('export_zakken_kg_logs') }}">
+          <span>Download de data</span>  <i class="fas fa-download"></i>
+        </a>
+
         <!-- Zakken KG Log Section -->
             {% for bar_id, bar_name, total_kg in zakken_kg_logs_grouped %}
                 <div class="bar-log-container">
@@ -175,6 +172,7 @@
                     </table>
                 </div>
             {% endfor %}
+
 
 
         <!-- Tabs for switching views

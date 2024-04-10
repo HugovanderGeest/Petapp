@@ -1334,9 +1334,6 @@ input[type="submit"] {
 }
 
 @media (max-width: 600px) {
-    .cube-container {
-        width: 90%;
-    }
 
     .input-group input[type="number"],
     input[type="submit"] {
@@ -1347,6 +1344,10 @@ input[type="submit"] {
         /* Adjust padding to fit smaller screens */
     }
 }
+
+.cube-container.bottom-boy {
+    height: 65vh;
+  }
 
 .modal {
     display: none;
@@ -1758,6 +1759,13 @@ input[type="submit"] {
     background-color: #C82333;
 }
 
+.removeZak {
+    font-size: 20px;
+  padding: 15px !important;
+  border-radius: 15px !important;
+}
+
+
 .zakkenField input {
     padding: 20px;
     border-radius: 20px;
@@ -1768,7 +1776,7 @@ input[type="submit"] {
 .zakkenField button {
     margin-bottom: 20px;
     margin-top: 10px;
-    background-color: #f44336;
+    background-color: #4E73DF;
     padding: 10px;
     border: none;
     color: white;
@@ -1800,3 +1808,4 @@ input[type="submit"] {
     border-radius: 5px; /* Optional: Rounds the corners of the scrollable container */
     margin-bottom: 20px; /* Ensures spacing between the container and anything below it */
 }
+

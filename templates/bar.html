@@ -13,6 +13,8 @@
 <body>
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
+
     {% if from_admin %}
     <script>
         $(document).ready(function () {
@@ -184,9 +186,9 @@
                 <div id="zakkenFieldsContainer">
                 <div id="zakkenFields">
                     <div class="zakkenField" data-index="0">
-                        <label>Zak 1 in KG:</label>
+                        <label>Zak 1 in KG:</label> <br>
                         <input type="number" name="zakken[0].kg" required>
-                        <button type="button" class="removeZak">Remove</button>
+                        <button type="button" class="removeZak">X</button>
                     </div>
                 </div>
             </div>
@@ -445,9 +447,9 @@
             zakIndex++;
             $('#zakkenFields').append(`
                 <div class="zakkenField" data-index="${zakIndex}">
-                    <label>Zak ${zakIndex + 1} in KG:</label>
+                    <label>Zak ${zakIndex + 1} in KG:</label> <br>
                     <input type="number" name="zakken[${zakIndex}].kg" required>
-                    <button type="button" class="removeZak">Remove</button>
+                    <button type="button" class="removeZak">X</button>
                 </div>
             `);
         });

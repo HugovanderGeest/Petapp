@@ -16,7 +16,6 @@
 <body>
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
-    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
     <div class="gear-icon-container"> <i id="toggleSidebar" class="fa fa-bars"></i></div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}

@@ -8,11 +8,16 @@
     <title>Briefing Overview</title>
 </head>
 <body>
+    
+
     {% for location in locations %}
+    
     <h1>Add Briefing for {{ location.name }}</h1>
+
     <!-- The form for adding a new briefing -->
     <!-- No need for a separate 'Add Briefing' link, as the form is directly on the page -->
-    <form method="POST" action="{{ url_for('location_briefing', location_id=location.id) }}" enctype="multipart/form-data">
+    <div class="briefing-form-container">
+    <form method="POST" action="{{ url_for('briefing') }}" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div>{{ form.information.label }} {{ form.information }}</div>
         <div>{{ form.date.label }} {{ form.date }}</div>
@@ -38,49 +43,8 @@
         <!-- Dynamically added day-time entries will go here -->
         <div>{{ form.submit() }}</div>
     </form>
-
-    <hr>
-
-    <!-- Display submitted form data -->
-    {% if submitted_form %}
-    <h2>Submitted Briefing</h2>
-    <div>
-        <p><strong>Information:</strong> {{ submitted_form.information.data }}</p>
-        <p><strong>Date:</strong> {{ submitted_form.date.data }}</p>
-        <p><strong>Users:</strong>
-            {% for user in submitted_form.user.data %}
-                {{ user }}{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        </p>
-        <!-- Add other form fields here -->
-    </div>
-    {% endif %}
-
-    <h2>Existing Briefings for {{ location.name }}</h2>
-    {% for briefing in location.briefings %}
-    <div>
-        <h3>{{ briefing.date }}: {{ briefing.event_time }}</h3>
-        <p><strong>Information:</strong> {{ briefing.information }}</p>
-        <p><strong>Date:</strong> {{ briefing.date }}</p>
-        <p><strong>Event Time:</strong> {{ briefing.event_time }}</p>
-        <p><strong>Team Contact:</strong> {{ briefing.team_contact }}</p>
-        <p><strong>Planning:</strong> {{ briefing.planning }}</p>
-        <p><strong>Accreditation:</strong> {{ briefing.accreditation }}</p>
-        <p><strong>Break and Food:</strong> {{ briefing.break_food }}</p>
-        <p><strong>Accommodation:</strong> {{ briefing.accommodation }}</p>
-        <p><strong>Production Bags:</strong> {{ briefing.production_bags }}</p>
-        <p><strong>Production Bars:</strong> {{ briefing.production_bars }}</p>
-        <p><strong>Collection:</strong> {{ briefing.collection }}</p>
-        <p><strong>Container:</strong> {{ briefing.container }}</p>
-        <p><strong>Gator:</strong> {{ briefing.gator }}</p>
-        <p><strong>Signing:</strong> {{ briefing.signing }}</p>
-        <p><strong>Return System:</strong> {{ briefing.return_system }}</p>
-        <p><strong>Special Notes:</strong> {{ briefing.special_notes }}</p>
-    </div>
-    {% else %}
-    <p>No briefings found for {{ location.name }}.</p>
-    {% endfor %}
-    {% endfor %}
+</div>
+{% endfor %}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
@@ -95,7 +59,7 @@
 
                 // Update the newEntryHtml string to include the count for each set of inputs
                 var newEntryHtml = `<div>
-                                        <label>${dayTimeEntriesCount}</label>
+                                        <label>Dag ${dayTimeEntriesCount}</label>
                                         <input type="text" name="day_time_entries-${dayTimeEntriesCount}-start_time" placeholder="Van">
                                         <input type="text" name="day_time_entries-${dayTimeEntriesCount}-end_time" placeholder="Tot">
                                     </div>`;

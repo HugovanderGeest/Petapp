@@ -12,8 +12,13 @@
 
 <body>
 
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <!-- <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2"> -->
     <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
+    <h2 class="top-boy">Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
+
+    <form class="check-in"  action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+        <input class="check-button"  type="submit" value="Check In">
+    </form>
 
     {% if from_admin %}
     <script>
@@ -168,13 +173,7 @@
 
         <div class="cube rond user-cube">
 
-            <form class="check-in"  action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
-                <input class="check-button"  type="submit" value="Check In">
-            </form>
-
-            <h2>Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
-
-            <form method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}" id="myForm">
+            <form class="zakform" method="POST" action="{{ url_for('update_bar_details', bar_id=bar.id) }}" id="myForm">
                 <!-- <div class="input-group">
                     <label for="zakken_gekregen">Zakken gekregen:</label>
                     <input type="number" name="zakken_gekregen" id="zakken_gekregen">
@@ -464,11 +463,32 @@
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
   {% for category, message in messages %}
-    <div class="alert alert-{{ category }}">{{ message }}</div>
+    <div class="checkmark-container">
+        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+        </svg>
+    </div>
+    
   {% endfor %}
 {% endif %}
 {% endwith %}
 
+<script>
+// Function to show the checkmark
+function showCheckmark() {
+    // Add 'show' class to the checkmark container to start the fade-in
+    $('.checkmark-container').addClass('show');
+
+    // Remove 'show' class after a delay to fade out
+    setTimeout(function() {
+        $('.checkmark-container').removeClass('show');
+    }, 3000); // Adjust the timing as needed
+}
+
+// Call this function when you want to show and auto-hide the checkmark
+showCheckmark();
+</script>
 
 </body>
 

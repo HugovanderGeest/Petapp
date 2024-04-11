@@ -554,12 +554,53 @@ def location(user_id, location_id):
 
     return render_template('location.html', location=location, bars=bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
 
-@app.route('/briefing')
+@app.route('/briefing', methods=['GET', 'POST'])
 def briefing():
-    locations = Location.query.all()  # Query all locations from the database
-    form = BriefingForm()  # Initialize your form
-    return render_template('briefing.html', locations=locations, form=form)
+    form = BriefingForm()
+    locations = Location.query.all()  # Query all locations
+    print(locations)  # Debug: Print the list of locations to console
+    if form.validate_on_submit():
+        print("Form data received:", request.form)  # Debug: Print form data to terminal
+        
+        # Assuming you have a function to handle the uploaded file
+        filename = None
+        photo = form.photo.data
+        if photo:
+            filename = secure_filename(photo.filename)
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photo.save(photo_path)
 
+        new_briefing = Briefing(
+            information=form.information.data,
+            date=form.date.data,
+            team_contact=form.team_contact.data,
+            planning=form.planning.data,
+            accreditation=form.accreditation.data,
+            break_food=form.break_food.data,
+            accommodation=form.accommodation.data,
+            production_bags=form.production_bags.data,
+            production_bars=form.production_bars.data,
+            collection=form.collection.data,
+            container=form.container.data,
+            gator=form.gator.data,
+            signing=form.signing.data,
+            photo_filename=filename,
+            return_system=form.return_system.data,
+            special_notes=form.special_notes.data,
+            user_id=form.user.data.id if form.user.data else None
+        )
+        db.session.add(new_briefing)
+        db.session.commit()
+        flash('Briefing added successfully!')
+        return redirect(url_for('briefing'))
+
+    briefings = Briefing.query.all()
+    return render_template('briefing.html', form=form, locations=locations)
+
+@app.route('/briefing/view')
+def view_briefings():
+    briefings = Briefing.query.all()
+    return render_template('view_briefings.html', briefings=briefings)
 
 @app.template_filter('hours_since')
 def hours_since(dt):
@@ -666,25 +707,24 @@ class Briefing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     information = db.Column(db.Text, nullable=False)
     date = db.Column(db.Date, nullable=False)
-    event_time = db.Column(db.String(120), nullable=False)
-    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
-    photo_filename = db.Column(db.String(255), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    location = db.relationship('Location', backref=db.backref('briefings', lazy=True))
-    team_contact = db.Column(db.Text, nullable=True)
-    planning = db.Column(db.Text, nullable=True)
-    accreditation = db.Column(db.Text, nullable=True)
-    break_food = db.Column(db.Text, nullable=True)
-    accommodation = db.Column(db.Text, nullable=True)
-    production_bags = db.Column(db.Integer, nullable=True)
-    production_bars = db.Column(db.Integer, nullable=True)
-    collection = db.Column(db.Text, nullable=True)
-    container = db.Column(db.Text, nullable=True)
-    gator = db.Column(db.Text, nullable=True)
-    signing = db.Column(db.Text, nullable=True)
-    return_system = db.Column(db.Text, nullable=True)
-    special_notes = db.Column(db.Text, nullable=True)
+    team_contact = db.Column(db.Text)
+    planning = db.Column(db.Text)
+    accreditation = db.Column(db.Text)
+    break_food = db.Column(db.Text)
+    accommodation = db.Column(db.Text)
+    production_bags = db.Column(db.Integer)
+    production_bars = db.Column(db.Integer)
+    collection = db.Column(db.Text)
+    container = db.Column(db.Text)
+    gator = db.Column(db.Text)
+    signing = db.Column(db.Text)
+    photo_filename = db.Column(db.String(255))  # Assuming storage of filename
+    return_system = db.Column(db.Text)
+    special_notes = db.Column(db.Text)
+    # Assuming there's a relationship with a User model for the 'user' field
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship('User', backref='briefings')
+
 
 class DayTimeEntryForm(FlaskForm):
     day = StringField('Day', validators=[DataRequired()])
@@ -969,9 +1009,14 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
-# with app.app_context():
-#     db.drop_all()
-#     db.create_all()
+@app.route('/jemaiseenbar')
+def drop_database():
+    if not current_user.is_admin:
+        return "Unauthorized", 403  # Ensure only authorized users can perform this action
+    db.drop_all()
+    db.create_all()  # Optional: Recreate the database tables after dropping them
+    return "Database dropped and recreated."
+
 
 if __name__ == '__main__':
     app.run(debug=True)  

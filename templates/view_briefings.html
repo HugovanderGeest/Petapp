@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>View Briefings</title>
+</head>
+<body>
+    <h1>View Briefings</h1>
+
+    <div class="briefings-container">
+        {% for briefing in briefings %}
+            <div class="briefing">
+                <h2>{{ briefing.date }}</h2>
+                <p><strong>Information:</strong> {{ briefing.information }}</p>
+                <p><strong>Team Contact:</strong> {{ briefing.team_contact }}</p>
+                <p><strong>Planning:</strong> {{ briefing.planning }}</p>
+                <p><strong>Accreditation:</strong> {{ briefing.accreditation }}</p>
+                <p><strong>Break Food:</strong> {{ briefing.break_food }}</p>
+                <p><strong>Accommodation:</strong> {{ briefing.accommodation }}</p>
+                <p><strong>Production Bags:</strong> {{ briefing.production_bags }}</p>
+                <p><strong>Production Bars:</strong> {{ briefing.production_bars }}</p>
+                <p><strong>Collection:</strong> {{ briefing.collection }}</p>
+                <p><strong>Container:</strong> {{ briefing.container }}</p>
+                <p><strong>Gator:</strong> {{ briefing.gator }}</p>
+                <p><strong>Signing:</strong> {{ briefing.signing }}</p>
+                <p><strong>Return System:</strong> {{ briefing.return_system }}</p>
+                <p><strong>Special Notes:</strong> {{ briefing.special_notes }}</p>
+                <!-- Add more fields as needed -->
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

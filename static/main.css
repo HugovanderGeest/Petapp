@@ -62,11 +62,12 @@ body {
 }
 
 #barSearchInput {
-    width: 90vw;
+    width: 70vw;
     font-size: 20px;
     border-radius: 10px;
     border: none;
     padding: 20px;
+      padding-left: 20px;
     background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
     background-repeat: no-repeat;
     background-size: 20px;
@@ -76,7 +77,7 @@ body {
     max-width: 500px;
     position: absolute;
     top: 50%;
-    left: 50%;
+    left: 60%;
     transform: translate(-50%, -50%);
   }
 
@@ -452,14 +453,12 @@ form.check-in {
     color: black;
     text-decoration: none;
     font-size: 20px;
-    top: -85px;
-    width: 430px;
+    top: 50px;
 }
 
 input.check-button {
     padding: 50px;
     font-size: 30px !important;
-    border-radius: 15px 15px 0px 0px !important;
 }
 
 .rond {
@@ -580,7 +579,7 @@ input.check-button {
 
 .back-button {
     position: fixed;
-    top: 10px;
+    top: 20px;
     left: 10px;
     background-color: transparent;
     color: #2E52BB;
@@ -595,10 +594,6 @@ input.check-button {
     background-color: #333;
     color: #f8f9fa;
 }
-
-
-
-
 #link {
     width: 100%;
     padding: 15px;
@@ -665,7 +660,7 @@ input.check-button {
     padding: 15px;
     border: none;
     border-radius: 5px;
-    background-color: #4e73df;
+    background-color: #270eae;
     color: white;
     font-size: 18px;
     cursor: pointer;
@@ -804,7 +799,6 @@ input.check-button {
 #formContainer {
     position: absolute;
     bottom: 0px;
-    height: 110px;
 }
 
 .submit-button {
@@ -843,15 +837,16 @@ input.check-button {
 
     .bars-list {
         display: flex;
-        flex-wrap: wrap;
+        flex-direction: column;
+        /* flex-wrap: wrap; */
         gap: 10px;
         justify-content: center;
         list-style: none;
         padding: 0;
-        margin-top: -120px; /* Adjust if needed to accommodate the new padding */
-        padding-top: 300px; /* Added space at the top inside the scrollable area */
-        padding-bottom: 300px; /* Added space at the bottom inside the scrollable area */
-        max-height: 70vh; /* Adjust based on your needs */
+        margin-top: -120px;
+        padding-top: 300px;
+        padding-bottom: 300px;
+        max-height: 70vh;
         overflow-y: auto;
         max-width: 500px;
     }
@@ -860,29 +855,28 @@ input.check-button {
 
 /* List item styling */
 .bars-list li {
-    /* No bottom margin needed since flexbox handles spacing */
+    background-color: transparent !important;
 }
 
 /* List item link styling */
 .bars-list li a {
-    background-color: #007bff;
+    background-color: #270eae;
     color: white;
     display: flex;
-    /* Use flex to center content */
     justify-content: center;
-    /* Center text horizontally */
     align-items: center;
-    /* Center text vertically */
-    padding: 20px 15px;
     text-decoration: none;
-    border-radius: 5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
     min-width: 100px;
-    /* Minimum width for each item */
     text-align: center;
     font-size: 20px;
-}
+    font-weight: bold;
+    border-radius: 50px;
+    width: fit-content;
+    padding: 16px 48px;
+} 
+
 
 .list-section {
     background-color: white;
@@ -1032,14 +1026,28 @@ form input[type="submit"] {
     padding: 0.5em 1em;
     border: none;
     border-radius: 5px;
-    background-color: #4e73df;
+    background-color: #270eae;
     color: white;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    margin-top: 0;
+}
+
+.top-boy {
+    position: absolute;
+    top: -17px;    
+    color: #270eae;
+    width: 100vw;
+    background-color: white;
+    text-align: center;
+    padding: 10px;
+    font-size: 20px;
+    border-radius: 0px 0px 15px 15px;
+    max-width: 480px;
 }
 
 form input[type="submit"]:hover {
-    background-color: #3658a4;
+    background-color: #270eae;
 }
 
 /* Additional responsive adjustments as needed */
@@ -1272,7 +1280,7 @@ form input[type="submit"]:hover {
     /* Rounded corners */
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
     /* Subtle shadow for depth */
-    width: 500px;
+    width: 95vw;
     margin: auto;
     /* Center the form */
 
@@ -1347,6 +1355,7 @@ input[type="submit"] {
 
 .cube-container.bottom-boy {
     height: 65vh;
+    max-width: 500px;
   }
 
 .modal {
@@ -1760,23 +1769,27 @@ input[type="submit"] {
 }
 
 .removeZak {
-    font-size: 20px;
-  padding: 15px !important;
-  border-radius: 15px !important;
+    font-size: 35px;
+    padding: 15px !important;
+}
+
+.zakform {
+    padding: 0px;
 }
 
 
 .zakkenField input {
     padding: 20px;
     border-radius: 20px;
-    border: #4E73DF 5px solid;
-    font-size: 20px;
-}
+    border: #4E73DF 3px solid;
+    font-size: 30px;
+    width: 40vw;
+  }
 
 .zakkenField button {
     margin-bottom: 20px;
     margin-top: 10px;
-    background-color: #4E73DF;
+    background-color: red;
     padding: 10px;
     border: none;
     color: white;
@@ -1799,13 +1812,187 @@ input[type="submit"] {
     border-radius: 0 !important;
     background-color: #04AA6D !important;
     width: 500px !important;
+    border-radius: 15px 15px 0px 0px !important;
 }
 
 #zakkenFieldsContainer {
-    max-height: 500px; /* Adjust based on the available space and desired appearance */
-    overflow-y: auto; /* Enables vertical scrolling if content overflows */
+    max-height: 470px;   
+     overflow-y: auto; /* Enables vertical scrolling if content overflows */
     padding: 10px; /* Optional: Adds some spacing inside the container */
     border-radius: 5px; /* Optional: Rounds the corners of the scrollable container */
     margin-bottom: 20px; /* Ensures spacing between the container and anything below it */
 }
 
+#zakkenFields {
+    max-width: 400px;
+  }
+
+.checkmark-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s, visibility 0s linear 0.5s;
+}
+
+.checkmark-container.show {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.5s;
+}
+
+
+.checkmark {
+    width: 150px; /* Increased size */
+    height: 150px; /* Increased size */
+}
+
+.checkmark-circle {
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2.5;
+    stroke-miterlimit: 10;
+    stroke: #63C642;
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark-check {
+    transform-origin: 50% 50%;
+    stroke-dasharray: 48;
+    stroke-dashoffset: 48;
+    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+    stroke-width: 2.5;
+    stroke-miterlimit: 10;
+    stroke: #63C642;
+    fill: none;
+}
+
+@keyframes stroke {
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* General Body Styling specific to briefing form */
+.briefing-form-container {
+    padding: 40px 0; /* Spacing around the form for better layout */
+}
+
+.briefing-form-container .main-container {
+    width: 80%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.briefing-form-container form {
+    display: grid;
+    gap: 20px;
+}
+
+.briefing-form-container form div {
+    display: flex;
+    flex-direction: column;
+}
+
+.briefing-form-container input[type="text"],
+.briefing-form-container input[type="date"],
+.briefing-form-container input[type="file"],
+.briefing-form-container select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.briefing-form-container button,
+.briefing-form-container input[type="submit"] {
+    cursor: pointer;
+    padding: 10px 15px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.briefing-form-container button:hover,
+.briefing-form-container input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+.briefing-form-container h1 {
+    text-align: center;
+    color: #333;
+}
+
+.briefing-form-container #day-time-entries-container div {
+    display: flex;
+    gap: 10px;
+}
+
+.briefing-form-container #day-time-entries-container input[type="text"] {
+    flex: 1;
+}
+
+.briefing-form-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.briefing-form-container a:hover {
+    text-decoration: underline;
+}
+
+
+.location-details-container {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.location-details-title {
+    margin-bottom: 20px;
+    text-align: center;
+    color: #333;
+}
+
+.location-detail {
+    margin-bottom: 10px;
+    font-size: 18px;
+    color: #666;
+}
+
+.location-detail strong {
+    color: #333;
+}
+
+.location-back-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #4e73df;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.location-back-button:hover {
+    background-color: #3658a4;
+}

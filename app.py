@@ -897,8 +897,9 @@ def update_bar(bar_id):
 @app.route('/bar/<int:bar_id>/check_in', methods=['POST'])
 @login_required
 def check_in_bar(bar_id):
-    new_check_in = CheckInLog(bar_id=bar_id, user_id=current_user.id)
-    db.session.add(new_check_in)
+    bar = Bar.query.get_or_404(bar_id)
+    bar.last_checked_in = datetime.utcnow()
+    bar.last_checked_in_user_id = current_user.id  # Save the user who checked in
     db.session.commit()
     flash('Successfully checked in.', 'success')
     return redirect(url_for('bar', bar_id=bar_id))

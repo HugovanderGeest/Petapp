@@ -169,6 +169,14 @@ def create_bar_link():
     # Pass the form to your template
     return render_template('location.html', bar_link_form=bar_link_form)
 
+class CheckInLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<CheckInLog bar_id={self.bar_id}, user_id={self.user_id}, timestamp={self.timestamp}>'
 
 class PostForm(FlaskForm):
     text = StringField('Text', validators=[DataRequired()])
@@ -212,6 +220,16 @@ class ActivityLog(db.Model):
 
     def __repr__(self):
         return f'<ActivityLog {self.field} - User: {self.user.username}, Bar: {self.bar.name}>'
+
+@app.route('/bar/<int:bar_id>/update_location_link', methods=['POST'])
+def update_location_link(bar_id):
+    new_link = request.form.get('newLocationLink')
+    # Assume you have a Bar model with a 'link' field that you want to update
+    bar = Bar.query.get_or_404(bar_id)
+    bar.link = new_link
+    db.session.commit()
+    flash('Location link updated successfully!')
+    return redirect(url_for('some_view_function', bar_id=bar.id))
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -814,6 +832,21 @@ def change_log():
                            zakken_kg_logs_grouped=zakken_kg_logs_grouped,  # New, grouped by bars with totals
                            detailed_logs_by_bar=detailed_logs_by_bar)  # Detailed logs for each bar
 
+@app.route('/export_check_ins')
+def export_check_ins():
+    check_ins = CheckInLog.query.all()
+    data = [{
+        "Bar ID": check_in.bar_id, 
+        "User ID": check_in.user_id, 
+        "Timestamp": check_in.timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    } for check_in in check_ins]
+    df = pd.DataFrame(data)
+
+    # Define the file path; consider using Flask's app.instance_path or similar for file storage
+    filepath = os.path.join(current_app.root_path, 'static', 'check_ins.xlsx')
+    df.to_excel(filepath, index=False)
+    
+    return send_from_directory(directory=os.path.join(current_app.root_path, 'static'), path='check_ins.xlsx', as_attachment=True, download_name='check_ins.xlsx')
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
@@ -864,12 +897,12 @@ def update_bar(bar_id):
 @app.route('/bar/<int:bar_id>/check_in', methods=['POST'])
 @login_required
 def check_in_bar(bar_id):
-    bar = Bar.query.get_or_404(bar_id)
-    bar.last_checked_in = datetime.utcnow()
-    bar.last_checked_in_user_id = current_user.id  # Save the user who checked in
+    new_check_in = CheckInLog(bar_id=bar_id, user_id=current_user.id)
+    db.session.add(new_check_in)
     db.session.commit()
     flash('Successfully checked in.', 'success')
     return redirect(url_for('bar', bar_id=bar_id))
+
 
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
@@ -885,12 +918,19 @@ def update_bar_details(bar_id):
         # Process form data
         zakken_kg_submissions = []
         for key, value in request.form.items():
-            if key.startswith('zakken[') and key.endswith('].kg') and value.isdigit():
-                kg = int(value)
-                zakken_kg_submissions.append(kg)
-                # Create and add each ZakkenKGLog entry to the session
-                log_entry = ZakkenKGLog(bar_id=bar_id, user_id=current_user.id, kg_submitted=kg)
-                db.session.add(log_entry)
+            if key.startswith('zakken[') and key.endswith('].kg'):
+                # Replace comma with dot for decimal numbers
+                value = value.replace(',', '.')
+                try:
+                    kg = float(value)
+                    zakken_kg_submissions.append(kg)
+                    # Create and add each ZakkenKGLog entry to the session
+                    log_entry = ZakkenKGLog(bar_id=bar_id, user_id=current_user.id, kg_submitted=kg)
+                    db.session.add(log_entry)
+                except ValueError:
+                    # Handle the case where conversion to float fails
+                    flash('Invalid number format.', 'error')
+                    return redirect(url_for('bar', bar_id=bar_id))
 
         db.session.commit()
 

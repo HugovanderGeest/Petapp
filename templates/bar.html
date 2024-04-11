@@ -55,13 +55,6 @@
             </div>
         </a>
 
-        <a href="{{ url_for('index') }}">
-            <div class="side-link">
-                <i class="fas fa-play"></i>
-                <p>Start</p>
-            </div>
-        </a>
-
         <a href="{{ url_for('view_photos') }}">
                 <div class="side-link">
                     <i class="fas fa-images"></i>
@@ -75,6 +68,8 @@
             <p>Check</p>
             </div>
         </a>
+
+        <button id="myBtn">Change Location Link</button>
 
         <div class="side-bottom">
 
@@ -92,7 +87,6 @@
     {% endif %}
 
     <div class="bottom-navbar">
-        <a href="javascript:history.back()" class="nav-item"><i class="fas fa-arrow-left"></i><span>Terug</span></a>
         <!-- Photo icon with text -->
         <a href="javascript:void(0);" class="nav-item" id="photoIcon" onclick="document.getElementById('photoModal').style.display='block'">
             <i class="fas fa-images"></i><span>Photos</span>
@@ -102,11 +96,15 @@
             <i class="fas fa-file "></i><span>Notes</span>
         </a>
         <!-- Map marker link with text -->
-        <a href="{{ bar.link }}" class="nav-item">
+    <!-- <a href="{{ bar.link }}" class="nav-item">
             <i class="fas fa-map-marker-alt"></i><span>Location</span>
+        </a> -->
+
+        <a id="addZak" class="nav-item">
+            <i class="fas fa-plus"></i><span>Plus zakken</span>
         </a>
     </div>
-    
+
     
 
     <!--<div class="cube-container bottom-boy" style="display: none;">
@@ -154,18 +152,11 @@
                                 <p>No notes have been left for this bar.</p>
                             {% endif %}
                         </div>
-                    </div>
+                    </div> -->
 
-                
-                <div class="gray">
-                    <form id="link-form" style="display: none;" method="post" data-bar-id="{{ bar.id }}">
-                        <label for="link">googlemaps link:</label><br>
-                        <input type="text" id="link" name="link">
-                        <input type="submit" value="Submit">
-                    </form>
-                </div>
-            </form> -->
-        <!-- </div>
+        
+              <!--    </form> 
+       </div>
     </div>
     </div> -->
 
@@ -186,13 +177,11 @@
                 <div id="zakkenFields">
                     <div class="zakkenField" data-index="0">
                         <label>Zak 1 in KG:</label> <br>
-                        <input type="number" name="zakken[0].kg" required>
+                        <input type="text" name="zakken[0].kg" required>
                         <button type="button" class="removeZak">X</button>
                     </div>
                 </div>
-            </div>
-                <button type="button" id="addZak">+ Zakken</button>
-                
+            </div>                
 
                 <div class="input-group meer" id="kgVanZakContainer">
                     <label for="kg_van_zakInput">Totaal KG van zakken:</label>
@@ -222,7 +211,7 @@
                     <span class="close">&times;</span>
                     <h2>Upload Photo</h2>
                     <form action="{{ url_for('upload_photo', bar_id=bar.id) }}" method="post" enctype="multipart/form-data">
-                        <input type="file" name="photo">
+                        <input class="file-boy" type="file" name="photo">
                         <input type="submit" value="Upload Photo">
                     </form>
                 </div>
@@ -247,7 +236,6 @@
 
         </div>
     </div>
-
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
     <script>
@@ -382,59 +370,27 @@
     </script>
 
 <script>
-    // Get the modal
-    var showNotesModal = document.getElementById('showNotesModal');
+$(document).ready(function() {
+    // Close modal functionality
+    $('.close').click(function() {
+        // This assumes the close button is directly inside the modal content, which is directly inside the modal
+        $(this).closest('.modal').hide();
+    });
 
-    // Get the button that opens the modal
-    var showNotesBtn = document.getElementById("showNotesBtn");
-
-    // Get the <span> element that closes the modal
-    var span = showNotesModal.getElementsByClassName("close")[0];
-
-    // When the user clicks the button, open the modal 
-    showNotesBtn.onclick = function() {
-        showNotesModal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        showNotesModal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == showNotesModal) {
-            showNotesModal.style.display = "none";
+    // Close modals when clicking outside of them
+    $(window).click(function(event) {
+        if ($(event.target).hasClass('modal')) {
+            $(event.target).hide();
         }
-    }
-</script>
+    });
 
-<script>
-    // Get the modal
-    var photoModal = document.getElementById('photoModal');
+    // Example of opening a modal with an ID specified by a button's data-target attribute
+    $('[data-target]').click(function() {
+        var modalId = $(this).attr('data-target');
+        $('#' + modalId).show();
+    });
+});
 
-    // Get the button that opens the modal
-    var photoBtn = document.getElementById('photoIcon');
-
-    // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[1]; // Assuming this is the second close button on your page
-
-    // When the user clicks the button, open the modal 
-    photoBtn.onclick = function() {
-        photoModal.style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    span.onclick = function() {
-        photoModal.style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-        if (event.target == photoModal) {
-            photoModal.style.display = "none";
-        }
-    }
 </script>
 
 

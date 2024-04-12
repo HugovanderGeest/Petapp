@@ -838,8 +838,7 @@ input.check-button {
 
     .bars-list {
         display: flex;
-        flex-direction: column;
-        /* flex-wrap: wrap; */
+        flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
         list-style: none;
@@ -869,13 +868,14 @@ input.check-button {
     text-decoration: none;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s ease;
-    min-width: 100px;
+    min-width: 50px;
     text-align: center;
     font-size: 20px;
     font-weight: bold;
     border-radius: 50px;
     width: fit-content;
     padding: 16px 48px;
+    max-width: 40vw;
 } 
 
 

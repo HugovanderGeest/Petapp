@@ -27,6 +27,7 @@ from flask_login import UserMixin, login_user, login_required, logout_user, curr
 from wtforms_sqlalchemy.fields import QuerySelectMultipleField
 from wtforms import SelectMultipleField, widgets
 
+
 app = Flask(__name__)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'  # Specify the login view
@@ -63,7 +64,6 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
         self.group = group
         self.badges = badges
         self.is_admin = is_admin
-
 
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -1023,6 +1023,15 @@ def submit_link():
         bar.link = link
         db.session.commit() 
     return redirect(url_for('bar', bar_id=bar_id))
+
+@app.route('/delete_log/<int:log_id>', methods=['POST'])
+def delete_log(log_id):
+    log = ChangeLog.query.get_or_404(log_id)
+    db.session.delete(log)
+    db.session.commit()
+    flash('Log entry deleted successfully.', 'success')
+    return redirect(url_for('change_log'))
+
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():

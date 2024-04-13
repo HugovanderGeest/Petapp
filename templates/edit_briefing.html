@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Briefing Detail</title>
+</head>
+<body>
+    <h1>Edit Briefing Details</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {{ form.hidden_tag() }}
+
+        <p>{{ form.information.label }}<br>{{ form.information() }}</p>
+        <p>{{ form.date.label }}<br>{{ form.date() }}</p>
+        <p>{{ form.team_contact.label }}<br>{{ form.team_contact() }}</p>
+        <p>{{ form.planning.label }}<br>{{ form.planning() }}</p>
+        <p>{{ form.accreditation.label }}<br>{{ form.accreditation() }}</p>
+        <p>{{ form.break_food.label }}<br>{{ form.break_food() }}</p>
+        <p>{{ form.accommodation.label }}<br>{{ form.accommodation() }}</p>
+        <p>{{ form.production_bags.label }}<br>{{ form.production_bags() }}</p>
+        <p>{{ form.production_bars.label }}<br>{{ form.production_bars() }}</p>
+        <p>{{ form.collection.label }}<br>{{ form.collection() }}</p>
+        <p>{{ form.container.label }}<br>{{ form.container() }}</p>
+        <p>{{ form.gator.label }}<br>{{ form.gator() }}</p>
+        <p>{{ form.signing.label }}<br>{{ form.signing() }}</p>
+        <p>{{ form.photo.label }}<br>{{ form.photo() }}</p>
+        <p>{{ form.return_system.label }}<br>{{ form.return_system() }}</p>
+        <p>{{ form.special_notes.label }}<br>{{ form.special_notes() }}</p>
+        <p>{{ form.user.label }}<br>{{ form.user() }}</p>
+        
+        <p>{{ form.submit() }}</p>
+    </form>
+    <a href="{{ url_for('show_briefings') }}">Back to Briefings List</a>
+</body>
+</html>

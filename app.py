@@ -209,6 +209,26 @@ class Bar(db.Model):
         self.bekers = bekers
         self.location_id = location_id
 
+class BriefingDetail(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    information = db.Column(db.String(500), nullable=True)
+    date = db.Column(db.String(100), nullable=True)
+    team_contact = db.Column(db.String(500), nullable=True)
+    planning = db.Column(db.String(500), nullable=True)
+    accreditation = db.Column(db.String(500), nullable=True)
+    break_food = db.Column(db.String(500), nullable=True)
+    accommodation = db.Column(db.String(500), nullable=True)
+    production_bags = db.Column(db.Integer, default=0)
+    production_bars = db.Column(db.Integer, default=0)
+    collection = db.Column(db.String(500), nullable=True)
+    container = db.Column(db.String(500), nullable=True)
+    gator = db.Column(db.String(500), nullable=True)
+    signing = db.Column(db.String(500), nullable=True)
+    photo_filename = db.Column(db.String(500), nullable=True)
+    return_system = db.Column(db.String(500), nullable=True)
+    special_notes = db.Column(db.String(1000), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 class ActivityLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -572,54 +592,6 @@ def location(user_id, location_id):
 
     return render_template('location.html', location=location, bars=bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
 
-@app.route('/briefing', methods=['GET', 'POST'])
-def briefing():
-    form = BriefingForm()
-    locations = Location.query.all()  # Query all locations
-    print(locations)  # Debug: Print the list of locations to console
-    if form.validate_on_submit():
-        print("Form data received:", request.form)  # Debug: Print form data to terminal
-        
-        # Assuming you have a function to handle the uploaded file
-        filename = None
-        photo = form.photo.data
-        if photo:
-            filename = secure_filename(photo.filename)
-            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            photo.save(photo_path)
-
-        new_briefing = Briefing(
-            information=form.information.data,
-            date=form.date.data,
-            team_contact=form.team_contact.data,
-            planning=form.planning.data,
-            accreditation=form.accreditation.data,
-            break_food=form.break_food.data,
-            accommodation=form.accommodation.data,
-            production_bags=form.production_bags.data,
-            production_bars=form.production_bars.data,
-            collection=form.collection.data,
-            container=form.container.data,
-            gator=form.gator.data,
-            signing=form.signing.data,
-            photo_filename=filename,
-            return_system=form.return_system.data,
-            special_notes=form.special_notes.data,
-            user_id=form.user.data.id if form.user.data else None
-        )
-        db.session.add(new_briefing)
-        db.session.commit()
-        flash('Briefing added successfully!')
-        return redirect(url_for('briefing'))
-
-    briefings = Briefing.query.all()
-    return render_template('briefing.html', form=form, locations=locations)
-
-@app.route('/briefing/view')
-def view_briefings():
-    briefings = Briefing.query.all()
-    return render_template('view_briefings.html', briefings=briefings)
-
 @app.template_filter('hours_since')
 def hours_since(dt):
     if dt is None:
@@ -654,122 +626,158 @@ def log_change():
 
     return jsonify({'success': 'Change logged successfully'}), 200
 
-@app.route('/location/<int:location_id>/briefing', methods=['GET', 'POST'])
-def location_briefing(location_id):
-    location = Location.query.get_or_404(location_id)
-    form = BriefingForm()
-    if form.validate_on_submit():
-        new_briefing = Briefing(
-            information=form.information.data,
-            date=form.date.data,
-            event_time=form.event_time.data,
-            team_contact=form.team_contact.data,
-            planning=form.planning.data,
-            accreditation=form.accreditation.data,
-            break_food=form.break_food.data,
-            accommodation=form.accommodation.data,
-            production_bags=form.production_bags.data,
-            production_bars=form.production_bars.data,
-            collection=form.collection.data,
-            container=form.container.data,
-            gator=form.gator.data,
-            signing=form.signing.data,
-            return_system=form.return_system.data,
-            special_notes=form.special_notes.data,
-            location_id=location_id
-        )
-        db.session.add(new_briefing)
-        db.session.commit()
-        flash('Briefing added successfully.')
-        # Redirect to the same page (/briefing) without including location_id
-        return redirect(url_for('location_briefing', location_id=location_id))
-
-    # Get existing briefings for the location if needed
-    briefings = Briefing.query.filter_by(location_id=location_id).all()
-
-    return render_template('briefing.html', form=form, location=location, briefings=briefings)
-
-@app.route('/add_briefing/<int:location_id>', methods=['GET', 'POST'])
+@app.route('/bar/<int:bar_id>/update_details_and_check_in', methods=['POST'])
 @login_required
-def add_briefing(location_id):
-    location = Location.query.get_or_404(location_id)
-    form = BriefingForm()
-    if form.validate_on_submit():
-        briefing = Briefing(
-            information=form.information.data,
-            date=form.date.data,
-            event_time=form.event_time.data,
-            team_contact=form.team_contact.data,
-            planning=form.planning.data,
-            accreditation=form.accreditation.data,
-            break_food=form.break_food.data,
-            accommodation=form.accommodation.data,
-            production_bags=form.production_bags.data,
-            production_bars=form.production_bars.data,
-            collection=form.collection.data,
-            container=form.container.data,
-            gator=form.gator.data,
-            signing=form.signing.data,
-            return_system=form.return_system.data,
-            special_notes=form.special_notes.data,
-            location_id=location_id
-        )
-        db.session.add(briefing)
+def update_bar_details_and_check_in(bar_id):
+    # First, handle the check-in
+    bar = Bar.query.get_or_404(bar_id)
+    bar.last_checked_in = datetime.utcnow()
+    bar.last_checked_in_user_id = current_user.id  # Assuming current_user is the logged-in user
+    db.session.commit()
+
+    # Then, process the KG submissions
+    try:
+        zakken_kg_submissions = []
+        for key, value in request.form.items():
+            if key.startswith('zakken[') and key.endswith('].kg'):
+                value = value.replace(',', '.')
+                kg = float(value)
+                zakken_kg_submissions.append(kg)
+                log_entry = ZakkenKGLog(bar_id=bar_id, user_id=current_user.id, kg_submitted=kg)
+                db.session.add(log_entry)
         db.session.commit()
-        flash('Briefing added successfully!')
-        return redirect(url_for('location_briefing', location_id=location_id))
-    return render_template('add_briefing.html', form=form, location_id=location_id)
+        flash(f'Successfully checked in and submitted {len(zakken_kg_submissions)} zakken KG entries for bar {bar.name}.', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash('An error occurred while processing your submission. Please try again.', 'error')
+        return redirect(url_for('bar', bar_id=bar_id))
 
-
-class Briefing(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    information = db.Column(db.Text, nullable=False)
-    date = db.Column(db.Date, nullable=False)
-    team_contact = db.Column(db.Text)
-    planning = db.Column(db.Text)
-    accreditation = db.Column(db.Text)
-    break_food = db.Column(db.Text)
-    accommodation = db.Column(db.Text)
-    production_bags = db.Column(db.Integer)
-    production_bars = db.Column(db.Integer)
-    collection = db.Column(db.Text)
-    container = db.Column(db.Text)
-    gator = db.Column(db.Text)
-    signing = db.Column(db.Text)
-    photo_filename = db.Column(db.String(255))  # Assuming storage of filename
-    return_system = db.Column(db.Text)
-    special_notes = db.Column(db.Text)
-    # Assuming there's a relationship with a User model for the 'user' field
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    user = db.relationship('User', backref='briefings')
-
+    return redirect(url_for('bar', bar_id=bar_id))
 
 class DayTimeEntryForm(FlaskForm):
     day = StringField('Day', validators=[DataRequired()])
     time = StringField('Time', validators=[DataRequired()])
 
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, FileField, IntegerField, TextAreaField, SubmitField, SelectField
+from wtforms.validators import Optional
+from flask_wtf.file import FileAllowed
+
 class BriefingForm(FlaskForm):
-    information = TextAreaField('Informatie over het evenement', validators=[DataRequired()])
-    date = DateField('Datum', format='%Y-%m-%d', validators=[DataRequired()])
-    event_time = StringField('Event Time')
-    user = QuerySelectField('User', query_factory=lambda: User.query, allow_blank=True, get_label='username')
-    photo = FileField('Photo', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
-    day_time_entries = FieldList(FormField(DayTimeEntryForm), min_entries=1, max_entries=10)
-    team_contact = TextAreaField('Team en Contact')
-    planning = TextAreaField('Planning')
-    accreditation = TextAreaField('Accreditatie')
-    break_food = TextAreaField('Pauze en Eten')
-    accommodation = TextAreaField('Verblijf')
-    production_bags = IntegerField('Aantal zakken')
-    production_bars = IntegerField('Aantal barren')
-    collection = TextAreaField('Inzamelen')
-    container = TextAreaField('Container')
-    gator = TextAreaField('Gator')
-    signing = TextAreaField('Signing')
-    return_system = TextAreaField('Retoursysteem')
-    special_notes = TextAreaField('Bijzonderheden')
+    information = StringField('Information', validators=[Optional()])
+    date = StringField('Date', validators=[Optional()])
+    team_contact = TextAreaField('Team Contact', validators=[Optional()])
+    planning = TextAreaField('Planning', validators=[Optional()])
+    accreditation = TextAreaField('Accreditation', validators=[Optional()])
+    break_food = TextAreaField('Break Food', validators=[Optional()])
+    accommodation = TextAreaField('Accommodation', validators=[Optional()])
+    production_bags = IntegerField('Production Bags', validators=[Optional()])
+    production_bars = IntegerField('Production Bars', validators=[Optional()])
+    collection = TextAreaField('Collection', validators=[Optional()])
+    container = TextAreaField('Container', validators=[Optional()])
+    gator = TextAreaField('Gator', validators=[Optional()])
+    signing = TextAreaField('Signing', validators=[Optional()])
+    photo = FileField('Photo', validators=[FileAllowed(['jpg', 'png'], 'Images only!'), Optional()])
+    return_system = TextAreaField('Return System', validators=[Optional()])
+    special_notes = TextAreaField('Special Notes', validators=[Optional()])
+    user = SelectMultipleField('Users', coerce=int, validators=[Optional()], option_widget=widgets.CheckboxInput(), widget=widgets.ListWidget(prefix_label=False))   
     submit = SubmitField('Submit')
+    
+    def __init__(self, *args, **kwargs):
+        super(BriefingForm, self).__init__(*args, **kwargs)
+        self.user.choices = [(u.id, u.username) for u in User.query.all()]  # suming User model has id and username
+
+
+@app.route('/briefings')
+def show_briefings():
+    all_briefings = Location.query.all()  # This assumes locations are the same as briefings; adjust if necessary
+    return render_template('briefings.html', briefings=all_briefings)
+
+@app.route('/briefing/<int:briefing_id>', methods=['GET', 'POST'])
+def briefing_detail(briefing_id):
+    briefing = Location.query.get_or_404(briefing_id)
+    form = BriefingForm()
+    form.user.choices = [(u.id, u.username) for u in User.query.all()]  # Populate choices
+
+    if form.validate_on_submit():
+        if form.photo.data and form.photo.data.filename != '':
+            photo_file = form.photo.data
+            filename = secure_filename(photo_file.filename)
+            photo_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photo_file.save(photo_file_path)
+        else:
+            filename = None
+        
+        new_detail = BriefingDetail.query.get_or_404(briefing_id)
+        new_detail.information = form.information.data or ''
+        new_detail.date = form.date.data or ''
+        new_detail.team_contact = form.team_contact.data or ''
+        new_detail.planning = form.planning.data or ''
+        new_detail.accreditation = form.accreditation.data or ''
+        new_detail.break_food = form.break_food.data or ''
+        new_detail.accommodation = form.accommodation.data or ''
+        new_detail.production_bags = form.production_bags.data if form.production_bags.data is not None else 0
+        new_detail.production_bars = form.production_bars.data if form.production_bars.data is not None else 0
+        new_detail.collection = form.collection.data or ''
+        new_detail.container = form.container.data or ''
+        new_detail.gator = form.gator.data or ''
+        new_detail.signing = form.signing.data or ''
+        new_detail.photo_filename = filename
+        new_detail.return_system = form.return_system.data or ''
+        new_detail.special_notes = form.special_notes.data or ''
+        # Handle multiple users
+        new_detail.users = [User.query.get(user_id) for user_id in form.user.data]
+
+        db.session.commit()
+        flash('Briefing details updated successfully!')
+        return redirect(url_for('show_briefings'))
+    
+    # Pre-populate form when loading page for the first time
+    if request.method == 'GET':
+        form.user.data = [user.id for user in briefing.users]  # Set the default users selected in the form
+
+    return render_template('briefing_detail.html', briefing=briefing, form=form)
+
+
+@app.route('/edit-briefing/<int:briefing_id>', methods=['GET', 'POST'])
+def edit_briefing(briefing_id):
+    # Retrieve the existing briefing from the database
+    briefing_detail = BriefingDetail.query.get_or_404(briefing_id)
+    form = BriefingForm(obj=briefing_detail)  # Pre-populate the form with the existing briefing data
+    
+    if form.validate_on_submit():
+        # Assign form values to the respective fields of the briefing detail
+        briefing_detail.information = form.information.data
+        briefing_detail.date = form.date.data
+        briefing_detail.team_contact = form.team_contact.data
+        briefing_detail.planning = form.planning.data
+        briefing_detail.accreditation = form.accreditation.data
+        briefing_detail.break_food = form.break_food.data
+        briefing_detail.accommodation = form.accommodation.data
+        briefing_detail.production_bags = form.production_bags.data
+        briefing_detail.production_bars = form.production_bars.data
+        briefing_detail.collection = form.collection.data
+        briefing_detail.container = form.container.data
+        briefing_detail.gator = form.gator.data
+        briefing_detail.signing = form.signing.data
+        briefing_detail.return_system = form.return_system.data
+        briefing_detail.special_notes = form.special_notes.data
+        briefing_detail.user_id = form.user.data
+
+        if form.photo.data and form.photo.data.filename != '':
+            photo_file = form.photo.data
+            filename = secure_filename(photo_file.filename)
+            photo_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            briefing_detail.photo_filename = filename
+        
+        # Save changes
+        db.session.commit()
+        flash('Briefing details updated successfully!')
+        return redirect(url_for('show_briefings'))
+
+    return render_template('edit_briefing.html', form=form, briefing_id=briefing_id)
+
 
 @app.route('/change_log')
 def change_log():
@@ -1061,8 +1069,6 @@ def assign_location(user_id):
 
 @app.route('/jemaiseenbar')
 def drop_database():
-    if not current_user.is_admin:
-        return "Unauthorized", 403  # Ensure only authorized users can perform this action
     db.drop_all()
     db.create_all()  # Optional: Recreate the database tables after dropping them
     return "Database dropped and recreated."

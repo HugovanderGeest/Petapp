@@ -25,6 +25,7 @@ h1, h2 {
     height: 500px; /* Set the height to 1000px */
     margin: 30px auto;
     background-size: cover;
+    cursor: crosshair;
 }
 
 #mapImage {
@@ -34,6 +35,7 @@ h1, h2 {
     width: 100%;  /* Will fill the container */
     height: 100%; /* Will fill the container */
     image-rendering: optimizeQuality; /* or 'crisp-edges' depending on your preference */
+    cursor: crosshair;
 }
 
 .bar-marker, .bar-label {

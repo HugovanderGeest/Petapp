@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <title>Bar Notes</title>
+</head>
+
+<body class="bar-notes-body">
+    <div class="bar-notes-container">
+        <h1 class="bar-notes-header">Notes on Bars</h1>
+        <ul class="bar-notes-list">
+            {% for bar in bars %}
+            <li class="bar-notes-item">
+                <h3 class="bar-notes-title">{{ bar.name }} - {{ bar.location.name }}</h3>
+                <p class="bar-notes-text"><strong>Note:</strong> {{ bar.note }}</p>
+                {% if bar.user %}
+                    <p class="bar-notes-meta">Left by: {{ bar.user.username }}</p>
+                {% else %}
+                    <p class="bar-notes-meta">Left by: Unknown</p>
+                {% endif %}
+            </li>
+            {% else %}
+            <p>No notes available.</p>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+
+
+</html>

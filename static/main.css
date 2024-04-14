@@ -1185,6 +1185,7 @@ form input[type="submit"]:hover {
     margin: 0 auto;
     font-size: 24px; /* Slightly larger icons */
     transition: color 0.2s;
+    cursor: pointer;
 }
 
 .nav-item span {
@@ -2045,3 +2046,84 @@ input[type="submit"] {
     display: flex !important;
 }
 
+/* General settings for bar notes page */
+.bar-notes-body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container for the notes content */
+.bar-notes-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 800px;
+}
+
+/* Styling the list of bars and notes */
+.bar-notes-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 20px;
+}
+
+.bar-notes-item {
+    background-color: #f8f8f8;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.3s;
+}
+
+.bar-notes-item:hover {
+    background-color: #e6f7ff;
+    cursor: pointer;
+}
+
+/* Header styles for bar notes */
+.bar-notes-header {
+    text-align: center;
+    color: #4E73DF;
+    margin-bottom: 20px;
+}
+
+.bar-notes-title {
+    color: #333;
+    font-weight: 500;
+}
+
+/* Paragraph styles for notes and user information */
+.bar-notes-text {
+    font-size: 16px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.bar-notes-text strong {
+    color: #333;
+}
+
+/* Metadata style */
+.bar-notes-meta {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #888;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .bar-notes-container {
+        width: 100%;
+        padding: 10px;
+        border-radius: 0;
+    }
+}

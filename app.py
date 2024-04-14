@@ -219,6 +219,7 @@ class Bar(db.Model):
     location = db.relationship('Location', backref=db.backref('bars', lazy=True))
     x = db.Column(db.Float, nullable=True)  # X coordinate as percentage
     y = db.Column(db.Float, nullable=True)  # Y coordinate as percentage
+    note = db.Column(db.String(1000))  # Assuming note is just a text field for simplicity
 
     def __init__(self, name, location_id, zakken=0, bekers=0):
         self.name = name
@@ -906,6 +907,13 @@ def get_bars():
     bars = Bar.query.filter(Bar.x.isnot(None), Bar.y.isnot(None)).all()
     bars_data = [{'id': bar.id, 'name': bar.name, 'x': bar.x, 'y': bar.y} for bar in bars]
     return jsonify(bars_data)
+
+@app.route('/bar_notes')
+def bar_notes():
+    # Ensure the query includes a join to User if not automatically handled by a relationship
+    bars_with_notes = Bar.query.filter(Bar.note.isnot(None)).all()
+    return render_template('bar_notes.html', bars=bars_with_notes)
+
 
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])

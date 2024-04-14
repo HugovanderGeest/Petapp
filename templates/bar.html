@@ -16,8 +16,8 @@
     <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
     <h2 class="top-boy">Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
 
-    <form class="check-in"  action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
-        <input class="check-button"  type="submit" value="Check In">
+    <form class="check-in" action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
+        <input class="check-button" type="submit" value="Check In">
     </form>
 
     {% if from_admin %}
@@ -56,20 +56,22 @@
         </a>
 
         <a href="{{ url_for('view_photos') }}">
-                <div class="side-link">
-                    <i class="fas fa-images"></i>
-                    <p>Photos</p>
-                </div>
-            </a>
-
-        <a href="{{ url_for('check_ins') }}">
             <div class="side-link">
-            <i class="fas fa-check"></i>
-            <p>Check</p>
+                <i class="fas fa-images"></i>
+                <p>Photos</p>
             </div>
         </a>
 
-        <button id="myBtn">Change Location Link</button>
+        <a href="{{ url_for('check_ins') }}">
+            <div class="side-link">
+                <i class="fas fa-check"></i>
+                <p>Check</p>
+            </div>
+        </a>
+
+        <a href="{{ url_for('bar_notes') }}">View Bar Notes</a>
+
+
 
         <div class="side-bottom">
 
@@ -88,100 +90,37 @@
 
     <div class="bottom-navbar">
         <!-- Photo icon with text -->
-        <a href="javascript:void(0);" class="nav-item" id="photoIcon" onclick="document.getElementById('photoModal').style.display='block'">
+        <a href="javascript:void(0);" class="nav-item" id="photoIcon"
+            onclick="document.getElementById('photoModal').style.display='block'">
             <i class="fas fa-images"></i><span>Photos</span>
         </a>
         <!-- Note icon with text -->
-        <a href="javascript:void(0);" class="nav-item" id="noteBtn" onclick="document.getElementById('noteModal').style.display='block'">
+        <a href="javascript:void(0);" class="nav-item" id="noteBtn"
+            onclick="document.getElementById('noteModal').style.display='block'">
             <i class="fas fa-file "></i><span>Notes</span>
         </a>
-        <!-- Map marker link with text -->
-    <!-- <a href="{{ bar.link }}" class="nav-item">
-            <i class="fas fa-map-marker-alt"></i><span>Location</span>
-        </a> -->
 
         <a id="addZak" class="nav-item">
             <i class="fas fa-plus"></i><span>Plus zakken</span>
         </a>
     </div>
 
-    
-
-    <!--<div class="cube-container bottom-boy" style="display: none;">
-        <div class="cube user-cube">
-
-            <h2>Bar {{ bar.name }} op {{ bar.location.name }}</h2> -->
-
-
-            <!-- <form method="POST">
-                <div class="meer">
-                    <label for="zakkenInput">Zakken gekregen:</label>
-                    <div class="input-group-form">
-                        <button id="zakken-minus">-</button>
-                        <input type="number" id="zakken_gekregenInput" name="zakken_gekregen"
-                            value="{{ bar.zakken_gekregen }}" style=" -moz-appearance: textfield;">
-                        <button id="zakken-plus">+</button>
-                    </div>
-                </div>
-                <div class="meer">
-                    <label for="volleZakkenInput">Volle zakken opgehaald:</label>
-                    <div class="input-group-form">
-                        <button id="volleZakken-minus">-</button>
-                        <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
-                            value="{{ bar.volle_zakken_opgehaald }}" style=" -moz-appearance: textfield;">
-                        <button id="volleZakken-plus">+</button>
-                    </div>
-                </div>
-                <div class="meer" id="kgVanZakContainer">
-                    <label for="kg_van_zakInput">Totaal KG van zakken:</label>
-                    <div class="input-group-form">
-                        <input type="number" id="volle_zakken_opgehaaldInput" name="volle_zakken_opgehaald"
-                            value="{{ bar.kg_van_zak }}" style=" -moz-appearance: textfield;">
-                    </div>
-                </div>
-                <i id="showNotesBtn" class="fas fa-file" style="cursor: pointer;"></i>
-                   Modal for displaying notes 
-                    <div id="showNotesModal" class="modal">
-
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <h2>Notes for Bar {{ bar.name }}:</h2>
-                            {% if bar.note %}
-                                <p>{{ bar.note }}</p>
-                            {% else %}
-                                <p>No notes have been left for this bar.</p>
-                            {% endif %}
-                        </div>
-                    </div> -->
-
-        
-              <!--    </form> 
-       </div>
-    </div>
-    </div> -->
-
     <div class="cube-container bottom-boy">
 
         <div class="cube rond user-cube">
 
-            <form class="zakform" method="POST" action="{{ url_for('update_bar_details_and_check_in', bar_id=bar.id) }}" id="myForm">
-                                <!-- <div class="input-group">
-                    <label for="zakken_gekregen">Zakken gekregen:</label>
-                    <input type="number" name="zakken_gekregen" id="zakken_gekregen">
-                </div> -->
-                <!-- <div class="input-group">
-                    <label for="volle_zakken_opgehaald">Volle zakken opgehaald:</label>
-                    <input type="number" name="volle_zakken_opgehaald" id="volle_zakken_opgehaald">
-                </div> -->
+            <form class="zakform" method="POST" action="{{ url_for('update_bar_details_and_check_in', bar_id=bar.id) }}"
+                id="myForm">
+
                 <div id="zakkenFieldsContainer">
-                <div id="zakkenFields">
-                    <div class="zakkenField" data-index="0">
-                        <label>Zak 1 in KG:</label> <br>
-                        <input type="text" name="zakken[0].kg" required>
-                        <button type="button" class="removeZak">X</button>
+                    <div id="zakkenFields">
+                        <div class="zakkenField" data-index="0">
+                            <label>Zak 1 in KG:</label> <br>
+                            <input type="text" name="zakken[0].kg" required>
+                            <button type="button" class="removeZak">X</button>
+                        </div>
                     </div>
                 </div>
-            </div>                
 
                 <div class="input-group meer" id="kgVanZakContainer">
                     <label for="kg_van_zakInput">Totaal KG van zakken:</label>
@@ -191,26 +130,15 @@
 
                 <input class="bottom-stuur" type="submit" value="Stuur">
 
-            </form>            
+            </form>
 
-
-
-
-
-
-
-        <!-- <div class="center-nav">
-            <i id="photoIcon" class="fas fa-images" style="cursor: pointer;"></i>
-           <i id="noteBtn" class="fas fa-file "></i>
-           <a href="{{ bar.link }}"><i class="fas fa-map-marker-alt"></i></a>
-        </div> -->
-                    <!-- The Modal -->
             <div id="photoModal" class="modal">
                 <!-- Modal content -->
                 <div class="modal-content">
                     <span class="close">&times;</span>
                     <h2>Upload Photo</h2>
-                    <form action="{{ url_for('upload_photo', bar_id=bar.id) }}" method="post" enctype="multipart/form-data">
+                    <form action="{{ url_for('upload_photo', bar_id=bar.id) }}" method="post"
+                        enctype="multipart/form-data">
                         <input class="file-boy" type="file" name="photo">
                         <input type="submit" value="Upload Photo">
                     </form>
@@ -369,82 +297,82 @@
         }
     </script>
 
-<script>
-$(document).ready(function() {
-    // Close modal functionality
-    $('.close').click(function() {
-        // This assumes the close button is directly inside the modal content, which is directly inside the modal
-        $(this).closest('.modal').hide();
-    });
+    <script>
+        $(document).ready(function () {
+            // Close modal functionality
+            $('.close').click(function () {
+                // This assumes the close button is directly inside the modal content, which is directly inside the modal
+                $(this).closest('.modal').hide();
+            });
 
-    // Close modals when clicking outside of them
-    $(window).click(function(event) {
-        if ($(event.target).hasClass('modal')) {
-            $(event.target).hide();
-        }
-    });
+            // Close modals when clicking outside of them
+            $(window).click(function (event) {
+                if ($(event.target).hasClass('modal')) {
+                    $(event.target).hide();
+                }
+            });
 
-    // Example of opening a modal with an ID specified by a button's data-target attribute
-    $('[data-target]').click(function() {
-        var modalId = $(this).attr('data-target');
-        $('#' + modalId).show();
-    });
-});
+            // Example of opening a modal with an ID specified by a button's data-target attribute
+            $('[data-target]').click(function () {
+                var modalId = $(this).attr('data-target');
+                $('#' + modalId).show();
+            });
+        });
 
-</script>
+    </script>
 
 
-<script>
-    $(document).ready(function() {
-        let zakIndex = 0;
-    
-        $('#addZak').click(function() {
-            zakIndex++;
-            $('#zakkenFields').append(`
+    <script>
+        $(document).ready(function () {
+            let zakIndex = 0;
+
+            $('#addZak').click(function () {
+                zakIndex++;
+                $('#zakkenFields').append(`
                 <div class="zakkenField" data-index="${zakIndex}">
                     <label>Zak ${zakIndex + 1} in KG:</label> <br>
                     <input type="text" name="zakken[${zakIndex}].kg" required>
                     <button type="button" class="removeZak">X</button>
                 </div>
             `);
-        });
-    
-        $('body').on('click', '.removeZak', function() {
-            $(this).parent('.zakkenField').remove();
-        });
-    });
-    </script>
-    
+            });
 
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-  {% for category, message in messages %}
+            $('body').on('click', '.removeZak', function () {
+                $(this).parent('.zakkenField').remove();
+            });
+        });
+    </script>
+
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
     <div class="checkmark-container">
         <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
-            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
         </svg>
     </div>
-    
-  {% endfor %}
-{% endif %}
-{% endwith %}
 
-<script>
-// Function to show the checkmark
-function showCheckmark() {
-    // Add 'show' class to the checkmark container to start the fade-in
-    $('.checkmark-container').addClass('show');
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 
-    // Remove 'show' class after a delay to fade out
-    setTimeout(function() {
-        $('.checkmark-container').removeClass('show');
-    }, 3000); // Adjust the timing as needed
-}
+    <script>
+        // Function to show the checkmark
+        function showCheckmark() {
+            // Add 'show' class to the checkmark container to start the fade-in
+            $('.checkmark-container').addClass('show');
 
-// Call this function when you want to show and auto-hide the checkmark
-showCheckmark();
-</script>
+            // Remove 'show' class after a delay to fade out
+            setTimeout(function () {
+                $('.checkmark-container').removeClass('show');
+            }, 3000); // Adjust the timing as needed
+        }
+
+        // Call this function when you want to show and auto-hide the checkmark
+        showCheckmark();
+    </script>
 
 </body>
 

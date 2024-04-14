@@ -9,9 +9,9 @@
     <h1>All Briefings</h1>
     <ul>
         {% for briefing in briefings %}
-        <li><a href="{{ url_for('briefing_detail', briefing_id=briefing.id) }}">{{ briefing.name }}</a></li>
-                    <a href="{{ url_for('edit_briefing', briefing_id=briefing.id) }}">Edit</a>
+        <li><a href="{{ url_for('location_details', location_id=briefing.id) }}">{{ briefing.name }}</a></li>
         {% endfor %}
     </ul>
+    
 </body>
 </html>

@@ -62,7 +62,7 @@ body {
 }
 
 #barSearchInput {
-    width: 70vw;
+    width: 90vw;
     font-size: 20px;
     border-radius: 10px;
     border: none;
@@ -77,7 +77,7 @@ body {
     max-width: 500px;
     position: absolute;
     top: 50%;
-    left: 60%;
+    left: 50%;
     transform: translate(-50%, -50%);
   }
 
@@ -875,7 +875,9 @@ input.check-button {
     border-radius: 50px;
     width: fit-content;
     padding: 16px 48px;
-    max-width: 40vw;
+    max-width: 50px;
+        font-size: 1.3em;
+  overflow: hidden;
 } 
 
 

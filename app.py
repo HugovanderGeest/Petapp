@@ -26,7 +26,7 @@ from wtforms import TextAreaField, IntegerField, DateField
 from flask_login import UserMixin, login_user, login_required, logout_user, current_user  # Import UserMixin and login_user
 from wtforms_sqlalchemy.fields import QuerySelectMultipleField
 from wtforms import SelectMultipleField, widgets
-
+from forms import SimpleForm  # Import the form you just defined
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -56,6 +56,7 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
     profile_picture = db.Column(db.String(255), nullable=True)
+    
 
     def __init__(self, username, password, location_id=None, group=None, badges=0, is_admin=False):
         self.username = username
@@ -110,6 +111,9 @@ class ZakkenKGLog(db.Model):
 
     def __repr__(self):
         return f'<ZakkenKGLog bar_id={self.bar_id}, user_id={self.user_id}, kg_submitted={self.kg_submitted}, timestamp={self.timestamp}>'
+
+class UpdateLocationForm(FlaskForm):
+    submit = SubmitField('Update')
 
 
 class LocationForm(FlaskForm):
@@ -208,26 +212,6 @@ class Bar(db.Model):
         self.zakken = zakken
         self.bekers = bekers
         self.location_id = location_id
-
-class BriefingDetail(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    information = db.Column(db.String(500), nullable=True)
-    date = db.Column(db.String(100), nullable=True)
-    team_contact = db.Column(db.String(500), nullable=True)
-    planning = db.Column(db.String(500), nullable=True)
-    accreditation = db.Column(db.String(500), nullable=True)
-    break_food = db.Column(db.String(500), nullable=True)
-    accommodation = db.Column(db.String(500), nullable=True)
-    production_bags = db.Column(db.Integer, default=0)
-    production_bars = db.Column(db.Integer, default=0)
-    collection = db.Column(db.String(500), nullable=True)
-    container = db.Column(db.String(500), nullable=True)
-    gator = db.Column(db.String(500), nullable=True)
-    signing = db.Column(db.String(500), nullable=True)
-    photo_filename = db.Column(db.String(500), nullable=True)
-    return_system = db.Column(db.String(500), nullable=True)
-    special_notes = db.Column(db.String(1000), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
 class ActivityLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -659,124 +643,22 @@ class DayTimeEntryForm(FlaskForm):
     time = StringField('Time', validators=[DataRequired()])
 
 
-from flask_wtf import FlaskForm
-from wtforms import StringField, FileField, IntegerField, TextAreaField, SubmitField, SelectField
-from wtforms.validators import Optional
-from flask_wtf.file import FileAllowed
+class LocationAttribute(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    key = db.Column(db.String(255), nullable=False)
+    value = db.Column(db.String(255))
 
-class BriefingForm(FlaskForm):
-    information = StringField('Information', validators=[Optional()])
-    date = StringField('Date', validators=[Optional()])
-    team_contact = TextAreaField('Team Contact', validators=[Optional()])
-    planning = TextAreaField('Planning', validators=[Optional()])
-    accreditation = TextAreaField('Accreditation', validators=[Optional()])
-    break_food = TextAreaField('Break Food', validators=[Optional()])
-    accommodation = TextAreaField('Accommodation', validators=[Optional()])
-    production_bags = IntegerField('Production Bags', validators=[Optional()])
-    production_bars = IntegerField('Production Bars', validators=[Optional()])
-    collection = TextAreaField('Collection', validators=[Optional()])
-    container = TextAreaField('Container', validators=[Optional()])
-    gator = TextAreaField('Gator', validators=[Optional()])
-    signing = TextAreaField('Signing', validators=[Optional()])
-    photo = FileField('Photo', validators=[FileAllowed(['jpg', 'png'], 'Images only!'), Optional()])
-    return_system = TextAreaField('Return System', validators=[Optional()])
-    special_notes = TextAreaField('Special Notes', validators=[Optional()])
-    user = SelectMultipleField('Users', coerce=int, validators=[Optional()], option_widget=widgets.CheckboxInput(), widget=widgets.ListWidget(prefix_label=False))   
-    submit = SubmitField('Submit')
-    
-    def __init__(self, *args, **kwargs):
-        super(BriefingForm, self).__init__(*args, **kwargs)
-        self.user.choices = [(u.id, u.username) for u in User.query.all()]  # suming User model has id and username
+    location = db.relationship('Location', backref=db.backref('attributes', lazy=True))
+
+    def __repr__(self):
+        return f'<LocationAttribute {self.key}: {self.value}>'
 
 
 @app.route('/briefings')
 def show_briefings():
     all_briefings = Location.query.all()  # This assumes locations are the same as briefings; adjust if necessary
     return render_template('briefings.html', briefings=all_briefings)
-
-@app.route('/briefing/<int:briefing_id>', methods=['GET', 'POST'])
-def briefing_detail(briefing_id):
-    briefing = Location.query.get_or_404(briefing_id)
-    form = BriefingForm()
-    form.user.choices = [(u.id, u.username) for u in User.query.all()]  # Populate choices
-
-    if form.validate_on_submit():
-        if form.photo.data and form.photo.data.filename != '':
-            photo_file = form.photo.data
-            filename = secure_filename(photo_file.filename)
-            photo_file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-            photo_file.save(photo_file_path)
-        else:
-            filename = None
-        
-        new_detail = BriefingDetail.query.get_or_404(briefing_id)
-        new_detail.information = form.information.data or ''
-        new_detail.date = form.date.data or ''
-        new_detail.team_contact = form.team_contact.data or ''
-        new_detail.planning = form.planning.data or ''
-        new_detail.accreditation = form.accreditation.data or ''
-        new_detail.break_food = form.break_food.data or ''
-        new_detail.accommodation = form.accommodation.data or ''
-        new_detail.production_bags = form.production_bags.data if form.production_bags.data is not None else 0
-        new_detail.production_bars = form.production_bars.data if form.production_bars.data is not None else 0
-        new_detail.collection = form.collection.data or ''
-        new_detail.container = form.container.data or ''
-        new_detail.gator = form.gator.data or ''
-        new_detail.signing = form.signing.data or ''
-        new_detail.photo_filename = filename
-        new_detail.return_system = form.return_system.data or ''
-        new_detail.special_notes = form.special_notes.data or ''
-        # Handle multiple users
-        new_detail.users = [User.query.get(user_id) for user_id in form.user.data]
-
-        db.session.commit()
-        flash('Briefing details updated successfully!')
-        return redirect(url_for('show_briefings'))
-    
-    # Pre-populate form when loading page for the first time
-    if request.method == 'GET':
-        form.user.data = [user.id for user in briefing.users]  # Set the default users selected in the form
-
-    return render_template('briefing_detail.html', briefing=briefing, form=form)
-
-
-@app.route('/edit-briefing/<int:briefing_id>', methods=['GET', 'POST'])
-def edit_briefing(briefing_id):
-    # Retrieve the existing briefing from the database
-    briefing_detail = BriefingDetail.query.get_or_404(briefing_id)
-    form = BriefingForm(obj=briefing_detail)  # Pre-populate the form with the existing briefing data
-    
-    if form.validate_on_submit():
-        # Assign form values to the respective fields of the briefing detail
-        briefing_detail.information = form.information.data
-        briefing_detail.date = form.date.data
-        briefing_detail.team_contact = form.team_contact.data
-        briefing_detail.planning = form.planning.data
-        briefing_detail.accreditation = form.accreditation.data
-        briefing_detail.break_food = form.break_food.data
-        briefing_detail.accommodation = form.accommodation.data
-        briefing_detail.production_bags = form.production_bags.data
-        briefing_detail.production_bars = form.production_bars.data
-        briefing_detail.collection = form.collection.data
-        briefing_detail.container = form.container.data
-        briefing_detail.gator = form.gator.data
-        briefing_detail.signing = form.signing.data
-        briefing_detail.return_system = form.return_system.data
-        briefing_detail.special_notes = form.special_notes.data
-        briefing_detail.user_id = form.user.data
-
-        if form.photo.data and form.photo.data.filename != '':
-            photo_file = form.photo.data
-            filename = secure_filename(photo_file.filename)
-            photo_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            briefing_detail.photo_filename = filename
-        
-        # Save changes
-        db.session.commit()
-        flash('Briefing details updated successfully!')
-        return redirect(url_for('show_briefings'))
-
-    return render_template('edit_briefing.html', form=form, briefing_id=briefing_id)
 
 
 @app.route('/change_log')
@@ -865,6 +747,31 @@ def add_bar_to_location(location_id):
         db.session.commit()
         return jsonify({'success': 'Bar added successfully', 'bar_name': new_bar.name, 'bar_id': new_bar.id})
     return jsonify({'error': 'Missing data'}), 400
+
+@app.route('/location_details/<int:location_id>', methods=['GET', 'POST'])
+def location_details(location_id):
+    location = Location.query.get_or_404(location_id)
+    form = SimpleForm()  # Create an instance of the form
+    if form.validate_on_submit():
+        LocationAttribute.query.filter_by(location_id=location_id).delete()
+        keys = request.form.getlist('dynamicField_key[]')
+        values = request.form.getlist('dynamicField_value[]')
+        for key, value in zip(keys, values):
+            if key:  # Ensure there is a key
+                new_attribute = LocationAttribute(location_id=location_id, key=key, value=value)
+                db.session.add(new_attribute)
+        db.session.commit()
+        flash('Location updated with dynamic fields!', 'success')
+        return redirect(url_for('view_location', location_id=location_id))
+    attributes = location.attributes
+    return render_template('location_details.html', location=location, attributes=attributes, form=form)
+
+
+@app.route('/view_location/<int:location_id>')
+def view_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    attributes = location.attributes  # Assuming `attributes` is a relationship defined in your Location model
+    return render_template('view_location.html', location=location, attributes=attributes)
 
 
 @app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update {{ location.name }}</title>
+    <script>
+        function addField(key, value) {
+            var container = document.getElementById("fieldsContainer");
+            var keyInput = document.createElement("input");
+            keyInput.type = "text";
+            keyInput.name = "dynamicField_key[]";  // Use arrays to handle multiple entries
+            keyInput.placeholder = "Enter key";
+            keyInput.value = key || '';
+            
+            var valueInput = document.createElement("input");
+            valueInput.type = "text";
+            valueInput.name = "dynamicField_value[]";
+            valueInput.placeholder = "Enter value";
+            valueInput.value = value || '';
+            
+            var lineBreak = document.createElement("br");
+
+            container.appendChild(keyInput);
+            container.appendChild(valueInput);
+            container.appendChild(lineBreak);
+        }
+    </script>
+</head>
+<body onload="loadExistingFields()">
+    <h1>Update {{ location.name }}</h1>
+    <form method="post">
+        {{ form.hidden_tag() }}
+        <div id="fieldsContainer">
+            <!-- Dynamic fields will be added here -->
+        </div>
+        <button type="button" onclick="addField()">Add Field</button>
+        <br>
+        {{ form.submit }}
+    </form>
+    <a href="/">Back to All Locations</a>
+    <script>
+        function loadExistingFields() {
+            {% for attr in location.attributes %}
+            addField('{{ attr.key }}', '{{ attr.value }}');
+            {% endfor %}
+        }
+    </script>
+</body>
+</html>

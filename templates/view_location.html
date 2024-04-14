@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Location: {{ location.name }}</title>
+</head>
+<body>
+    <h1>{{ location.name }}</h1>
+    <p><strong>ID:</strong> {{ location.id }}</p>
+    <!-- Display dynamic attributes -->
+    {% if attributes %}
+        <ul>
+            {% for attr in attributes %}
+                <li><strong>{{ attr.key }}:</strong> {{ attr.value }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No additional attributes available.</p>
+    {% endif %}
+    <a href="/">Back to All Locations</a>
+</body>
+</html>

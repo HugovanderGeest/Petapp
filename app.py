@@ -139,6 +139,7 @@ class Location(db.Model):
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     url = db.Column(db.String(500), nullable=True)
+    map_image = db.Column(db.String(255))  # New field to store the filename of the map image
 
     def __init__(self, name, zakken=0, bekers=0, url=None):
         self.name = name
@@ -913,6 +914,35 @@ def update_bar_details(bar_id):
 
     return redirect(url_for('bar', bar_id=bar_id))
 
+@app.route('/map/<int:location_id>', methods=['GET', 'POST'])
+def map_page(location_id):
+    location = Location.query.get_or_404(location_id)
+    bars = Bar.query.filter_by(location_id=location_id).all()
+
+    if request.method == 'POST' and 'map_photo' in request.files:
+        file = request.files['map_photo']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            location.map_image = filename  # Save the filename in the database
+            db.session.commit()
+            flash('Map photo uploaded successfully!')
+            return redirect(url_for('map_page', location_id=location_id))
+
+    filename = location.map_image  # Retrieve the filename from the database to display
+    return render_template('map.html', location=location, bars=bars, filename=filename)
+
+@app.route('/save_bar_location', methods=['POST'])
+def save_bar_location():
+    data = request.get_json()
+    new_bar = Bar(name="New Bar", location_id=data['location_id'], x=data['x'], y=data['y'])
+    db.session.add(new_bar)
+    db.session.commit()
+    return jsonify({'success': 'Bar added successfully', 'bar_id': new_bar.id})
 
 @app.route('/zakken_kg_log')
 def zakken_kg_log():
@@ -920,6 +950,26 @@ def zakken_kg_log():
     logs = ZakkenKGLog.query.order_by(ZakkenKGLog.timestamp.desc()).all()
     return render_template('change_log.html', zakken_kg_logs=logs)
 
+@app.route('/upload_map_photo', methods=['POST'])
+@login_required  # Require user to be logged in
+def upload_map_photo():
+    if 'map_photo' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['map_photo']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        flash('Map photo uploaded successfully!')
+        # Add any additional handling here, like saving to a database, if necessary
+        return redirect(url_for('some_function_to_view_or_use_the_map', filename=filename))
+    else:
+        flash('File type not allowed')
+        return redirect(request.url)
 
 
 def log_change(user_id, bar_id, field, old_value, new_value):

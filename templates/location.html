@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
 
     <div class="search-container location-bar">
         <form action="" method="get"> <!-- You may need to adjust the action attribute -->
@@ -32,7 +31,6 @@
     <button id="removeBarBtn" style="display: none;">Remove Bar</button>
 
 
-    <!-- Form, initially hidden -->
 
     <ul id="barsList" class="bars-list">
         {% for bar in bars %}
@@ -49,6 +47,10 @@
     </ul>
 
 
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('map_page', location_id=location.id) }}" class="btn btn-primary">Map</a>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

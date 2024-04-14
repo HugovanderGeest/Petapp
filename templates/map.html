@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map of {{ location.name }}</title>
+</head>
+<body>
+    <h1>Map for {{ location.name }}</h1>
+    <p>Details about the location can be added here.</p>
+
+    <!-- Map Upload Form -->
+    <form method="POST" action="{{ url_for('map_page', location_id=location.id) }}" enctype="multipart/form-data">
+        <input type="file" name="map_photo" accept="image/*">
+        <button type="submit">Upload Map Photo</button>
+    </form>
+
+    <!-- Display the uploaded map image if it exists -->
+    {% if filename %}
+    <h2>Map Image:</h2>
+    <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Map of {{ location.name }}" style="max-width: 100%;">
+    {% endif %}
+
+    <!-- List of Bars -->
+    <h2>Bars in {{ location.name }}</h2>
+    <ul>
+        {% for bar in bars %}
+        <li>{{ bar.name }}</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>

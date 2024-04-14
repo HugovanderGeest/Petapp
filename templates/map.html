@@ -4,29 +4,154 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Map of {{ location.name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='map.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
     <h1>Map for {{ location.name }}</h1>
-    <p>Details about the location can be added here.</p>
+    <div id="mapContainer">
+        {% if filename %}
+        <img id="mapImage" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Map of {{ location.name }}">
+                    <p>No map image uploaded for this location.</p>
+        {% endif %}
+    </div>
 
-    <!-- Map Upload Form -->
-    <form method="POST" action="{{ url_for('map_page', location_id=location.id) }}" enctype="multipart/form-data">
-        <input type="file" name="map_photo" accept="image/*">
-        <button type="submit">Upload Map Photo</button>
+    <button class="settings-btn" onclick="toggleSettings()">Settings</button>
+    <div class="settings-panel" id="settingsPanel">
+    <h2>Upload a Map Image</h2>
+    <form action="{{ url_for('map_page', location_id=location.id) }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="map_photo" required>
+        <button type="submit">Upload Image</button>
     </form>
 
-    <!-- Display the uploaded map image if it exists -->
-    {% if filename %}
-    <h2>Map Image:</h2>
-    <img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Map of {{ location.name }}" style="max-width: 100%;">
-    {% endif %}
+    <button id="myBtn">Place a Bar on the Map</button>
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Select a bar and click on the map to place it:</p>
+            <select id="barSelect">
+                {% for bar in bars %}
+                    <option value="{{ bar.id }}">{{ bar.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    </div>
+    <script>
+        var modal = document.getElementById("myModal");
+        var btn = document.getElementById("myBtn");
+        var span = document.getElementsByClassName("close")[0];
 
-    <!-- List of Bars -->
-    <h2>Bars in {{ location.name }}</h2>
-    <ul>
-        {% for bar in bars %}
-        <li>{{ bar.name }}</li>
-        {% endfor %}
-    </ul>
+        btn.onclick = function() {
+            modal.style.display = "block";
+        }
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        $(document).ready(function() {
+            $('#mapImage').click(function(e) {
+                var posX = $(this).offset().left, posY = $(this).offset().top;
+                var x = e.pageX - posX;
+                var y = e.pageY - posY;
+
+                var mapWidth = $(this).width();
+                var mapHeight = $(this).height();
+
+                var xPercent = (x / mapWidth) * 100;
+                var yPercent = (y / mapHeight) * 100;
+                var barId = $('#barSelect').val();
+                var barName = $('#barSelect option:selected').text();
+
+                $.post('{{ url_for("save_bar_location") }}', {
+                    x: xPercent,
+                    y: yPercent,
+                    bar_id: barId
+                }, function(data) {
+                    if (data.success) {
+                        alert('Bar placed at ' + xPercent + '%, ' + yPercent + '%');
+                        modal.style.display = "none";
+
+                        var marker = $('<div class="bar-marker"></div>');
+                        var label = $('<div class="bar-label"><a href="/bar/' + barId + '">' + barName + '</a></div>');
+                        
+                        marker.css({
+                            'left': xPercent + '%',
+                            'top': yPercent + '%'
+                        });
+                        label.css({
+                            'left': xPercent + '%',
+                            'top': yPercent + '%'
+                        });
+
+                        $('#mapContainer').append(marker);
+                        $('#mapContainer').append(label);
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                });
+            });
+
+            // Load existing bars and place them on the map
+            $.getJSON('{{ url_for("get_bars") }}', function(bars) {
+                bars.forEach(function(bar) {
+                    if (bar.x && bar.y) {
+                        var marker = $('<div class="bar-marker"></div>');
+                        var label = $('<div class="bar-label"><a href="/bar/' + bar.id + '">' + bar.name + '</a></div>');
+                        
+                        marker.css({
+                            'left': bar.x + '%',
+                            'top': bar.y + '%'
+                        });
+                        label.css({
+                            'left': bar.x + '%',
+                            'top': bar.y + '%'
+                        });
+
+                        $('#mapContainer').append(marker);
+                        $('#mapContainer').append(label);
+                    }
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(window).resize(function() {
+    // Adjust map container padding-top based on its current width to maintain aspect ratio
+    var currentWidth = $('#mapContainer').width();
+    var desiredHeight = currentWidth / 2; // Change '2' based on your desired aspect ratio
+    var paddingPercentage = (desiredHeight / currentWidth) * 100;
+    $('#mapContainer').css('padding-top', paddingPercentage + '%');
+});
+
+function toggleSettings() {
+        var panel = document.getElementById("settingsPanel");
+        panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+    }
+// Simulate checking if the user is an admin
+var isAdmin = true; // This would be dynamically set based on your authentication system
+
+window.onload = function() {
+    if (isAdmin) {
+        var button = document.createElement('button');
+        button.className = 'settings-btn';
+        button.innerText = 'Settings';
+        button.onclick = function() { toggleSettings(); };
+        document.body.appendChild(button);
+    }
+};
+
+function toggleSettings() {
+    var panel = document.getElementById('settingsPanel');
+    panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+}
+
+    </script>
 </body>
 </html>

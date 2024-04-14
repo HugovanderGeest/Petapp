@@ -164,6 +164,16 @@ class BarLinkForm(FlaskForm):
     bar_number = StringField('Bar Number', validators=[DataRequired()])
     submit = SubmitField('Create Link')
 
+class BarLocation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    x = db.Column(db.Float, nullable=False)  # X coordinate as percentage
+    y = db.Column(db.Float, nullable=False)  # Y coordinate as percentage
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    location = db.relationship('Location', backref=db.backref('bar_locations', lazy=True))
+
+    def __repr__(self):
+        return f'<BarLocation x={self.x}, y={self.y}, location_id={self.location_id}>'
+
 @app.route('/create_bar_link', methods=['GET', 'POST'])
 def create_bar_link():
     bar_link_form = BarLinkForm()
@@ -207,6 +217,8 @@ class Bar(db.Model):
     bekers = db.Column(db.Integer, nullable=False, default=0)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
     location = db.relationship('Location', backref=db.backref('bars', lazy=True))
+    x = db.Column(db.Float, nullable=True)  # X coordinate as percentage
+    y = db.Column(db.Float, nullable=True)  # Y coordinate as percentage
 
     def __init__(self, name, location_id, zakken=0, bekers=0):
         self.name = name
@@ -870,6 +882,30 @@ def check_in_bar(bar_id):
     flash('Successfully checked in.', 'success')
     return redirect(url_for('bar', bar_id=bar_id))
 
+@app.route('/save_bar_location', methods=['POST'])
+def save_bar_location():
+    x = request.form.get('x')
+    y = request.form.get('y')
+    bar_id = request.form.get('bar_id')
+
+    try:
+        bar = Bar.query.get(bar_id)
+        if bar:
+            bar.x = float(x)
+            bar.y = float(y)
+            db.session.commit()
+            return jsonify({'success': 'Bar location updated successfully', 'x': x, 'y': y})
+        else:
+            return jsonify({'error': 'Bar not found'}), 404
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/get_bars', methods=['GET'])
+def get_bars():
+    bars = Bar.query.filter(Bar.x.isnot(None), Bar.y.isnot(None)).all()
+    bars_data = [{'id': bar.id, 'name': bar.name, 'x': bar.x, 'y': bar.y} for bar in bars]
+    return jsonify(bars_data)
 
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
@@ -934,15 +970,12 @@ def map_page(location_id):
             return redirect(url_for('map_page', location_id=location_id))
 
     filename = location.map_image  # Retrieve the filename from the database to display
+    if filename is None:
+        flash('No map photo available. Please upload one.')
+        return render_template('map.html', location=location, bars=bars, filename=None)
+    
     return render_template('map.html', location=location, bars=bars, filename=filename)
 
-@app.route('/save_bar_location', methods=['POST'])
-def save_bar_location():
-    data = request.get_json()
-    new_bar = Bar(name="New Bar", location_id=data['location_id'], x=data['x'], y=data['y'])
-    db.session.add(new_bar)
-    db.session.commit()
-    return jsonify({'success': 'Bar added successfully', 'bar_id': new_bar.id})
 
 @app.route('/zakken_kg_log')
 def zakken_kg_log():

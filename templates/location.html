@@ -49,8 +49,10 @@
 
     </div>
 
-    <div style="text-align: center; margin-top: 20px;">
-        <a href="{{ url_for('map_page', location_id=location.id) }}" class="btn btn-primary">Map</a>
+    <div class="map">
+        <a href="{{ url_for('map_page', location_id=location.id) }}">
+            <i class="fas fa-map-marker-alt"></i> <!-- Font Awesome map icon -->
+        </a>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>

@@ -752,27 +752,77 @@ def add_bar_to_location(location_id):
 def location_details(location_id):
     location = Location.query.get_or_404(location_id)
     form = SimpleForm()  # Create an instance of the form
-    if form.validate_on_submit():
-        LocationAttribute.query.filter_by(location_id=location_id).delete()
-        keys = request.form.getlist('dynamicField_key[]')
-        values = request.form.getlist('dynamicField_value[]')
-        for key, value in zip(keys, values):
-            if key:  # Ensure there is a key
-                new_attribute = LocationAttribute(location_id=location_id, key=key, value=value)
-                db.session.add(new_attribute)
-        db.session.commit()
-        flash('Location updated with dynamic fields!', 'success')
-        return redirect(url_for('view_location', location_id=location_id))
+    all_users = User.query.all()  # Fetch all users for the dropdown
+
+    if request.method == 'POST':
+        if 'user_id' in request.form:
+            # Handle adding a user to this location
+            user_id = request.form.get('user_id')
+            user = User.query.get(user_id)
+            if user:
+                user.location_id = location_id
+                db.session.commit()
+                flash('User added to location successfully!', 'success')
+            else:
+                flash('User not found.', 'error')
+        
+        if form.validate_on_submit():
+            # Handle dynamic fields updates
+            LocationAttribute.query.filter_by(location_id=location_id).delete()
+            keys = request.form.getlist('dynamicField_key[]')
+            values = request.form.getlist('dynamicField_value[]')
+            for key, value in zip(keys, values):
+                if key:  # Ensure there is a key
+                    new_attribute = LocationAttribute(location_id=location_id, key=key, value=value)
+                    db.session.add(new_attribute)
+            db.session.commit()
+            flash('Location updated with dynamic fields!', 'success')
+            return redirect(url_for('view_location', location_id=location_id))
+
     attributes = location.attributes
-    return render_template('location_details.html', location=location, attributes=attributes, form=form)
+    return render_template('location_details.html', location=location, attributes=attributes, form=form, all_users=all_users)
+
+
+@app.route('/location/<int:location_id>/add_user', methods=['POST'])
+def add_user_to_location(location_id):
+    user_id = request.form.get('user_id')
+    user = User.query.get(user_id)
+    if user:
+        user.location_id = location_id
+        db.session.commit()
+        flash('User added to location successfully!', 'success')
+    else:
+        flash('User not found.', 'error')
+    return redirect(url_for('location_details', location_id=location_id))
 
 
 @app.route('/view_location/<int:location_id>')
 def view_location(location_id):
     location = Location.query.get_or_404(location_id)
-    attributes = location.attributes  # Assuming `attributes` is a relationship defined in your Location model
-    return render_template('view_location.html', location=location, attributes=attributes)
+    attributes = location.attributes  # Fetching dynamic attributes of the location
+    users = User.query.filter_by(location_id=location_id).all()  # Fetching all users associated with this location
+    return render_template('view_location.html', location=location, attributes=attributes, users=users)
 
+@app.route('/edit_location/<int:location_id>', methods=['GET'])
+def edit_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    return render_template('edit_location.html', location=location)
+
+@app.route('/update_location/<int:location_id>', methods=['POST'])
+def update_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    location.name = request.form['name']
+    # Clear existing attributes
+    LocationAttribute.query.filter_by(location_id=location_id).delete()
+    # Add new or updated attributes
+    keys = request.form.getlist('dynamicField_key[]')
+    values = request.form.getlist('dynamicField_value[]')
+    for key, value in zip(keys, values):
+        if key and value:
+            new_attr = LocationAttribute(location_id=location_id, key=key, value=value)
+            db.session.add(new_attr)
+    db.session.commit()
+    return redirect(url_for('view_location', location_id=location_id))
 
 @app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])
 def bar(bar_id):

@@ -3,20 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='briefing.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Update {{ location.name }}</title>
     <script>
         function addField(key, value) {
             var container = document.getElementById("fieldsContainer");
             var keyInput = document.createElement("input");
             keyInput.type = "text";
-            keyInput.name = "dynamicField_key[]";  // Use arrays to handle multiple entries
-            keyInput.placeholder = "Enter key";
+            keyInput.name = "dynamicField_key[]";
+            keyInput.placeholder = "Titel";
             keyInput.value = key || '';
+            keyInput.className = "key-input";  // Assigning class name to the keyInput element
+            container.appendChild(keyInput);
+
             
             var valueInput = document.createElement("input");
             valueInput.type = "text";
             valueInput.name = "dynamicField_value[]";
-            valueInput.placeholder = "Enter value";
+            valueInput.placeholder = "Inhoud";
             valueInput.value = value || '';
             
             var lineBreak = document.createElement("br");
@@ -29,6 +34,14 @@
 </head>
 <body onload="loadExistingFields()">
     <h1>Update {{ location.name }}</h1>
+    <form method="POST" action="{{ url_for('add_user_to_location', location_id=location.id) }}">
+        <h3>Add User to Location</h3>
+        {% for user in all_users %}
+            <input type="checkbox" id="user_{{ user.id }}" name="user_id[]" value="{{ user.id }}">
+            <label for="user_{{ user.id }}">{{ user.username }}</label><br>
+        {% endfor %}
+        <button type="submit">Add User</button>
+    </form>
     <form method="post">
         {{ form.hidden_tag() }}
         <div id="fieldsContainer">
@@ -44,7 +57,7 @@
             {% for attr in location.attributes %}
             addField('{{ attr.key }}', '{{ attr.value }}');
             {% endfor %}
-        }
-    </script>
+        </end{script>
+
 </body>
 </html>

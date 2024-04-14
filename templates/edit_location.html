@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='briefing.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <title>Edit: {{ location.name }}</title>
+    <script>
+        function addField(key = '', value = '') {
+            var container = document.getElementById('fieldsContainer');
+            var div = document.createElement('div');
+            div.innerHTML = `<input type="text" name="dynamicField_key[]" value="${key}" placeholder="Key">
+                             <input type="text" name="dynamicField_value[]" value="${value}" placeholder="Value">
+                             <button type="button" onclick="this.parentNode.remove()">Remove</button><br>`;
+            container.appendChild(div);
+        }
+
+        function loadFields() {
+            {% for attr in location.attributes %}
+            addField('{{ attr.key }}', '{{ attr.value }}');
+            {% endfor %}
+        }
+    </script>
+</head>
+<body onload="loadFields()">
+    <h1>Edit Location: {{ location.name }}</h1>
+    <form action="{{ url_for('update_location', location_id=location.id) }}" method="post">
+        <label for="name">Location Name:</label>
+        <input type="text" id="name" name="name" value="{{ location.name }}"><br>
+
+        <h3>Aanpassen:</h3>
+        <div id="fieldsContainer"></div>
+        <button type="button" onclick="addField()">Add New Field</button><br><br>
+
+        <input type="submit" value="Save">
+    </form>
+</body>
+</html>

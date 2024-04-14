@@ -8,6 +8,24 @@
     <title>Dashboard</title>
 </head>
 
+<style>
+    .btn-link {
+    padding: 6px 12px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 5px;
+    display: inline-block;
+}
+.btn-link:hover {
+    background-color: #0056b3;
+    color: white;
+}
+
+</style>
+
 <body>
     <img src="{{ url_for('static', filename='cup.png') }}" alt="Floating Cup" class="floating-cup">
 
@@ -26,13 +44,19 @@
             <h3>Controleur</h3>
             {% endif %}
             <h4>Dit is jouw pagina, hier kan jij zien waar je ingedeeld staat</h4>
-            {% if location_name != 'Je hebt nog geen locatie' %}
-            <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id if user.location else 0) }}">{{ location_name }}</a>
+            {% if user.location %}
+                <div> cv
+                    <p>View Assigned Location:</p>
+                    <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}" class="btn-link">{{ location_name }}</a> 
+                    <a href="{{ url_for('view_location', location_id=user.location.id) }}" class="btn-link">Informatie</a>
+                </div>
             {% else %}
-                {{ location_name }}
+                <p>Je hebt nog geen locatie</p>
             {% endif %}
         </div>        
     </div>
+    
+    
 
     <div class="bottom-navbar">
         <a href="{{ url_for('index') }}" class="nav-item"><i class="fas fa-arrow-left"></i><span>Log uit</span></a>

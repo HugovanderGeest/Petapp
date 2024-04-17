@@ -164,7 +164,7 @@
                 <!-- Modal content -->
                 <div class="modal-content">
                     <span class="close">&times;</span>
-                    <h2>notities {{ bar.name }} op/in {{ bar.location.name }}</h2>
+                    <h2>Notities {{ bar.name }} in {{ bar.location.name }}</h2>
                     <form method="POST" action="{{ url_for('leave_note_for_bar', bar_id=bar.id) }}">
                         <textarea name="bar_note" id="bar_note" rows="4" cols="50"
                             placeholder="Bekers zijn... , zakken zijn..."></textarea>

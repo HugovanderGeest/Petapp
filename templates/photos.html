@@ -1,118 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
 
     <title>View Photos</title>
-</head>
-<body>
+  </head>
+  <body>
+    <img
+      src="{{ url_for('static', filename='logo.png') }}"
+      alt="CircularPET Logo"
+      class="logo2"
+    />
+    <a href="javascript:history.back()" class="back-button"
+      ><i class="fas fa-arrow-left"></i
+    ></a>
+    <div class="gear-icon-container">
+      <i id="toggleSidebar" class="fa fa-bars"></i>
+    </div>
 
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
-    <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
-    <div class="gear-icon-container"> <i id="toggleSidebar" class="fa fa-bars"></i></div>
+    <div class="sidebar" style="display: none">
+      <!-- BEGIN: Changed the initial display to none -->
+      <h2 class="side-titel">
+        {{ current_user.username if current_user.is_authenticated else 'Admin'
+        }}
+      </h2>
+      {% if current_user.is_admin %}
+      <h3>Admin</h3>
+      {% else %}
+      <h3>Controleur</h3>
+      {% endif %}
 
-    <div class="sidebar" style="display: none;">
-        <!-- BEGIN: Changed the initial display to none -->
-            <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
-                {% if current_user.is_admin %}
-                    <h3>Admin</h3>
-                    {% else %}
-                <h3>Controleur</h3>
-            {% endif %}
-
-        <a href="{{ url_for('admin') }}">
-            <div class="side-link">
-                <i class="fas fa-user"></i>
-            <p>Admin</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('change_log') }}">
-            <div class="side-link">
-            <i class="fas fa-book"></i>
-            <p>Log</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('check_ins') }}">
-            <div class=" side-link">
-            <i class="fas fa-check"></i>
-            <p>Check</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('view_photos') }}">
-            <div class=" active side-link">
-                <i class="fas fa-images"></i>
-                <p>Photos</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('show_briefings') }}">
-            <div class="side-link">
-                <i class="fas fa-file"></i>
-                <p>Briefings</p>
-            </div>
-        </a>
-
-
-        <div class="side-bottom">
-
-            <div class="line"></div>
-    
-            <a href="{{ url_for('index') }}">
-                <div class="side-link">
-                <i class="fas fa-arrow-left"></i>
-                <p>Log-uit</p>
-            </div>
-            </a>
+      <a href="{{ url_for('admin') }}">
+        <div class="side-link">
+          <i class="fas fa-user"></i>
+          <p>Admin</p>
         </div>
+      </a>
+
+      <a href="{{ url_for('change_log') }}">
+        <div class="side-link">
+          <i class="fas fa-book"></i>
+          <p>Log</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('check_ins') }}">
+        <div class="side-link">
+          <i class="fas fa-check"></i>
+          <p>Check</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('view_photos') }}">
+        <div class="active side-link">
+          <i class="fas fa-images"></i>
+          <p>Photos</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('show_briefings') }}">
+        <div class="side-link">
+          <i class="fas fa-file"></i>
+          <p>Briefings</p>
+        </div>
+      </a>
+
+      <div class="side-bottom">
+        <div class="line"></div>
+
+        <a href="{{ url_for('index') }}">
+          <div class="side-link">
+            <i class="fas fa-arrow-left"></i>
+            <p>Log-uit</p>
+          </div>
+        </a>
+      </div>
     </div>
 
     <div class="photos-container">
-        {% for photo in photos %}
-            <div class="photo-item">
-            <img src="{{ url_for('uploaded_photos', filename=photo.filename) }}" alt="Photo" style="cursor: pointer; ">
-            <p>Uploaded at: {{ photo.uploaded_at }}</p>
-            <p>Bar: {{ photo.bar.name }}</p>
-        </div>
-    {% endfor %}
-</div>
+      {% for photo in photos %}
+      <div class="photo-item">
+        <img
+          src="{{ url_for('uploaded_photos', filename=photo.filename) }}"
+          alt="Photo"
+          style="cursor: pointer"
+        />
+        <p>Uploaded at: {{ photo.uploaded_at }}</p>
+        <p>Bar: {{ photo.bar.name }}</p>
+      </div>
+      {% endfor %}
+    </div>
 
     <div id="lightboxModal" class="lightbox-modal">
-        <span class="close-lightbox" onclick="closeModal()">&times;</span>
-        <img class="lightbox-content" id="lightboxPhoto">
+      <span class="close-lightbox" onclick="closeModal()">&times;</span>
+      <img class="lightbox-content" id="lightboxPhoto" />
     </div>
 
     <script>
-        // Function to open the modal and display the clicked image
-        function openModal(src) {
-            document.getElementById('lightboxModal').style.display = "block";
-            document.getElementById('lightboxPhoto').src = src;
-        }
+      // Function to open the modal and display the clicked image
+      function openModal(src) {
+        document.getElementById("lightboxModal").style.display = "block";
+        document.getElementById("lightboxPhoto").src = src;
+      }
 
-        // Function to close the modal
-        function closeModal() {
-            document.getElementById('lightboxModal').style.display = "none";
-        }
+      // Function to close the modal
+      function closeModal() {
+        document.getElementById("lightboxModal").style.display = "none";
+      }
 
-        // Add click event to images
-        document.querySelectorAll('.photo-item img').forEach(img => {
-            img.onclick = () => openModal(img.src);
-        });
+      // Add click event to images
+      document.querySelectorAll(".photo-item img").forEach((img) => {
+        img.onclick = () => openModal(img.src);
+      });
     </script>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#toggleSidebar').click(function () {
-            // Toggle the visibility of the sidebar with a slide animation
-            $('.sidebar').slideToggle();
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#toggleSidebar").click(function () {
+          // Toggle the visibility of the sidebar with a slide animation
+          $(".sidebar").slideToggle();
         });
-    });
-</script>
-</body>
+      });
+    </script>
+  </body>
 </html>

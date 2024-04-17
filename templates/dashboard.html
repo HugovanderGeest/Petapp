@@ -1,162 +1,204 @@
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='main.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
     <title>Dashboard</title>
-</head>
+  </head>
 
-<style>
+  <style>
     .btn-link {
-    padding: 6px 12px;
-    background-color: #007bff;
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    border-radius: 5px;
-    margin: 5px;
-    display: inline-block;
-}
-.btn-link:hover {
-    background-color: #0056b3;
-    color: white;
-}
+      padding: 6px 12px;
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 5px;
+      display: inline-block;
+    }
+    .btn-link:hover {
+      background-color: #0056b3;
+      color: white;
+    }
+  </style>
 
-</style>
+  <body>
+    <img
+      src="{{ url_for('static', filename='cup.png') }}"
+      alt="Floating Cup"
+      class="floating-cup"
+    />
 
-<body>
-    <img src="{{ url_for('static', filename='cup.png') }}" alt="Floating Cup" class="floating-cup">
+    <img
+      src="{{ url_for('static', filename='logo.png') }}"
+      alt="CircularPET Logo"
+      class="logo2"
+    />
 
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
-
-    <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}" alt="" id="profilePic">
-
-    
+    <img
+      src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}"
+      alt=""
+      id="profilePic"
+    />
 
     <div class="login-container bigger">
-        <div class="login-form naame">
-            <h2>{{ username }}</h2>
-            {% if current_user.is_admin %}
-            <h3>Admin</h3>
-            {% else %}
-            <h3>Controleur</h3>
-            {% endif %}
-            <h4>Dit is jouw pagina</h4>
-            {% if user.location %}
-                <div> 
-                    <p>Informatie voor jou:</p>
-                    <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}" class="btn-link">{{ location_name }}</a> 
-                    <a href="{{ url_for('view_location', location_id=user.location.id) }}" class="btn-link">Informatie</a>
-                </div>
-            {% else %}
-                <p>Je hebt nog geen locatie</p>
-            {% endif %}
-        </div>        
+      <div class="login-form naame">
+        <h2>{{ username }}</h2>
+        {% if current_user.is_admin %}
+        <h3>Admin</h3>
+        {% else %}
+        <h3>Controleur</h3>
+        {% endif %}
+        <h4>Dit is jouw pagina</h4>
+        {% if user.location %}
+        <div>
+          <p>Informatie voor jou:</p>
+          <a
+            href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}"
+            class="btn-link"
+            >{{ location_name }}</a
+          >
+          <a
+            href="{{ url_for('view_location', location_id=user.location.id) }}"
+            class="btn-link"
+            >Informatie</a
+          >
+        </div>
+        {% else %}
+        <p>Je hebt nog geen locatie</p>
+        {% endif %}
+      </div>
     </div>
-    
-    
 
     <div class="bottom-navbar">
-        <a href="{{ url_for('index') }}" class="nav-item"><i class="fas fa-arrow-left"></i><span>Log uit</span></a>
-        <a href="#settings" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+      <a href="{{ url_for('index') }}" class="nav-item"
+        ><i class="fas fa-arrow-left"></i><span>Log uit</span></a
+      >
+      <a href="#settings" class="nav-item"
+        ><i class="fas fa-cog"></i><span>Settings</span></a
+      >
     </div>
 
-    <input type="file" id="profileInput" name="profile_picture" style="display: none;" onchange="uploadPicture()">
-                
+    <input
+      type="file"
+      id="profileInput"
+      name="profile_picture"
+      style="display: none"
+      onchange="uploadPicture()"
+    />
+
     <!-- Lightbox container (hidden by default) -->
     <div id="passwordChangeLightbox" class="modal">
-        <!-- Lightbox content -->
-        <div class="modal-content">
-            <span class="close">&times;</span> <!-- Close button -->
-            <!-- Your existing Change Password form here -->
-            <div class="password-change-form">
-                <h3>Change Password</h3>
-                <form action="{{ url_for('change_password', user_id=user.id) }}" method="post">
-                    <label for="new_password">New Password:</label>
-                    <input type="password" id="new_password" name="new_password" required>
-                    
-                    <label for="confirm_password">Confirm New Password:</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required>
-                    
-                    <button type="submit">Change Password</button>
-                </form>
-            </div>
+      <!-- Lightbox content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <!-- Close button -->
+        <!-- Your existing Change Password form here -->
+        <div class="password-change-form">
+          <h3>Change Password</h3>
+          <form
+            action="{{ url_for('change_password', user_id=user.id) }}"
+            method="post"
+          >
+            <label for="new_password">New Password:</label>
+            <input
+              type="password"
+              id="new_password"
+              name="new_password"
+              required
+            />
+
+            <label for="confirm_password">Confirm New Password:</label>
+            <input
+              type="password"
+              id="confirm_password"
+              name="confirm_password"
+              required
+            />
+
+            <button type="submit">Change Password</button>
+          </form>
         </div>
+      </div>
     </div>
 
     <script>
-        document.getElementById('profilePic').onclick = function() {
-            document.getElementById('profileInput').click();
-        };
-        
-        function uploadPicture() {
-            var form_data = new FormData();
-            var file_input = document.getElementById('profileInput');
-            var profile_pic_img = document.getElementById('profilePic'); // Get the profile picture img element
-        
-            if(file_input.files.length > 0) {
-                form_data.append('profile_picture', file_input.files[0]);
-                fetch('{{ url_for("upload_profile_picture", user_id=user.id) }}', {
-                    method: 'POST',
-                    body: form_data,
-                    credentials: 'include'
-                }).then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok'); // Handle HTTP errors
-                    }
-                    return response.json(); // This will fail if the response is not JSON
-                }).then(data => {
-                    if(data.image_url) {
-                        profile_pic_img.src = data.image_url; // Update the src of the profile picture img element
-                    } else {
-                        // If there's no image_url in the response, handle it (perhaps the server should always send this on success)
-                        alert('Upload succeeded, but no image URL was returned.');
-                    }
-                }).catch(error => {
-                    console.error('Upload failed:', error);
-                    alert('Failed to upload the profile picture. ' + error.message);
-                });
-            }
+      document.getElementById("profilePic").onclick = function () {
+        document.getElementById("profileInput").click();
+      };
+
+      function uploadPicture() {
+        var form_data = new FormData();
+        var file_input = document.getElementById("profileInput");
+        var profile_pic_img = document.getElementById("profilePic"); // Get the profile picture img element
+
+        if (file_input.files.length > 0) {
+          form_data.append("profile_picture", file_input.files[0]);
+          fetch('{{ url_for("upload_profile_picture", user_id=user.id) }}', {
+            method: "POST",
+            body: form_data,
+            credentials: "include",
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error("Network response was not ok"); // Handle HTTP errors
+              }
+              return response.json(); // This will fail if the response is not JSON
+            })
+            .then((data) => {
+              if (data.image_url) {
+                profile_pic_img.src = data.image_url; // Update the src of the profile picture img element
+              } else {
+                // If there's no image_url in the response, handle it (perhaps the server should always send this on success)
+                alert("Upload succeeded, but no image URL was returned.");
+              }
+            })
+            .catch((error) => {
+              console.error("Upload failed:", error);
+              alert("Failed to upload the profile picture. " + error.message);
+            });
         }
-        </script>
-        <script>
-            // Get the modal
-            var modal = document.getElementById("passwordChangeLightbox");
-        
-            // Get the button that opens the modal
-            var btn = document.querySelector(".fa-cog"); // Assuming .fa-cog is your settings icon class
-        
-            // Get the <span> element that closes the modal
-            var span = document.getElementsByClassName("close")[0];
-        
-            // When the user clicks the button, open the modal 
-            btn.onclick = function() {
-                modal.style.display = "block";
-            }
-        
-            // When the user clicks on <span> (x), close the modal
-            span.onclick = function() {
-                modal.style.display = "none";
-            }
-        
-            // When the user clicks anywhere outside of the modal, close it
-            window.onclick = function(event) {
-                if (event.target == modal) {
-                    modal.style.display = "none";
-                }
-            }
-        </script>
-        
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-          {% endfor %}
-        {% endif %}
-      {% endwith %}
+      }
+    </script>
+    <script>
+      // Get the modal
+      var modal = document.getElementById("passwordChangeLightbox");
 
-</body>
+      // Get the button that opens the modal
+      var btn = document.querySelector(".fa-cog"); // Assuming .fa-cog is your settings icon class
 
+      // Get the <span> element that closes the modal
+      var span = document.getElementsByClassName("close")[0];
+
+      // When the user clicks the button, open the modal
+      btn.onclick = function () {
+        modal.style.display = "block";
+      };
+
+      // When the user clicks on <span> (x), close the modal
+      span.onclick = function () {
+        modal.style.display = "none";
+      };
+
+      // When the user clicks anywhere outside of the modal, close it
+      window.onclick = function (event) {
+        if (event.target == modal) {
+          modal.style.display = "none";
+        }
+      };
+    </script>
+
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+    messages %} {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %} {% endif %} {% endwith %}
+  </body>
 </html>

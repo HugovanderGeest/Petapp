@@ -1,414 +1,452 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
 
-{% block content %}
+<!-- <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2"> -->
+<!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
+<h2 class="top-boy">Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
 
+<form
+  class="check-in"
+  action="{{ url_for('check_in_bar', bar_id=bar.id) }}"
+  method="post"
+>
+  <input class="check-button" type="submit" value="Check In" />
+</form>
 
-    <!-- <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2"> -->
-    <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
-    <h2 class="top-boy">Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
+{% if from_admin %}
+<script>
+  $(document).ready(function () {
+    $("#toggle").click(function () {
+      $(".sidebar").slideToggle();
+      $(".cube-container").slideToggle();
+    });
+  });
+</script>
 
-    <form class="check-in" action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
-        <input class="check-button" type="submit" value="Check In">
+<i id="toggle" class="fa fa-cog gear-icon-container"></i>
+
+<div class="sidebar" style="display: none">
+  <h2 class="side-titel">
+    {{ current_user.username if current_user.is_authenticated else 'Not logged
+    in' }}
+  </h2>
+  {% if current_user.is_admin %}
+  <h3>Admin</h3>
+  {% else %}
+  <h3>Controleur</h3>
+  {% endif %}
+
+  <a href="{{ url_for('admin') }}">
+    <div class="side-link">
+      <i class="fas fa-user"></i>
+      <p>Admin</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('change_log') }}">
+    <div class="side-link">
+      <i class="fas fa-book"></i>
+      <p>Log</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('view_photos') }}">
+    <div class="side-link">
+      <i class="fas fa-images"></i>
+      <p>Photos</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('check_ins') }}">
+    <div class="side-link">
+      <i class="fas fa-check"></i>
+      <p>Check</p>
+    </div>
+  </a>
+
+  <a href="{{ url_for('bar_notes') }}">View Bar Notes</a>
+
+  <div class="side-bottom">
+    <div class="line"></div>
+
+    <a href="{{ url_for('index') }}">
+      <div class="side-link">
+        <i class="fas fa-arrow-left"></i>
+        <p>Log-uit</p>
+      </div>
+    </a>
+  </div>
+</div>
+
+{% endif %}
+
+<button id="infoBtn" class="fab vraag"><i class="fas fa-question"></i></button>
+
+<div
+  id="infoLightbox"
+  style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+  "
+>
+  <div style="background: white; margin: 100px auto; padding: 20px; width: 50%">
+    <b> Vul hier in hoeveel kg één of meerdere zakken wegen. </b><br />
+    <br />
+    <b> Check-in </b><br />Als je langs een bar bent gelopen en geen zak hebt
+    meegenomen.<br /><br />
+    <b> Foto's </b><br />Upload foto's van de omgeving of van dingen die je
+    opvallen.<br />
+    <br />
+    <b> Notities </b><br />Wil je iets laten weten over een bar zodat wij daar
+    rekening mee kunnen houden, zet het hier.<br />
+    <br />
+    <b> +Zakken </b> <br />Voor als je meer dan één zak wilt inchecken.<br />
+    <br />
+
+    Vragen? app: <a href="tel:0639865297">0639865297</a><br />
+    <br /><br />
+    <br />
+    <button class="sluit-knop" onclick="closeLightbox()">Sluit</button>
+  </div>
+</div>
+
+<div class="bottom-navbar">
+  <!-- Photo icon with text -->
+
+  <a
+    href="{{ url_for('location', user_id=user.id, location_id=bar.location_id) }}"
+    class="nav-item"
+  >
+    <i class="fas fa-arrow-left"></i><span>Terug</span>
+  </a>
+
+  <a
+    href="javascript:void(0);"
+    class="nav-item"
+    id="photoIcon"
+    onclick="document.getElementById('photoModal').style.display='block'"
+  >
+    <i class="fas fa-images"></i><span>Foto's</span>
+  </a>
+  <!-- Note icon with text -->
+  <a
+    href="javascript:void(0);"
+    class="nav-item"
+    id="noteBtn"
+    onclick="document.getElementById('noteModal').style.display='block'"
+  >
+    <i class="fas fa-file"></i><span>Notities</span>
+  </a>
+
+  <a id="addZak" class="nav-item">
+    <i class="fas fa-plus"></i><span>Zakken</span>
+  </a>
+</div>
+
+<div class="cube-container bottom-boy">
+  <div class="cube rond user-cube">
+    <form
+      class="zakform"
+      method="POST"
+      action="{{ url_for('update_bar_details_and_check_in', bar_id=bar.id) }}"
+      id="myForm"
+    >
+      <div id="zakkenFieldsContainer">
+        <div id="zakkenFields">
+          <div class="zakkenField" data-index="0">
+            <label>Zak 1 in KG:</label> <br />
+            <input type="text" name="zakken[0].kg" required />
+            <button type="button" class="removeZak">X</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="input-group meer" id="kgVanZakContainer">
+        <label for="kg_van_zakInput">Totaal KG van zakken:</label>
+        <input
+          type="number"
+          id="kg_van_zakInput"
+          name="kg_van_zak"
+          style="-moz-appearance: textfield"
+        />
+      </div>
+
+      <input class="bottom-stuur" type="submit" value="Stuur" />
     </form>
 
-    {% if from_admin %}
-    <script>
-        $(document).ready(function () {
-            $("#toggle").click(function () {
-                $(".sidebar").slideToggle();
-                $(".cube-container").slideToggle();
-            });
-        });
-    </script>
-
-    <i id="toggle" class="fa fa-cog gear-icon-container"></i>
-
-
-    <div class="sidebar" style="display: none;">
-        <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Not logged in' }}</h2>
-        {% if current_user.is_admin %}
-        <h3>Admin</h3>
-        {% else %}
-        <h3>Controleur</h3>
-        {% endif %}
-
-        <a href="{{ url_for('admin') }}">
-            <div class="side-link">
-                <i class="fas fa-user"></i>
-                <p>Admin</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('change_log') }}">
-            <div class="side-link">
-                <i class="fas fa-book"></i>
-                <p>Log</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('view_photos') }}">
-            <div class="side-link">
-                <i class="fas fa-images"></i>
-                <p>Photos</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('check_ins') }}">
-            <div class="side-link">
-                <i class="fas fa-check"></i>
-                <p>Check</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('bar_notes') }}">View Bar Notes</a>
-
-
-
-        <div class="side-bottom">
-
-            <div class="line"></div>
-
-            <a href="{{ url_for('index') }}">
-                <div class="side-link">
-                    <i class="fas fa-arrow-left"></i>
-                    <p>Log-uit</p>
-                </div>
-            </a>
-        </div>
+    <div id="photoModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Upload Photo</h2>
+        <form
+          action="{{ url_for('upload_photo', bar_id=bar.id) }}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input class="file-boy" type="file" name="photo" />
+          <input type="submit" value="Upload Photo" />
+        </form>
+      </div>
     </div>
 
-    {% endif %}
-
-    <button id="infoBtn" class="fab vraag"><i class="fas fa-question"></i></button>
-
-        <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
-            <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
-                <b>  Vul hier in hoeveel kg één of meerdere zakken wegen. </b><br> <br>
-               <b> Check-in </b><br>Als je langs een bar bent gelopen en geen zak hebt meegenomen.<br><br>
-               <b>   Foto's </b><br>Upload foto's van de omgeving of van dingen die je opvallen.<br> <br>
-                <b>  Notities </b><br>Wil je iets laten weten over een bar zodat wij daar rekening mee kunnen houden, zet het hier.<br> <br>
-                    <b>  +Zakken </b> <br>Voor als je meer dan één zak wilt inchecken.<br> <br>
-
-                Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
-                <button class="sluit-knop" onclick="closeLightbox()">Sluit</button> 
-            </div>
-        </div>
-
-
-    <div class="bottom-navbar">
-        <!-- Photo icon with text -->
-
-        <a href="{{ url_for('location', user_id=user.id, location_id=bar.location_id) }}" class="nav-item">
-            <i class="fas fa-arrow-left"></i><span>Terug</span>
-        </a>
-        
-        <a href="javascript:void(0);" class="nav-item" id="photoIcon"
-            onclick="document.getElementById('photoModal').style.display='block'">
-            <i class="fas fa-images"></i><span>Foto's</span>
-        </a>
-        <!-- Note icon with text -->
-        <a href="javascript:void(0);" class="nav-item" id="noteBtn"
-            onclick="document.getElementById('noteModal').style.display='block'">
-            <i class="fas fa-file "></i><span>Notities</span>
-        </a>
-
-        <a id="addZak" class="nav-item">
-            <i class="fas fa-plus"></i><span>Zakken</span>
-        </a>
+    <!-- The Modal -->
+    <div id="noteModal" class="modal">
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Notities {{ bar.name }} in {{ bar.location.name }}</h2>
+        <form
+          method="POST"
+          action="{{ url_for('leave_note_for_bar', bar_id=bar.id) }}"
+        >
+          <textarea
+            name="bar_note"
+            id="bar_note"
+            rows="4"
+            cols="50"
+            placeholder="Bekers zijn... , zakken zijn..."
+          ></textarea>
+          <input type="submit" value="Verstuur" />
+        </form>
+      </div>
     </div>
+  </div>
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-    <div class="cube-container bottom-boy">
+<script>
+  $(document).ready(function () {
+    // Toggle details functionality
 
-        <div class="cube rond user-cube">
+    $("#link-form").submit(function (e) {
+      e.preventDefault(); // Prevent default form submission
+      var barId = $(this).data("bar-id");
+      var linkValue = $("#link").val();
+      var updateLinkUrl = `/bar/${barId}/update-link`;
 
-            <form class="zakform" method="POST" action="{{ url_for('update_bar_details_and_check_in', bar_id=bar.id) }}"
-                id="myForm">
+      $.ajax({
+        url: updateLinkUrl,
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ link: linkValue }),
+        success: function (response) {
+          alert("Link updated successfully");
+        },
+        error: function (xhr, status, error) {
+          alert("Error updating link");
+        },
+      });
+    });
 
-                <div id="zakkenFieldsContainer">
-                    <div id="zakkenFields">
-                        <div class="zakkenField" data-index="0">
-                            <label>Zak 1 in KG:</label> <br>
-                            <input type="text" name="zakken[0].kg" required>
-                            <button type="button" class="removeZak">X</button>
-                        </div>
-                    </div>
-                </div>
+    // Button click event handlers for increment/decrement actions
+    $(
+      "#zakken-minus, #zakken-plus, #volleZakken-minus, #volleZakken-plus"
+    ).click(function (e) {
+      e.preventDefault();
+      var idParts = this.id.split("-");
+      var field = idParts[0] + "_gekregen";
+      var increment = idParts[1] === "plus" ? 1 : -1;
+      if (field === "volleZakken_gekregen") field = "volle_zakken_opgehaald";
+      updateBar(field, increment);
+    });
 
-                <div class="input-group meer" id="kgVanZakContainer">
-                    <label for="kg_van_zakInput">Totaal KG van zakken:</label>
-                    <input type="number" id="kg_van_zakInput" name="kg_van_zak" style=" -moz-appearance: textfield;">
-                </div>
+    // Show/hide Kg van zak dynamically
+    function toggleKgVanZakVisibility() {
+      var volleZakkenValue = $("#volle_zakken_opgehaaldInput").val();
+      if (volleZakkenValue > 0) {
+        $("#kgVanZakContainer").show();
+      } else {
+        $("#kgVanZakContainer").hide();
+      }
+    }
 
+    $("#volle_zakken_opgehaaldInput").on("input", toggleKgVanZakVisibility);
+    toggleKgVanZakVisibility(); // Call on document ready to ensure correct initial state
 
-                <input class="bottom-stuur" type="submit" value="Stuur">
+    // Function to update bar details and log changes
+    function updateBar(field, increment) {
+      var input = $("#" + field + "Input");
+      var currentValue = parseInt(input.val(), 10) || 0;
+      var newValue = currentValue + increment;
+      $.ajax({
+        url: "/bar/{{ bar.id }}/update",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({ field: field, increment: increment }),
+        success: function (response) {
+          input.val(newValue);
+          logChangeToServer("{{ bar.id }}", field, currentValue, newValue);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Request failed:", textStatus, errorThrown);
+          console.log(jqXHR.responseText);
+        },
+      });
+    }
 
-            </form>
+    // Logging function
+    function logChangeToServer(barId, field, oldValue, newValue) {
+      $.ajax({
+        url: "/log_change",
+        type: "POST",
+        contentType: "application/json",
+        data: JSON.stringify({
+          bar_id: barId,
+          field: field,
+          old_value: oldValue.toString(),
+          new_value: newValue.toString(),
+        }),
+        success: function (response) {
+          console.log("Change logged successfully", response);
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+          console.error("Failed to log change:", textStatus, errorThrown);
+          console.log(jqXHR.responseText);
+        },
+      });
+    }
+  });
+</script>
 
-            <div id="photoModal" class="modal">
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Upload Photo</h2>
-                    <form action="{{ url_for('upload_photo', bar_id=bar.id) }}" method="post"
-                        enctype="multipart/form-data">
-                        <input class="file-boy" type="file" name="photo">
-                        <input type="submit" value="Upload Photo">
-                    </form>
-                </div>
-            </div>
+<script>
+  $(document).ready(function () {
+    $("#toggleSidebar").click(function () {
+      // Toggle the visibility of the sidebar with a slide animation
+      $(".sidebar").slideToggle();
+    });
+  });
+</script>
 
+<script>
+  // Get the modal
+  var modal = document.getElementById("noteModal");
 
-            <!-- The Modal -->
-            <div id="noteModal" class="modal">
+  // Get the button that opens the modal
+  var btn = document.getElementById("noteBtn");
 
-                <!-- Modal content -->
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h2>Notities {{ bar.name }} in {{ bar.location.name }} </h2>
-                    <form method="POST" action="{{ url_for('leave_note_for_bar', bar_id=bar.id) }}">
-                        <textarea name="bar_note" id="bar_note" rows="4" cols="50"
-                            placeholder="Bekers zijn... , zakken zijn..."></textarea>
-                        <input type="submit" value="Verstuur">
-                    </form>
-                </div>
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
 
-            </div>
+  // When the user clicks the button, open the modal
+  btn.onclick = function () {
+    modal.style.display = "block";
+  };
 
-        </div>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function () {
+    modal.style.display = "none";
+  };
 
-    <script>
-        $(document).ready(function () {
-            // Toggle details functionality
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+</script>
 
-            $('#link-form').submit(function (e) {
-                e.preventDefault(); // Prevent default form submission
-                var barId = $(this).data('bar-id');
-                var linkValue = $('#link').val();
-                var updateLinkUrl = `/bar/${barId}/update-link`;
+<script>
+  $(document).ready(function () {
+    // Close modal functionality
+    $(".close").click(function () {
+      // This assumes the close button is directly inside the modal content, which is directly inside the modal
+      $(this).closest(".modal").hide();
+    });
 
-                $.ajax({
-                    url: updateLinkUrl,
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ link: linkValue }),
-                    success: function (response) {
-                        alert('Link updated successfully');
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Error updating link');
-                    }
-                });
-            });
+    // Close modals when clicking outside of them
+    $(window).click(function (event) {
+      if ($(event.target).hasClass("modal")) {
+        $(event.target).hide();
+      }
+    });
 
+    // Example of opening a modal with an ID specified by a button's data-target attribute
+    $("[data-target]").click(function () {
+      var modalId = $(this).attr("data-target");
+      $("#" + modalId).show();
+    });
+  });
+</script>
 
+<script>
+  $(document).ready(function () {
+    let zakIndex = 0;
 
-            // Button click event handlers for increment/decrement actions
-            $('#zakken-minus, #zakken-plus, #volleZakken-minus, #volleZakken-plus').click(function (e) {
-                e.preventDefault();
-                var idParts = this.id.split('-');
-                var field = idParts[0] + '_gekregen';
-                var increment = idParts[1] === 'plus' ? 1 : -1;
-                if (field === 'volleZakken_gekregen') field = 'volle_zakken_opgehaald';
-                updateBar(field, increment);
-            });
-
-            // Show/hide Kg van zak dynamically
-            function toggleKgVanZakVisibility() {
-                var volleZakkenValue = $('#volle_zakken_opgehaaldInput').val();
-                if (volleZakkenValue > 0) {
-                    $('#kgVanZakContainer').show();
-                } else {
-                    $('#kgVanZakContainer').hide();
-                }
-            }
-
-            $('#volle_zakken_opgehaaldInput').on('input', toggleKgVanZakVisibility);
-            toggleKgVanZakVisibility(); // Call on document ready to ensure correct initial state
-
-            // Function to update bar details and log changes
-            function updateBar(field, increment) {
-                var input = $('#' + field + 'Input');
-                var currentValue = parseInt(input.val(), 10) || 0;
-                var newValue = currentValue + increment;
-                $.ajax({
-                    url: '/bar/{{ bar.id }}/update',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({ field: field, increment: increment }),
-                    success: function (response) {
-                        input.val(newValue);
-                        logChangeToServer('{{ bar.id }}', field, currentValue, newValue);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Request failed:', textStatus, errorThrown);
-                        console.log(jqXHR.responseText);
-                    }
-                });
-            }
-
-            // Logging function
-            function logChangeToServer(barId, field, oldValue, newValue) {
-                $.ajax({
-                    url: '/log_change',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        bar_id: barId,
-                        field: field,
-                        old_value: oldValue.toString(),
-                        new_value: newValue.toString()
-                    }),
-                    success: function (response) {
-                        console.log('Change logged successfully', response);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.error('Failed to log change:', textStatus, errorThrown);
-                        console.log(jqXHR.responseText);
-                    }
-                });
-            }
-        });
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $('#toggleSidebar').click(function () {
-                // Toggle the visibility of the sidebar with a slide animation
-                $('.sidebar').slideToggle();
-            });
-        });
-    </script>
-
-    <script>
-        // Get the modal
-        var modal = document.getElementById('noteModal');
-
-        // Get the button that opens the modal
-        var btn = document.getElementById("noteBtn");
-
-        // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("close")[0];
-
-        // When the user clicks the button, open the modal 
-        btn.onclick = function () {
-            modal.style.display = "block";
-        }
-
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            modal.style.display = "none";
-        }
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function (event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            // Close modal functionality
-            $('.close').click(function () {
-                // This assumes the close button is directly inside the modal content, which is directly inside the modal
-                $(this).closest('.modal').hide();
-            });
-
-            // Close modals when clicking outside of them
-            $(window).click(function (event) {
-                if ($(event.target).hasClass('modal')) {
-                    $(event.target).hide();
-                }
-            });
-
-            // Example of opening a modal with an ID specified by a button's data-target attribute
-            $('[data-target]').click(function () {
-                var modalId = $(this).attr('data-target');
-                $('#' + modalId).show();
-            });
-        });
-
-    </script>
-
-
-    <script>
-        $(document).ready(function () {
-            let zakIndex = 0;
-
-            $('#addZak').click(function () {
-                zakIndex++;
-                $('#zakkenFields').append(`
+    $("#addZak").click(function () {
+      zakIndex++;
+      $("#zakkenFields").append(`
                 <div class="zakkenField" data-index="${zakIndex}">
                     <label>Zak ${zakIndex + 1} in KG:</label> <br>
                     <input type="text" name="zakken[${zakIndex}].kg" required>
                     <button type="button" class="removeZak">X</button>
                 </div>
             `);
-            });
+    });
 
-            $('body').on('click', '.removeZak', function () {
-                $(this).parent('.zakkenField').remove();
-            });
-        });
-    </script>
+    $("body").on("click", ".removeZak", function () {
+      $(this).parent(".zakkenField").remove();
+    });
+  });
+</script>
 
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+%} {% for category, message in messages %}
+<div class="checkmark-container">
+  <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+    <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
+    <path
+      class="checkmark-check"
+      fill="none"
+      d="M14.1 27.2l7.1 7.2 16.7-16.8"
+    />
+  </svg>
+</div>
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    {% for category, message in messages %}
-    <div class="checkmark-container">
-        <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-            <circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none" />
-            <path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
-        </svg>
-    </div>
+{% endfor %} {% endif %} {% endwith %}
 
-    {% endfor %}
-    {% endif %}
-    {% endwith %}
+<script>
+  // Function to show the checkmark
+  function showCheckmark() {
+    // Add 'show' class to the checkmark container to start the fade-in
+    $(".checkmark-container").addClass("show");
 
-    <script>
-        // Function to show the checkmark
-        function showCheckmark() {
-            // Add 'show' class to the checkmark container to start the fade-in
-            $('.checkmark-container').addClass('show');
+    // Remove 'show' class after a delay to fade out
+    setTimeout(function () {
+      $(".checkmark-container").removeClass("show");
+    }, 3000); // Adjust the timing as needed
+  }
 
-            // Remove 'show' class after a delay to fade out
-            setTimeout(function () {
-                $('.checkmark-container').removeClass('show');
-            }, 3000); // Adjust the timing as needed
-        }
+  // Call this function when you want to show and auto-hide the checkmark
+  showCheckmark();
+</script>
 
-        // Call this function when you want to show and auto-hide the checkmark
-        showCheckmark();
-    </script>
-
-    <script>
-        $(document).ready(function () {
+<script>
+  $(document).ready(function () {
     // When the user clicks the question mark button, show the info lightbox
-    $('#infoBtn').click(function () {
-        $('#infoLightbox').show();
+    $("#infoBtn").click(function () {
+      $("#infoLightbox").show();
     });
 
     // Function to close the info lightbox when clicking on the close button inside it
     function closeLightbox() {
-        $('#infoLightbox').hide();
+      $("#infoLightbox").hide();
     }
 
     // Attach the closeLightbox function to the button inside the infoLightbox
-    $('#infoLightbox button').click(closeLightbox);
+    $("#infoLightbox button").click(closeLightbox);
 
     // Close the info lightbox when clicking outside of it
     $(window).click(function (event) {
-        if ($(event.target).attr('id') === 'infoLightbox') {
-            $('#infoLightbox').hide();
-        }
+      if ($(event.target).attr("id") === "infoLightbox") {
+        $("#infoLightbox").hide();
+      }
     });
-});
-
-    </script>
+  });
+</script>
 
 {% endblock %}

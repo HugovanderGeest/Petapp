@@ -1,66 +1,96 @@
-{% extends "base.html" %}
+{% extends "base.html" %} {% block content %}
+<a
+  href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/"
+  target="_blank"
+  class="maakappp"
+  >Maak hier een app van</a
+>
 
-{% block content %}
-<a href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/" target="_blank" class="maakappp">Maak hier een app van</a>
-
-<img src="{{ url_for('static', filename='cup.png') }}" alt="Floating Cup" class="floating-cup">
+<img
+  src="{{ url_for('static', filename='cup.png') }}"
+  alt="Floating Cup"
+  class="floating-cup"
+/>
 <div class="login-container">
-    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo">
-    <div class="login-form">
-        <form id="loginForm" method="POST" action="{{ url_for('login') }}" style="height: 160px;">
-            {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-            {% endif %}
-            {% endwith %}
+  <img
+    src="{{ url_for('static', filename='logo.png') }}"
+    alt="CircularPET Logo"
+    class="logo"
+  />
+  <div class="login-form">
+    <form
+      id="loginForm"
+      method="POST"
+      action="{{ url_for('login') }}"
+      style="height: 160px"
+    >
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
 
-            <div class="input-group">
-                <input type="text" id="username" name="username" required placeholder="Naam">
-            </div>
-            <div class="input-group">
-                <input type="password" id="password" name="password" required placeholder="Wachtwoord">
-            </div>
-            <div class="input-group">
-                <input type="submit" value="Login">
-            </div>
-        </form>
-    </div>
+      <div class="input-group">
+        <input
+          type="text"
+          id="username"
+          name="username"
+          required
+          placeholder="Naam"
+        />
+      </div>
+      <div class="input-group">
+        <input
+          type="password"
+          id="password"
+          name="password"
+          required
+          placeholder="Wachtwoord"
+        />
+      </div>
+      <div class="input-group">
+        <input type="submit" value="Login" />
+      </div>
+    </form>
+  </div>
 </div>
 
-<img id="movingImage" src="{{ url_for('static', filename='image.png') }}" alt="Moving Image" style="position: absolute; bottom: 0; display: none;">
+<img
+  id="movingImage"
+  src="{{ url_for('static', filename='image.png') }}"
+  alt="Moving Image"
+  style="position: absolute; bottom: 0; display: none"
+/>
 
 <script>
-    document.getElementById('loginForm').addEventListener('submit', function () {
-        document.getElementById('loading').style.display = 'block';
-    });
+  document.getElementById("loginForm").addEventListener("submit", function () {
+    document.getElementById("loading").style.display = "block";
+  });
 </script>
 <script>
-    let clickCount = 0;
-    const cupImage = document.querySelector('.floating-cup');
-    const movingImage = document.getElementById('movingImage');
+  let clickCount = 0;
+  const cupImage = document.querySelector(".floating-cup");
+  const movingImage = document.getElementById("movingImage");
 
-    cupImage.addEventListener('click', function() {
-        clickCount += 1;
-        if (clickCount === 3) {
-            clickCount = 0; // Reset click count
-            movingImage.style.display = 'block'; // Make the image visible
+  cupImage.addEventListener("click", function () {
+    clickCount += 1;
+    if (clickCount === 3) {
+      clickCount = 0; // Reset click count
+      movingImage.style.display = "block"; // Make the image visible
 
-            // Start the animation
-            const keyframes = [
-                { transform: 'translateX(-100vw)' }, 
-                { transform: 'translateX(100vw)' }
-            ];
-            const options = {
-                duration: 10000, // 5 seconds
-                fill: 'forwards' // Keep the property values set by the last keyframe
-            };
-            movingImage.animate(keyframes, options).onfinish = () => {
-                movingImage.style.display = 'none'; // Hide after animation
-            };
-        }
-    });
+      // Start the animation
+      const keyframes = [
+        { transform: "translateX(-100vw)" },
+        { transform: "translateX(100vw)" },
+      ];
+      const options = {
+        duration: 10000, // 5 seconds
+        fill: "forwards", // Keep the property values set by the last keyframe
+      };
+      movingImage.animate(keyframes, options).onfinish = () => {
+        movingImage.style.display = "none"; // Hide after animation
+      };
+    }
+  });
 </script>
 
 {% endblock %}

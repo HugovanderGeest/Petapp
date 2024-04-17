@@ -1,282 +1,279 @@
 @font-face {
-    font-family: 'Roboto';
-    src: url('/static/fonts/Roboto-Light.ttf') format('truetype');
-    font-weight: 300;
-    /* Light */
-    font-style: normal;
+  font-family: "Roboto";
+  src: url("/static/fonts/Roboto-Light.ttf") format("truetype");
+  font-weight: 300;
+  /* Light */
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Roboto';
-    src: url('/static/fonts/Roboto-Regular.ttf') format('truetype');
-    font-weight: 400;
-    /* Regular - assuming you have this variant */
-    font-style: normal;
+  font-family: "Roboto";
+  src: url("/static/fonts/Roboto-Regular.ttf") format("truetype");
+  font-weight: 400;
+  /* Regular - assuming you have this variant */
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Roboto';
-    src: url('/static/fonts/Roboto-Medium.ttf') format('truetype');
-    font-weight: 500;
-    /* Medium */
-    font-style: normal;
+  font-family: "Roboto";
+  src: url("/static/fonts/Roboto-Medium.ttf") format("truetype");
+  font-weight: 500;
+  /* Medium */
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Roboto';
-    src: url('/static/fonts/Roboto-Bold.ttf') format('truetype');
-    font-weight: 700;
-    /* Bold */
-    font-style: normal;
+  font-family: "Roboto";
+  src: url("/static/fonts/Roboto-Bold.ttf") format("truetype");
+  font-weight: 700;
+  /* Bold */
+  font-style: normal;
 }
 
 @font-face {
-    font-family: 'Roboto';
-    src: url('/static/fonts/Roboto-Black.ttf') format('truetype');
-    font-weight: 900;
-    /* Black */
-    font-style: normal;
+  font-family: "Roboto";
+  src: url("/static/fonts/Roboto-Black.ttf") format("truetype");
+  font-weight: 900;
+  /* Black */
+  font-style: normal;
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    height: 100vh;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: center;
-    overflow-x: hidden;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  height: 100vh;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+  overflow-x: hidden;
 }
 
 .location-bar {
-    position: absolute;
-    top: 20px;
+  position: absolute;
+  top: 20px;
 }
 
 .location-bar form {
-    width: 90vw;
-    background-color: transparent;
+  width: 90vw;
+  background-color: transparent;
 }
 
 #barSearchInput {
-    width: 70vw;
-    font-size: 20px;
-    border-radius: 10px;
-    border: none;
-    padding: 20px;
-      padding-left: 20px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
-    background-repeat: no-repeat;
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 10px center;
-    padding-left: 50px;
-    max-width: 500px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -30%);
-  }
+  width: 70vw;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  padding: 20px;
+  padding-left: 20px;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 50px;
+  max-width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+}
 
 .login-container {
-    text-align: center;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 350px;
+  text-align: center;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  height: 350px;
 }
 
 .bigger {
-    height: 70vh;
-    position: absolute !important;
-    top: 70vh;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 93% !important;
-    border-radius: 50px;
-    overflow-x: hidden;
+  height: 70vh;
+  position: absolute !important;
+  top: 70vh;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 93% !important;
+  border-radius: 50px;
+  overflow-x: hidden;
 }
 
 .blij {
-    height: 200px !important; 
+  height: 200px !important;
 }
 
 .logo {
-    width: 150px;
-    /* Adjust the size of your logo as needed */
-    margin-bottom: 30px;
+  width: 150px;
+  /* Adjust the size of your logo as needed */
+  margin-bottom: 30px;
 }
 
 .formenzo {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    display: flex;
-    flex-wrap: wrap;
-    z-index: 3;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-wrap: wrap;
+  z-index: 3;
 }
 
 .plus-icon {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #4e73df;
-    color: white;
-    padding: 25px;
-    font-size: 20px;
-    border-radius: 50px;
-    box-shadow: #b1b1b1 0px 0px 10px;
-    transition: 0.2s ease-in-out;
-    cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #4e73df;
+  color: white;
+  padding: 25px;
+  font-size: 20px;
+  border-radius: 50px;
+  box-shadow: #b1b1b1 0px 0px 10px;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
 }
 
 .overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 999;
-    display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  display: none;
 }
 
 .formenzo-active {
-    z-index: 1000;
+  z-index: 1000;
 }
 
 /* Styles for form elements inside the password change form */
 .password-change-form form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px; /* Space between form elements */
-    padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px; /* Space between form elements */
+  padding: 20px;
 }
 
 .password-change-form label {
-    display: block;
-    margin-bottom: 5px;
-    color: #333; /* Adjust the color to fit your design */
-    font-size: 16px; /* Adjust the font size as needed */
+  display: block;
+  margin-bottom: 5px;
+  color: #333; /* Adjust the color to fit your design */
+  font-size: 16px; /* Adjust the font size as needed */
 }
 
 .password-change-form input[type="password"] {
-    width: calc(100% - 20px); /* Full width minus padding */
-    padding: 10px;
-    margin-bottom: 10px; /* Space below each input */
-    border: 1px solid #ccc; /* Light grey border */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 16px; /* Text size */
+  width: calc(100% - 20px); /* Full width minus padding */
+  padding: 10px;
+  margin-bottom: 10px; /* Space below each input */
+  border: 1px solid #ccc; /* Light grey border */
+  border-radius: 5px; /* Rounded corners */
+  font-size: 16px; /* Text size */
 }
 
 .password-change-form button[type="submit"] {
-    width: 100%;
-    padding: 10px;
-    background-color: #4e73df; /* Your button color */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px; /* Button text size */
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+  width: 100%;
+  padding: 10px;
+  background-color: #4e73df; /* Your button color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 18px; /* Button text size */
+  transition: background-color 0.3s ease; /* Smooth transition for hover effect */
 }
 
 .password-change-form button[type="submit"]:hover {
-    background-color: #3658a4; /* Darker shade for hover effect */
+  background-color: #3658a4; /* Darker shade for hover effect */
 }
 
 .naame {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 .map-knop {
-    top: 20px;
+  top: 20px;
 }
 
 .naame h2 {
-    width: 100%;
-    font-size: 70px;
-    margin-top: 10px;
+  width: 100%;
+  font-size: 70px;
+  margin-top: 10px;
 }
 
 .naame h3 {
-    margin-top: -50px;
-    color: gray;
-    font-weight: 400;
+  margin-top: -50px;
+  color: gray;
+  font-weight: 400;
 }
 
 .naame h4 {
-    margin-top: 50px;
-    color: rgb(0, 0, 0);
-    font-weight: 400;
-    margin-bottom: 50px;
+  margin-top: 50px;
+  color: rgb(0, 0, 0);
+  font-weight: 400;
+  margin-bottom: 50px;
 }
 
 .naame a {
-    background-color: #4e73df;
-    text-decoration: none;
-    color: white;
-    padding: 15px;
-    border-radius: 20px;
-    font-size: 15px;
+  background-color: #4e73df;
+  text-decoration: none;
+  color: white;
+  padding: 15px;
+  border-radius: 20px;
+  font-size: 15px;
 }
 
 .naame p {
-    font-size: 20px;
-    margin: 0;
-    margin-bottom: 30px;
+  font-size: 20px;
+  margin: 0;
+  margin-bottom: 30px;
 }
 
 .naame h5 {
-    font-size: 30px;
-    font-weight: 900px;
-    margin: 0;
-
+  font-size: 30px;
+  font-weight: 900px;
+  margin: 0;
 }
 
 .user-info {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 .user-info img {
-    width: 40px; /* Example size */
-    height: 40px; /* Maintain aspect ratio */
-    border-radius: 50%; /* Circular pictures */
-    margin-right: 10px;
+  width: 40px; /* Example size */
+  height: 40px; /* Maintain aspect ratio */
+  border-radius: 50%; /* Circular pictures */
+  margin-right: 10px;
 }
 
-
 .plus-icon:hover {
-    background-color: #3658a4;
-    transform: scale(1.05);
+  background-color: #3658a4;
+  transform: scale(1.05);
 }
 
 .login-form form {
-    margin: 0 auto;
-    margin-bottom: 20px;
-    width: 310px;
-
+  margin: 0 auto;
+  margin-bottom: 20px;
+  width: 310px;
 }
 
 #infoLightbox {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.5);
-    z-index: 1000;  /* High z-index to ensure it covers other elements */
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000; /* High z-index to ensure it covers other elements */
 }
 
 .sluit-knop {
-    background-color: red;
+  background-color: red;
   padding: 20px;
   color: white;
   border: none;
@@ -285,279 +282,274 @@ body {
   cursor: pointer;
 }
 
-
 @media (max-width: 600px) {
-    .login-form form {
-        height: 100%;   
-    
-    }
+  .login-form form {
+    height: 100%;
+  }
 }
 
 .input-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .meer {
-    width: 200%;
+  width: 200%;
 }
 
 .sidebar {
-    height: 100vh; /* Fixed height to match the viewport height */
-    max-height: 100vh; /* Maximum height to ensure it doesn't exceed viewport */
-    overflow-y: auto; /* Enables vertical scrolling when content is taller than the sidebar */
-    background-color: white;
-    color: white;
-    width: 15vw; /* Adjust width as needed */
-    position: fixed; /* Changed from absolute to fixed to stay within the view during scroll */
-    bottom: 0;
-    right: 0;
-    border-radius: 0px 15px 0px 0px;
-    padding: 20px;
-    z-index: 6; /* Ensure it's above other content but below modal overlays if any */
-    display: block; /* Confirm it's not set to none */
+  height: 100vh; /* Fixed height to match the viewport height */
+  max-height: 100vh; /* Maximum height to ensure it doesn't exceed viewport */
+  overflow-y: auto; /* Enables vertical scrolling when content is taller than the sidebar */
+  background-color: white;
+  color: white;
+  width: 15vw; /* Adjust width as needed */
+  position: fixed; /* Changed from absolute to fixed to stay within the view during scroll */
+  bottom: 0;
+  right: 0;
+  border-radius: 0px 15px 0px 0px;
+  padding: 20px;
+  z-index: 6; /* Ensure it's above other content but below modal overlays if any */
+  display: block; /* Confirm it's not set to none */
 }
 
 @media (max-width: 600px) {
-    .sidebar {
-        width: 90vw;
-        overflow: hidden;
-        padding-left: 100px;
-        overflow: hidden;
-    }
+  .sidebar {
+    width: 90vw;
+    overflow: hidden;
+    padding-left: 100px;
+    overflow: hidden;
+  }
 }
 
 .max-man {
   max-height: 60vh;
   overflow: scroll;
-    overflow-x: scroll;
+  overflow-x: scroll;
   overflow-x: hidden;
 }
 
 /* Style for the search input field */
 #userSearchInput {
-    width: 90vw;
-    font-size: 20px;
-    border-radius: 10px;
-    border: none;
-    padding: 20px;
-      padding-left: 20px;
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
-    background-repeat: no-repeat;
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 10px center;
-    padding-left: 50px;
-    max-width: 500px;
-    position: relative;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -10%);
-    padding-left: 50px;
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 10px center;
+  width: 90vw;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  padding: 20px;
+  padding-left: 20px;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 50px;
+  max-width: 500px;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -10%);
+  padding-left: 50px;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 10px center;
 }
 
 .custom-table {
-    border-radius: 10px;
+  border-radius: 10px;
 }
 
 .download-knop {
-    background-color: #4e73df;
-    padding: 20px;
-    border-radius: 15px;
-    color: white;
-    text-decoration: none;
-  }
+  background-color: #4e73df;
+  padding: 20px;
+  border-radius: 15px;
+  color: white;
+  text-decoration: none;
+}
 
 .zoeken {
-    padding: 12px 20px;
-    background-color: #4e73df;
-    border-radius: 5px;
-    border: none;
-    color: white;
-    margin: 5px;
+  padding: 12px 20px;
+  background-color: #4e73df;
+  border-radius: 5px;
+  border: none;
+  color: white;
+  margin: 5px;
 }
 
 #userSearchInput {
-    background-image: url('https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg');
-    background-repeat: no-repeat;
-    padding-left: 50px;
-    background-size: 20px;
-    background-repeat: no-repeat;
-    background-position: 10px center;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+  background-repeat: no-repeat;
+  padding-left: 50px;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 10px center;
 }
 
 .primary-nav {
-    align-items: center;
-    height: 50px;
-    left: 0px;
-    padding: 15px;
-    width: 100%;
-    margin: 0px;
-    background-color: darkgray;
-    display: inline;
-    position: fixed;
-    top: 70px;
-    z-index: 3;
-    font-weight: bold;
+  align-items: center;
+  height: 50px;
+  left: 0px;
+  padding: 15px;
+  width: 100%;
+  margin: 0px;
+  background-color: darkgray;
+  display: inline;
+  position: fixed;
+  top: 70px;
+  z-index: 3;
+  font-weight: bold;
 }
 
 .search-container {
-    align-items: center;
-    display: flex;
-    justify-content: left;
+  align-items: center;
+  display: flex;
+  justify-content: left;
 }
 
 form .no-submit {
-    width: 180px;
-    align-items: center;
-    color: white;
-    right: 0;
-    display: flex;
-    padding: 2px;
-    border: 1px solid currentColor;
-    border-radius: 5px;
-    margin: 0 0;
+  width: 180px;
+  align-items: center;
+  color: white;
+  right: 0;
+  display: flex;
+  padding: 2px;
+  border: 1px solid currentColor;
+  border-radius: 5px;
+  margin: 0 0;
 }
 
 input.no-submit {
-    border: 1px solid white;
-    width: 100%;
-    padding: 9px 4px 9px 4px;
-    /* You can use your image but having cleaner code is better, so I suggest saving the file and just linking it*/
-    /*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3C!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --%3E%3Cpath d='M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z'/%3E%3C/svg%3E") ;*/
-    background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
-    background-size: 13px;
-    background-repeat: no-repeat;
-    background-position: 10px center;
+  border: 1px solid white;
+  width: 100%;
+  padding: 9px 4px 9px 4px;
+  /* You can use your image but having cleaner code is better, so I suggest saving the file and just linking it*/
+  /*background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3C!--! Font Awesome Pro 6.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --%3E%3Cpath d='M500.3 443.7l-119.7-119.7c27.22-40.41 40.65-90.9 33.46-144.7C401.8 87.79 326.8 13.32 235.2 1.723C99.01-15.51-15.51 99.01 1.724 235.2c11.6 91.64 86.08 166.7 177.6 178.9c53.8 7.189 104.3-6.236 144.7-33.46l119.7 119.7c15.62 15.62 40.95 15.62 56.57 0C515.9 484.7 515.9 459.3 500.3 443.7zM79.1 208c0-70.58 57.42-128 128-128s128 57.42 128 128c0 70.58-57.42 128-128 128S79.1 278.6 79.1 208z'/%3E%3C/svg%3E") ;*/
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+  background-size: 13px;
+  background-repeat: no-repeat;
+  background-position: 10px center;
 }
 
 li {
-    background-color: #4e73df;
-    padding: 10px;
-    text-decoration: none;
-    color: #4e73df;
-    border-radius: 15px;
-
+  background-color: #4e73df;
+  padding: 10px;
+  text-decoration: none;
+  color: #4e73df;
+  border-radius: 15px;
 }
 
 li a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 td a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 input[type="search"] {
-    border: none;
-    background-color: transparent;
-    margin: 0;
-    padding: 7px 8px 7px 30px;
-    font-size: 16px;
-    color: inherit;
-    border: 1px solid black;
-    border-radius: inherit;
+  border: none;
+  background-color: transparent;
+  margin: 0;
+  padding: 7px 8px 7px 30px;
+  font-size: 16px;
+  color: inherit;
+  border: 1px solid black;
+  border-radius: inherit;
 }
 
 input[type="search"]::placeholder {
-    color: white;
+  color: white;
 }
 
 input[type="search"]:focus {
-    box-shadow: 0 0 3px 0 #3f69a8;
-    border-color: #3f69a8;
-    outline: none;
+  box-shadow: 0 0 3px 0 #3f69a8;
+  border-color: #3f69a8;
+  outline: none;
 }
 
-
 form.check-in {
-    box-sizing: border-box;
-    background-color: transparent;
-    z-index: 2;
-    padding: 10px 20px;
-    position: absolute;
-    border-radius: 20px;
-    color: black;
-    text-decoration: none;
-    font-size: 20px;
-    top: 50px;
+  box-sizing: border-box;
+  background-color: transparent;
+  z-index: 2;
+  padding: 10px 20px;
+  position: absolute;
+  border-radius: 20px;
+  color: black;
+  text-decoration: none;
+  font-size: 20px;
+  top: 50px;
 }
 
 input.check-button {
-    padding: 50px;
-    font-size: 30px !important;
+  padding: 50px;
+  font-size: 30px !important;
 }
 
 .rond {
-    border-radius: 0px 0px 15px 15px !important;
+  border-radius: 0px 0px 15px 15px !important;
 }
 
 .sidebar h2 {
-    margin-top: 100px;
-    color: #4A4B4C;
+  margin-top: 100px;
+  color: #4a4b4c;
 }
 
 .sidebar h3 {
-    margin: 0px 0px 20px 0px;
-    font-size: 20px;
-    color: #777778;
-    font-weight: 100;
+  margin: 0px 0px 20px 0px;
+  font-size: 20px;
+  color: #777778;
+  font-weight: 100;
 }
 
 .side-link {
-    background-color: #ffff;
-    padding: 20px;
-    border-radius: 20px;
-    padding: 20px 500px 20px 20px;
-    transition: 0.2s ease-in-out;
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
+  background-color: #ffff;
+  padding: 20px;
+  border-radius: 20px;
+  padding: 20px 500px 20px 20px;
+  transition: 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 .sidebar a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .side-link p {
-    text-decoration: none;
-    text-align: left;
-    font-weight: 100;
-    margin: 0px;
-    margin-left: 20px;
-    color: #4A4B4C;
-    width: 100px;
+  text-decoration: none;
+  text-align: left;
+  font-weight: 100;
+  margin: 0px;
+  margin-left: 20px;
+  color: #4a4b4c;
+  width: 100px;
 }
 
 .side-link i {
-    color: #4A4B4C;
-    text-decoration: none;
-    font-size: 30px;
-
+  color: #4a4b4c;
+  text-decoration: none;
+  font-size: 30px;
 }
 
 .side-link:hover {
-    background-color: #a2baff;
-    color: white;
-    text-decoration: none;
+  background-color: #a2baff;
+  color: white;
+  text-decoration: none;
 }
 
 .line {
-    padding: 1px 300px;
-    background-color: #dff3ff;
-    margin-left: -50px;
-    margin-bottom: 30px;
+  padding: 1px 300px;
+  background-color: #dff3ff;
+  margin-left: -50px;
+  margin-bottom: 30px;
 }
 
 .side-bottom {
-    position: absolute;
-    bottom: 0;
+  position: absolute;
+  bottom: 0;
 }
 
 #zakken-minus,
@@ -566,619 +558,602 @@ input.check-button {
 #munten-plus,
 #volleZakken-minus,
 #volleZakken-plus {
-    padding: 10px 20px;
-    text-align: center;
-    font-size: 50px;
-    background-color: transparent;
-    border: none;
-    background-color: rgba(128, 128, 128, 0.274);
-    border-radius: 15px;
-    overflow: hidden;
-    color: blue;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 50px;
+  background-color: transparent;
+  border: none;
+  background-color: rgba(128, 128, 128, 0.274);
+  border-radius: 15px;
+  overflow: hidden;
+  color: blue;
 }
 
 #link-form {
-    padding: 20px;
-    margin: 20px;
+  padding: 20px;
+  margin: 20px;
 }
 
 .titel-bar {
-    color: black;
-    margin-top: 50px;
-    width: 90vw;
-    font-size: 40px;
-    background: rgb(118, 201, 251);
-    background: radial-gradient(circle, rgba(118, 201, 251, 1) 0%, rgba(12, 252, 255, 0) 100%);
-    border-radius: 20px;
-    overflow: hidden;
+  color: black;
+  margin-top: 50px;
+  width: 90vw;
+  font-size: 40px;
+  background: rgb(118, 201, 251);
+  background: radial-gradient(
+    circle,
+    rgba(118, 201, 251, 1) 0%,
+    rgba(12, 252, 255, 0) 100%
+  );
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .btn.btn-primary {
-    padding: 10px 20px;
-    margin: 15px;
-    position: absolute;
-    background-color: #76C9FB;
-    border-radius: 20px;
-    color: black;
-    text-decoration: none;
-    font-size: 20px;
-    top: -36px;
+  padding: 10px 20px;
+  margin: 15px;
+  position: absolute;
+  background-color: #76c9fb;
+  border-radius: 20px;
+  color: black;
+  text-decoration: none;
+  font-size: 20px;
+  top: -36px;
 }
 
-
 .input-group-form button {
-    width: 80px;
+  width: 80px;
 }
 
 .back-button {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    background-color: transparent;
-    color: #2E52BB;
-    text-decoration: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 30px;
-    z-index: 1000;
+  position: fixed;
+  top: 10px;
+  left: 10px;
+  background-color: transparent;
+  color: #2e52bb;
+  text-decoration: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 30px;
+  z-index: 1000;
 }
 
 .back-button:hover {
-    background-color: #333;
-    color: #f8f9fa;
+  background-color: #333;
+  color: #f8f9fa;
 }
 
 #link {
-    width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
-
 
 .input-group-form {
-    display: flex;
-    /* Enables flexbox layout */
-    flex-direction: row;
-    /* Aligns children horizontally */
-    gap: 10px;
-    /* Adjusts the gap between each item */
-    width: auto;
-    /* Adjusts the width to fit content or as needed */
-    border-radius: 20px;
-    /* Keeps your rounded corners */
-    color: rgba(128, 128, 128, 0.274);
-    margin: 3px 0px 20px 0px;
+  display: flex;
+  /* Enables flexbox layout */
+  flex-direction: row;
+  /* Aligns children horizontally */
+  gap: 10px;
+  /* Adjusts the gap between each item */
+  width: auto;
+  /* Adjusts the width to fit content or as needed */
+  border-radius: 20px;
+  /* Keeps your rounded corners */
+  color: rgba(128, 128, 128, 0.274);
+  margin: 3px 0px 20px 0px;
 }
 
-
 .meer label {
-    font-size: 20px;
+  font-size: 20px;
 }
 
 #zakken_gekregenInput,
 #munten_gekregenInput,
 #volle_zakken_opgehaaldInput {
-    border: none;
-    font-size: 40px;
-    width: 60px !important;
-    overflow: auto;
-    text-align: center;
-    border-radius: 20px;
+  border: none;
+  font-size: 40px;
+  width: 60px !important;
+  overflow: auto;
+  text-align: center;
+  border-radius: 20px;
 }
 
 .kg_zak {
-    border: none;
-    font-size: 40px;
-    text-align: left !important;
-    width: 200px !important;
-    overflow: auto;
-    text-align: center;
-    border-radius: 20px;
+  border: none;
+  font-size: 40px;
+  text-align: left !important;
+  width: 200px !important;
+  overflow: auto;
+  text-align: center;
+  border-radius: 20px;
 }
 
 .login-form input[type="text"],
 .login-form input[type="password"] {
-    width: 100%;
-    padding: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
-    /* Makes sure padding doesn't affect the width */
+  width: 100%;
+  padding: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  /* Makes sure padding doesn't affect the width */
 }
 
 .login-form input[type="submit"] {
-    width: 100%;
-    padding: 15px;
-    border: none;
-    border-radius: 5px;
-    background-color: #270eae;
-    color: white;
-    font-size: 18px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 5px;
+  background-color: #270eae;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 #gear-icon {
-    font-size: 30px;
-
+  font-size: 30px;
 }
 
 .alert {
-    position: fixed;
-    bottom: 20px;
-    left: 20px;
-    padding: 10px;
-    z-index: 1000;
-    border-radius: 5px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-    max-width: 300px;
-    color: #fff;
-    animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
-
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 10px;
+  z-index: 1000;
+  border-radius: 5px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  max-width: 300px;
+  color: #fff;
+  animation: fadeIn 2s forwards, fadeOut 2s 4s forwards;
 }
 
 .active {
-    background-color: #4e73df;
+  background-color: #4e73df;
 }
 
 .active p,
 .active i {
-    color: white;
+  color: white;
 }
 
 @keyframes fadeIn {
-    0% {
-        opacity: 0;
-    }
+  0% {
+    opacity: 0;
+  }
 
-    100% {
-        opacity: 1;
-    }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-    0% {
-        opacity: 1;
-    }
+  0% {
+    opacity: 1;
+  }
 
-    100% {
-        opacity: 0;
-    }
+  100% {
+    opacity: 0;
+  }
 }
 
-
 .alert-success {
-    background-color: #28a745;
+  background-color: #28a745;
 }
 
 .alert-error {
-    background-color: #dc3545;
+  background-color: #dc3545;
 }
 
 .alert-info {
-    background-color: #17a2b8;
+  background-color: #17a2b8;
 }
 
 .logo2 {
-    position: absolute;
-    top: 10px;
-    width: 90px;
-    position: fixed;
-    z-index: 1000;
-
+  position: absolute;
+  top: 10px;
+  width: 90px;
+  position: fixed;
+  z-index: 1000;
 }
 
 /* Additional CSS for gear icon and form transition */
 .gear-icon-container {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    cursor: pointer;
-    font-size: 24px;
-    /* Adjust size as needed */
-    color: #2E52BB;
-    /* Adjust color as needed */
-    font-size: 30px;
-    padding: 10px 20px;
-    margin-top: -10px;
-    margin-right: -10px;
-    z-index: 1000;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  cursor: pointer;
+  font-size: 24px;
+  /* Adjust size as needed */
+  color: #2e52bb;
+  /* Adjust color as needed */
+  font-size: 30px;
+  padding: 10px 20px;
+  margin-top: -10px;
+  margin-right: -10px;
+  z-index: 1000;
 }
 
 .gear-icon-container:hover {
-    background-color: #333;
-    color: #f8f9fa;
-    padding: 10px 20px;
-    border-radius: 5px;
+  background-color: #333;
+  color: #f8f9fa;
+  padding: 10px 20px;
+  border-radius: 5px;
 }
 
 /* Improved form styles for a cleaner look */
 .form-container {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 280px;
-    margin: 0 auto;
-    transition: all 0.3s ease-in-out;
-    /* Smooth transition for toggling form */
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 280px;
+  margin: 0 auto;
+  transition: all 0.3s ease-in-out;
+  /* Smooth transition for toggling form */
 }
 
 .form-input {
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 10px;
-    margin-bottom: 10px;
-    width: 100%;
-    box-sizing: border-box;
-    transition: border 0.3s ease-in-out;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 10px;
+  margin-bottom: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border 0.3s ease-in-out;
 }
 
 .form-input:focus {
-    border-color: #007bff;
+  border-color: #007bff;
 }
 
 #link-form {
-    width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
 #formContainer {
-    position: absolute;
-    bottom: 0px;
+  position: absolute;
+  bottom: 0px;
 }
 
 .submit-button {
-    background-color: #76C9FB;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease-in-out;
+  background-color: #76c9fb;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.3s ease-in-out;
 }
 
 .submit-button:hover {
-    background-color: #76C9FB;
+  background-color: #76c9fb;
 }
 
 .error-text {
-    color: white;
-    margin-top: 10px;
-    text-align: center;
-    font-size: 0.9em;
+  color: white;
+  margin-top: 10px;
+  text-align: center;
+  font-size: 0.9em;
 }
 
 /* Hide/Show Transition for the form */
 .hide {
-    display: none;
+  display: none;
 }
 
-
 .submit-button:hover {
-    background-color: #0069d9;
+  background-color: #0069d9;
 }
 
 /* List container styling */
 
-    .bars-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        justify-content: center;
-        list-style: none;
-        padding: 0;
-        margin-top: -120px;
-        padding-top: 300px;
-        padding-bottom: 300px;
-        max-height: 70vh;
-        overflow-y: auto;
-        max-width: 500px;
-    }
-    
-
+.bars-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  list-style: none;
+  padding: 0;
+  margin-top: -120px;
+  padding-top: 300px;
+  padding-bottom: 300px;
+  max-height: 70vh;
+  overflow-y: auto;
+  max-width: 500px;
+}
 
 /* List item styling */
 .bars-list li {
-    background-color: transparent !important;
+  background-color: transparent !important;
 }
 
 /* List item link styling */
 .bars-list li a {
-    background-color: #270eae;
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s ease;
-    min-width: 50px;
-    text-align: center;
-    font-size: 20px;
-    font-weight: bold;
-    border-radius: 50px;
-    width: fit-content;
-    padding: 16px 48px;
-    max-width: 50px;
-        font-size: 1.3em;
+  background-color: #270eae;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+  min-width: 50px;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border-radius: 50px;
+  width: fit-content;
+  padding: 16px 48px;
+  max-width: 50px;
+  font-size: 1.3em;
   overflow: hidden;
-} 
-
+}
 
 .list-section {
-    background-color: white;
-    padding: 5px 20px 20px 20px;
-    border-radius: 15px;
-    width: 300px;
+  background-color: white;
+  padding: 5px 20px 20px 20px;
+  border-radius: 15px;
+  width: 300px;
 }
 
 .list-section li {
-    color: #4E73DF;
+  color: #4e73df;
 }
 
 .fabl {
-    left: 20px;
+  left: 20px;
 }
 
 .list-section a,
 .links {
-    font-size: 19px;
-    line-height: 3;
-    text-decoration: none;
-    color: white;
-    padding: 10px;
-    background-color: #4E73DF;
-    border-radius: 10px;
-    min-width: 100px;
-    text-align: center;
-    transition: 0.2s ease-in-out;
-    margin-bottom: 10px;
+  font-size: 19px;
+  line-height: 3;
+  text-decoration: none;
+  color: white;
+  padding: 10px;
+  background-color: #4e73df;
+  border-radius: 10px;
+  min-width: 100px;
+  text-align: center;
+  transition: 0.2s ease-in-out;
+  margin-bottom: 10px;
 }
 
 .list-section a:hover,
 .links:hover {
-    background-color: #3658A4;
-    color: white;
-    text-decoration: none;
-    outline: none;
+  background-color: #3658a4;
+  color: white;
+  text-decoration: none;
+  outline: none;
 }
-
-
 
 .bars-list li a:hover,
 .bars-list li a:focus {
-    background-color: #0056b3;
-    color: white;
-    text-decoration: none;
-    outline: none;
+  background-color: #0056b3;
+  color: white;
+  text-decoration: none;
+  outline: none;
 }
 
-
 .login-form input[type="submit"]:hover {
-    background-color: #3658a4;
-    /* Darker shade for hover effect */
+  background-color: #3658a4;
+  /* Darker shade for hover effect */
 }
 
 /* Placeholder styling */
 ::placeholder {
-    color: #888;
+  color: #888;
 }
 
 /* Focus styling */
 .login-form input[type="text"]:focus,
 .login-form input[type="password"]:focus {
-    outline: none;
-    border-color: #4e73df;
-    box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.25);
+  outline: none;
+  border-color: #4e73df;
+  box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.25);
 }
 
-
 @keyframes floatAnimation {
-    0% {
-        transform: translate(0, 0);
-    }
+  0% {
+    transform: translate(0, 0);
+  }
 
-    50% {
-        transform: translate(30px, -50px);
-    }
+  50% {
+    transform: translate(30px, -50px);
+  }
 
-    100% {
-        transform: translate(0, 0);
-    }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 
 .floating-cup {
-    position: fixed;
-    top: 10%;
-    left: 0%;
-    width: 80px;
-    /* Set the width as desired */
-    height: auto;
-    /* Keep the aspect ratio of the image */
-    animation: floatAnimation 6s ease-in-out infinite;
-    z-index: 1;
-    /* Ensure it stays in the background */
+  position: fixed;
+  top: 10%;
+  left: 0%;
+  width: 80px;
+  /* Set the width as desired */
+  height: auto;
+  /* Keep the aspect ratio of the image */
+  animation: floatAnimation 6s ease-in-out infinite;
+  z-index: 1;
+  /* Ensure it stays in the background */
 }
 
 #movingImage {
-    width: 600px;
-    margin-bottom: -80px;
+  width: 600px;
+  margin-bottom: -80px;
 }
 
 /* Make sure the floating image does not interfere with the form */
 .login-container {
-    position: relative;
-    z-index: 1;
+  position: relative;
+  z-index: 1;
 }
 
 /* Existing styles ... */
 
 /* Dashboard specific styles */
 h1 {
-    color: #fff;
-    /* Adjust color as needed */
-    font-size: 2em;
-    /* Adjust size as needed */
-    text-align: center;
-    margin-bottom: 0.5em;
+  color: #fff;
+  /* Adjust color as needed */
+  font-size: 2em;
+  /* Adjust size as needed */
+  text-align: center;
+  margin-bottom: 0.5em;
 }
 
 form {
-    background: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    display: inline-block;
-    /* Center form on the page */
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  display: inline-block;
+  /* Center form on the page */
 }
 
 form label,
 form select,
 form input[type="submit"] {
-    font-size: 1em;
+  font-size: 1em;
 }
 
 .form-container {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 }
 
 .form-container .button-container {
-    width: 20%;
+  width: 20%;
 }
 
 form select {
-    padding: 0.5em;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f8f8f8;
+  padding: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #f8f8f8;
 }
 
 form input[type="submit"] {
-    padding: 0.5em 1em;
-    border: none;
-    border-radius: 5px;
-    background-color: #270eae;
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 0;
+  padding: 0.5em 1em;
+  border: none;
+  border-radius: 5px;
+  background-color: #270eae;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 0;
 }
 
 .login-container.bigger {
-    max-width: 460px;
-  }
+  max-width: 460px;
+}
 
 .maakappp {
-    position: absolute;
-    bottom: 0;
-    color: white;
-    background-color: #270eae;
-    padding: 20px;
-    border-radius: 15px;
-    text-decoration: none;
-  }
+  position: absolute;
+  bottom: 0;
+  color: white;
+  background-color: #270eae;
+  padding: 20px;
+  border-radius: 15px;
+  text-decoration: none;
+}
 
 .top-boy {
-    position: absolute;
-    top: -17px;    
-    color: #270eae;
-    width: 100vw;
-    background-color: white;
-    text-align: center;
-    padding: 10px;
-    font-size: 20px;
-    border-radius: 0px 0px 15px 15px;
-    max-width: 480px;
+  position: absolute;
+  top: -17px;
+  color: #270eae;
+  width: 100vw;
+  background-color: white;
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+  border-radius: 0px 0px 15px 15px;
+  max-width: 480px;
 }
 
 form input[type="submit"]:hover {
-    background-color: #270eae;
+  background-color: #270eae;
 }
 
 /* Additional responsive adjustments as needed */
 @media (max-width: 600px) {
-    h1 {
-        font-size: 1.5em;
-    }
+  h1 {
+    font-size: 1.5em;
+  }
 
-    form {
-        box-sizing: border-box;
-        /* Makes sure padding doesn't affect the width */
-    }
+  form {
+    box-sizing: border-box;
+    /* Makes sure padding doesn't affect the width */
+  }
 
-    .cube.user-dashboard-cube {
-        width: 300px;
-        background-color: white;
-    }
+  .cube.user-dashboard-cube {
+    width: 300px;
+    background-color: white;
+  }
 }
 
 .cube-titel {
-    margin: 0px 0px 30px 0px;
-    font-size: 23px;
+  margin: 0px 0px 30px 0px;
+  font-size: 23px;
 }
-
 
 .cube-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-    /* Adjust the space between cubes as needed */
-    justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  /* Adjust the space between cubes as needed */
+  justify-content: center;
 }
 
-
 .cube {
-    padding: 20px;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-right: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 20px;
 }
 
 .user-cube,
 .location-cube {
-    width: calc(33vw - 20px);
-    /* Adjust width to be 33% of the viewport width minus gap */
-    box-sizing: border-box;
+  width: calc(33vw - 20px);
+  /* Adjust width to be 33% of the viewport width minus gap */
+  box-sizing: border-box;
 }
 
 @media (max-width: 600px) {
-
-    .user-cube,
-    .location-cube {
-        width: 100vw;
-        /* Full viewport width on smaller screens, adjusting for any potential padding/margins */
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
+  .user-cube,
+  .location-cube {
+    width: 100vw;
+    /* Full viewport width on smaller screens, adjusting for any potential padding/margins */
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 }
-
-
 
 .users-list-cube,
 .locations-list-cube {
-    width: 100%;
-    box-sizing: border-box;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 @media (max-width: 600px) {
-
-    .user-cube,
-    .location-cube {
-        width: 100%;
-        /* Full width on smaller screens */
-    }
+  .user-cube,
+  .location-cube {
+    width: 100%;
+    /* Full width on smaller screens */
+  }
 }
 
 /* #profilePic {
@@ -1194,993 +1169,983 @@ form input[type="submit"]:hover {
      */
 
 #profilePic {
-    position: absolute;
-    top: 0%;
-    left: 50%;
-    transform: translate(-50%, 0%);
-    width: 100vw;
-    height: 50vh;
-    object-fit: cover;
-    opacity: 0.9;
-    cursor: pointer;
-    max-width: 500px;
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  width: 100vw;
+  height: 50vh;
+  object-fit: cover;
+  opacity: 0.9;
+  cursor: pointer;
+  max-width: 500px;
 }
 
 .bottom-navbar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    background: linear-gradient(145deg, #6e8efb, #4E73DF);
-    box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: space-around;
-    padding: 15px 0;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background: linear-gradient(145deg, #6e8efb, #4e73df);
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: space-around;
+  padding: 15px 0;
 
-    z-index: 998; /* Ensure it's above other content */
-    max-width: 500px;
+  z-index: 998; /* Ensure it's above other content */
+  max-width: 500px;
 }
 
 .nav-item {
-    text-decoration: none;
-    color: #fff;
-    text-align: center;
-    transition: transform 0.2s;
+  text-decoration: none;
+  color: #fff;
+  text-align: center;
+  transition: transform 0.2s;
 }
 
 .nav-item i {
-    display: block;
-    margin: 0 auto;
-    font-size: 24px; /* Slightly larger icons */
-    transition: color 0.2s;
-    cursor: pointer;
+  display: block;
+  margin: 0 auto;
+  font-size: 24px; /* Slightly larger icons */
+  transition: color 0.2s;
+  cursor: pointer;
 }
 
 .nav-item span {
-    display: block;
-    font-size: 14px; /* More readable text size */
-    margin-top: 4px; /* Adjusted spacing for clarity */
+  display: block;
+  font-size: 14px; /* More readable text size */
+  margin-top: 4px; /* Adjusted spacing for clarity */
 }
 
-.nav-item:hover, .nav-item:focus {
-    transform: translateY(-5px); /* Subtle lift effect */
-    color: #FFFF; /* Highlight text on hover/focus */
+.nav-item:hover,
+.nav-item:focus {
+  transform: translateY(-5px); /* Subtle lift effect */
+  color: #ffff; /* Highlight text on hover/focus */
 }
 
 .nav-item:active {
-    transform: scale(0.95); /* Pressed effect */
+  transform: scale(0.95); /* Pressed effect */
 }
 
 /* Optional: Highlight the active/current page's nav item */
 .nav-item.active i {
-    color: #FFFFFF; /* Bright color for active icon */
+  color: #ffffff; /* Bright color for active icon */
 }
 
-
-
-
-
 @media screen and (max-width: 480px) {
-    .login-container {
-        width: 85vw;
-        /* Set width to 100% of the viewport width */
-    }
+  .login-container {
+    width: 85vw;
+    /* Set width to 100% of the viewport width */
+  }
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 #bar_note {
-    width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 15px;
+  font-size: 18px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
-
 .gray {
-    background-color: lightblue;
-    overflow: hidden;
-    padding: 16px;
-    border-radius: 20px;
+  background-color: lightblue;
+  overflow: hidden;
+  padding: 16px;
+  border-radius: 20px;
 }
 
 #loading-icon {
-    animation: ease-in-out 1s linear infinite;
-    width: 100px;
+  animation: ease-in-out 1s linear infinite;
+  width: 100px;
 }
 
 .content-container {
-    width: 80%;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-    margin: 20px auto;
+  width: 80%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  margin: 20px auto;
 }
 
 .change-log-list {
-    list-style-type: none;
-    padding: 0;
+  list-style-type: none;
+  padding: 0;
 }
 
 .change-log-item {
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
-    margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .change-log-item:last-child {
-    border-bottom: none;
+  border-bottom: none;
 }
 
 .change-log-item p {
-    margin: 5px 0;
-    font-size: 16px;
-    color: #333;
+  margin: 5px 0;
+  font-size: 16px;
+  color: #333;
 }
 
 .cube-container {
-    background-color: #fff;
-    /* Light background for the form */
-    border-radius: 10px;
-    /* Rounded corners */
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
-    width: 95vw;
-    margin: auto;
-    /* Center the form */
-
+  background-color: #fff;
+  /* Light background for the form */
+  border-radius: 10px;
+  /* Rounded corners */
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow for depth */
+  width: 95vw;
+  margin: auto;
+  /* Center the form */
 }
 
 .bottom-boy {
-    position: absolute;
+  position: absolute;
 }
 
 .cube {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    max-width: 500px;
-    /* Center content */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  /* Center content */
 }
 
 #toggleDetailsButton {
-    z-index: 1000;
+  z-index: 1000;
 }
 
 .input-group {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    /* Increased spacing between fields */
-    width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Increased spacing between fields */
+  width: 100%;
 }
 
 .input-group label {
-    margin-bottom: 10px;
-    /* Slightly more space between label and input */
-    font-size: 18px;
-    /* Larger font size for better visibility on small screens */
-    color: #333;
+  margin-bottom: 10px;
+  /* Slightly more space between label and input */
+  font-size: 18px;
+  /* Larger font size for better visibility on small screens */
+  color: #333;
 }
 
 .input-group input[type="number"] {
-    width: 100%;
-    /* Full width to maximize touch target */
-    padding: 15px;
-    /* Larger padding for a bigger touch area */
-    font-size: 18px;
-    /* Larger font size for easier reading */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-sizing: border-box;
+  width: 100%;
+  /* Full width to maximize touch target */
+  padding: 15px;
+  /* Larger padding for a bigger touch area */
+  font-size: 18px;
+  /* Larger font size for easier reading */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
 }
 
 input[type="submit"] {
-    padding: 15px 20px;
-    /* Larger padding for a bigger button */
-    font-size: 18px;
-    /* Larger font size for readability and easier tapping */
-    margin-top: 10px;
-    /* More space above the submit button */
-    width: 100%;
+  padding: 15px 20px;
+  /* Larger padding for a bigger button */
+  font-size: 18px;
+  /* Larger font size for readability and easier tapping */
+  margin-top: 10px;
+  /* More space above the submit button */
+  width: 100%;
 }
 
 @media (max-width: 600px) {
-
-    .input-group input[type="number"],
-    input[type="submit"] {
-        /* Ensures that font size and padding adjustments are not too large for very small devices */
-        font-size: 16px;
-        /* Slightly smaller font size for extremely small screens */
-        padding: 12px;
-        /* Adjust padding to fit smaller screens */
-    }
+  .input-group input[type="number"],
+  input[type="submit"] {
+    /* Ensures that font size and padding adjustments are not too large for very small devices */
+    font-size: 16px;
+    /* Slightly smaller font size for extremely small screens */
+    padding: 12px;
+    /* Adjust padding to fit smaller screens */
+  }
 }
 
 .cube-container.bottom-boy {
-    height: 65vh;
-    max-width: 500px;
-  }
+  height: 65vh;
+  max-width: 500px;
+}
 
 .modal {
-    display: none;
-    /* Hidden by default */
-    position: fixed;
-    /* Stay in place */
-    z-index: 1;
-    /* Sit on top */
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    /* Full width */
-    height: 100%;
-    /* Full height */
-    overflow: auto;
-    /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0);
-    /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4);
-    /* Black w/ opacity */
+  display: none;
+  /* Hidden by default */
+  position: fixed;
+  /* Stay in place */
+  z-index: 1;
+  /* Sit on top */
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  /* Full width */
+  height: 100%;
+  /* Full height */
+  overflow: auto;
+  /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0);
+  /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4);
+  /* Black w/ opacity */
 }
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    /* Could be more or less, depending on screen size */
-    border-radius: 10px;
-    /* Optional: Rounded corners */
-    position: absolute;
-    top: 30vh;
-    right: 0;
-    left: 0;
-    max-width: 500px;
+  background-color: #fefefe;
+  margin: 15% auto;
+  /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  /* Could be more or less, depending on screen size */
+  border-radius: 10px;
+  /* Optional: Rounded corners */
+  position: absolute;
+  top: 30vh;
+  right: 0;
+  left: 0;
+  max-width: 500px;
 }
 
 .modal-content h2 {
-    width: 80%;
-    margin-left: 20px;
+  width: 80%;
+  margin-left: 20px;
 }
 
 #showNotesBtn {
-    padding: 30px;
-    font-size: 30px;
+  padding: 30px;
+  font-size: 30px;
 }
 
 .center-nav {
-    display: flex;
-    justify-content: space-around;
+  display: flex;
+  justify-content: space-around;
 }
 
 .center-nav i {
-    font-size: 30px;
-    cursor: pointer;
-    padding: 0px 30px;
+  font-size: 30px;
+  cursor: pointer;
+  padding: 0px 30px;
 }
 
 .center-nav a {
-    text-decoration: none;
-    color: black;
+  text-decoration: none;
+  color: black;
 }
-
 
 /* The Close Button */
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
 .close:hover,
 .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 /* Add Zoom Animation */
 .modal-content {
-    animation-name: zoom;
-    animation-duration: 0.6s;
+  animation-name: zoom;
+  animation-duration: 0.6s;
 }
 
 @keyframes zoom {
-    from {
-        transform: scale(0)
-    }
+  from {
+    transform: scale(0);
+  }
 
-    to {
-        transform: scale(1)
-    }
+  to {
+    transform: scale(1);
+  }
 }
 
 /* Style for the container of the bar list */
 .bars-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding: 20px;
 }
 
 /* Style for each bar item */
 .bar-item {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 200px;
-    /* Adjust based on your preference */
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 200px;
+  /* Adjust based on your preference */
 }
 
 /* Style for the Check In button in each bar item */
 .bar-item button {
-    margin-top: 10px;
-    padding: 10px 20px;
-    background-color: #4e73df;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #4e73df;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .bar-item button:hover {
-    background-color: #3658a4;
+  background-color: #3658a4;
 }
 
 .location-filters {
-    text-align: center;
-    margin-bottom: 20px;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 768px) {
-    .location-filters {
-        margin-top: 100px;
-    }
+  .location-filters {
+    margin-top: 100px;
+  }
 }
 
 .location-filters select {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
 }
 
 /* Adjustments to ensure your layout works nicely on all screen sizes */
 @media (max-width: 768px) {
-    .bars-container {
-        flex-direction: column;
-        align-items: center;
-    }
+  .bars-container {
+    flex-direction: column;
+    align-items: center;
+  }
 
-    .bar-item {
-        width: 80%;
-        /* Make bar items take more space on smaller screens */
-    }
+  .bar-item {
+    width: 80%;
+    /* Make bar items take more space on smaller screens */
+  }
 }
 
 /* Lightbox styles */
 .lightbox-modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0, 0, 0, 0.9);
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.9);
 }
 
 .lightbox-content {
-    padding: 20px;
-    max-height: 90vh;
-    max-width: 90vw;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+  padding: 20px;
+  max-height: 90vh;
+  max-width: 90vw;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .lightbox-photo {
-    width: 100%;
-    max-width: 650px;
-    margin: auto;
-    display: block;
+  width: 100%;
+  max-width: 650px;
+  margin: auto;
+  display: block;
 }
 
 .close-lightbox {
-    position: absolute;
-    top: 10px;
-    right: 25px;
-    color: #f1f1f1;
-    font-size: 35px;
-    font-weight: bold;
-    cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  color: #f1f1f1;
+  font-size: 35px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
 /* Styles for the container wrapping photo items */
 .photos-container {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 20px;
-    /* Adjust the space between photos */
-    padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  /* Adjust the space between photos */
+  padding: 20px;
 }
 
 /* Styles for individual photo items */
 .photo-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-    height: 300px;
-    overflow: hidden;
-    /* Ensures the content fits within the specified dimensions */
-    background-color: #fff;
-    /* Light background for contrast */
-    border-radius: 10px;
-    /* Rounded corners for a softer look */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Subtle shadow for depth */
-    padding: 10px;
-    /* Spacing around content */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px;
+  height: 300px;
+  overflow: hidden;
+  /* Ensures the content fits within the specified dimensions */
+  background-color: #fff;
+  /* Light background for contrast */
+  border-radius: 10px;
+  /* Rounded corners for a softer look */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* Subtle shadow for depth */
+  padding: 10px;
+  /* Spacing around content */
 }
 
 .photo-item img {
-    max-width: 100%;
-    max-height: 80%;
-    /* Adjust height to leave space for text */
-    object-fit: cover;
-    /* Ensures the photo covers the area, might crop some parts */
-    cursor: pointer;
-    transition: transform 0.2s ease;
-    /* Smooth transform transition */
-    border-radius: 5px;
-    /* Slightly rounded corners for the images */
+  max-width: 100%;
+  max-height: 80%;
+  /* Adjust height to leave space for text */
+  object-fit: cover;
+  /* Ensures the photo covers the area, might crop some parts */
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  /* Smooth transform transition */
+  border-radius: 5px;
+  /* Slightly rounded corners for the images */
 }
 
 .photo-item img:hover {
-    transform: scale(1.1);
-    /* Slightly enlarges the photo on hover */
+  transform: scale(1.1);
+  /* Slightly enlarges the photo on hover */
 }
 
 /* Enhanced text styling */
 .photo-item p {
-    color: #333;
-    /* Darker text for readability */
-    font-size: 14px;
-    /* Smaller font size for subtlety */
-    margin-top: 5px;
-    /* Space between image and text */
-    text-align: center;
-    /* Center-align text */
+  color: #333;
+  /* Darker text for readability */
+  font-size: 14px;
+  /* Smaller font size for subtlety */
+  margin-top: 5px;
+  /* Space between image and text */
+  text-align: center;
+  /* Center-align text */
 }
 
 /* Specific styling for the upload date to differentiate it */
 .photo-item p:first-child {
-    color: #666;
-    /* Lighter color for less emphasis */
-    font-size: 12px;
-    /* Even smaller font size */
+  color: #666;
+  /* Lighter color for less emphasis */
+  font-size: 12px;
+  /* Even smaller font size */
 }
 
 input[type="text"],
 input[type="password"],
 input[type="submit"] {
-    font-size: 16px;
-}   
+  font-size: 16px;
+}
 
 /* Table Container */
 .table-container {
-    padding: 20px;
-    /* Matches your container border-radius */
-    margin: 20px 0;
-    /* Spacing around the table container */
-    width: 90%;
-    /* Adjust the table container width on smaller screens */
-    overflow-x: auto;
-    /* Enable horizontal scrolling on small devices */
-    position: absolute;
-    top: 50px;
-    z-index: 1;
-    max-width: 500px;
-    border-radius: 10px;
+  padding: 20px;
+  /* Matches your container border-radius */
+  margin: 20px 0;
+  /* Spacing around the table container */
+  width: 90%;
+  /* Adjust the table container width on smaller screens */
+  overflow-x: auto;
+  /* Enable horizontal scrolling on small devices */
+  position: absolute;
+  top: 50px;
+  z-index: 1;
+  max-width: 500px;
+  border-radius: 10px;
 }
 
 /* Table Basic Styling */
 .custom-table {
-    width: 100%;
-    /* Full width of its container */
-    border-collapse: collapse;
-    /* Collapse borders for a clean look */
-    margin-top: 20px;
-    /* Space from any content above */
-    background-color: white;
-    text-decoration: none;
-
+  width: 100%;
+  /* Full width of its container */
+  border-collapse: collapse;
+  /* Collapse borders for a clean look */
+  margin-top: 20px;
+  /* Space from any content above */
+  background-color: white;
+  text-decoration: none;
 }
 
 .custom-table th,
 .custom-table td {
-    text-align: left;
-    /* Aligns text to the left */
-    padding: 12px;
-    /* Padding inside cells */
-    border-bottom: 1px solid #ccc;
-    /* Border for each cell */
-    text-decoration: none;
+  text-align: left;
+  /* Aligns text to the left */
+  padding: 12px;
+  /* Padding inside cells */
+  border-bottom: 1px solid #ccc;
+  /* Border for each cell */
+  text-decoration: none;
 }
 
 /* Table Header Styling */
 .custom-table th {
-    background-color: #4E73DE;
-    /* Header background color */
-    color: white;
-    /* Text color for headers */
-    font-size: 16px;
-    text-decoration: none;
+  background-color: #4e73de;
+  /* Header background color */
+  color: white;
+  /* Text color for headers */
+  font-size: 16px;
+  text-decoration: none;
 }
 
 .form-container {
-    transition: max-height 0.5s ease-out;
-    overflow: hidden;
-    max-height: 0;
+  transition: max-height 0.5s ease-out;
+  overflow: hidden;
+  max-height: 0;
 }
-
 
 /* Table Body Styling */
 .custom-table tbody tr:nth-child(odd) {
-    background-color: #f2f2f2;
-    /* Zebra striping for rows */
+  background-color: #f2f2f2;
+  /* Zebra striping for rows */
 }
 
 .custom-table tbody tr:hover {
-    background-color: #ddd;
-    /* Hover effect for table rows */
+  background-color: #ddd;
+  /* Hover effect for table rows */
 }
 
 /* Enhanced Styling for Input Fields Within Zakken Form */
 .new-zakken-field input[type="number"] {
-    flex-grow: 1;
-    margin-right: 10px;
-    padding: 10px;
-    border: 2px solid #CED4DA;
-    border-radius: 5px;
-    font-size: 16px;
-    color: #495057;
-    background-color: #FFF;
-    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+  flex-grow: 1;
+  margin-right: 10px;
+  padding: 10px;
+  border: 2px solid #ced4da;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #495057;
+  background-color: #fff;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .new-zakken-field input[type="number"]:focus {
-    border-color: #80BDFF;
-    outline: 0;
-    box-shadow: 0 0 0 .2rem rgba(0,123,255,.25);
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 /* Consistent Styling for All Buttons (Add More & Remove) */
- .new-zakken-field button.removeZak {
-    padding: 8px 16px;
-    font-size: 16px;
-    letter-spacing: 0.05em;
-    transition: all 0.2s ease-in-out;
-    text-transform: uppercase;
-    font-weight: bold;
+.new-zakken-field button.removeZak {
+  padding: 8px 16px;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
 /* Hover and Active States for Buttons */
- .new-zakken-field button.removeZak:hover {
-    filter: brightness(90%);
+.new-zakken-field button.removeZak:hover {
+  filter: brightness(90%);
 }
 
 .new-zakken-field button.removeZak:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 /* Further Button Customization */
 
 .new-zakken-field button.removeZak {
-    background-color: #DC3545;
-    color: #FFF;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #dc3545;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .new-zakken-field button.removeZak:hover {
-    background-color: #C82333;
+  background-color: #c82333;
 }
 
 .removeZak {
-    font-size: 35px;
-    padding: 15px !important;
+  font-size: 35px;
+  padding: 15px !important;
 }
 
 .zakform {
-    padding: 0px;
+  padding: 0px;
 }
 
 .zakkenField input {
-    padding: 20px;
-    border-radius: 20px;
-    border: #4E73DF 3px solid;
-    font-size: 30px;
-    width: 40vw;
-    max-width: 270px;
-  }
+  padding: 20px;
+  border-radius: 20px;
+  border: #4e73df 3px solid;
+  font-size: 30px;
+  width: 40vw;
+  max-width: 270px;
+}
 
 .zakkenField button {
-    margin-bottom: 20px;
-    margin-top: 10px;
-    background-color: red;
-    padding: 10px;
-    border: none;
-    color: white;
-    border-radius: 10px;
+  margin-bottom: 20px;
+  margin-top: 10px;
+  background-color: red;
+  padding: 10px;
+  border: none;
+  color: white;
+  border-radius: 10px;
 }
 
 .zakkenField label {
-    font-size: 20px;
-    margin-bottom: 10px;
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
 .bottom-stuur {
-    position: fixed;
-    bottom: 75px;
-    left: 50%; 
-    transform: translateX(-50%); 
-    font-size: 30px !important;
-    height: 70px;
-    padding-bottom: 100px;
-    border-radius: 0 !important;
-    background-color: #04AA6D !important;
-    width: 500px !important;
-    border-radius: 15px 15px 0px 0px !important;
+  position: fixed;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 30px !important;
+  height: 70px;
+  padding-bottom: 100px;
+  border-radius: 0 !important;
+  background-color: #04aa6d !important;
+  width: 500px !important;
+  border-radius: 15px 15px 0px 0px !important;
 }
 
 #zakkenFieldsContainer {
-    max-height: 470px;   
-     overflow-y: auto; /* Enables vertical scrolling if content overflows */
-    padding: 10px; /* Optional: Adds some spacing inside the container */
-    border-radius: 5px; /* Optional: Rounds the corners of the scrollable container */
-    margin-bottom: 20px; /* Ensures spacing between the container and anything below it */
+  max-height: 470px;
+  overflow-y: auto; /* Enables vertical scrolling if content overflows */
+  padding: 10px; /* Optional: Adds some spacing inside the container */
+  border-radius: 5px; /* Optional: Rounds the corners of the scrollable container */
+  margin-bottom: 20px; /* Ensures spacing between the container and anything below it */
 }
 
 .file-boy {
-    padding: 20px;
+  padding: 20px;
   font-size: 30px;
   width: 100%;
 }
 
 #zakkenFields {
-    max-width: 400px;
-  }
+  max-width: 400px;
+}
 
 .checkmark-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    visibility: hidden;
-    transition: opacity 0.5s, visibility 0s linear 0.5s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.5s, visibility 0s linear 0.5s;
 }
 
 .checkmark-container.show {
-    opacity: 1;
-    visibility: visible;
-    transition: opacity 0.5s;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.5s;
 }
 
-
 .checkmark {
-    width: 150px; /* Increased size */
-    height: 150px; /* Increased size */
+  width: 150px; /* Increased size */
+  height: 150px; /* Increased size */
 }
 
 .checkmark-circle {
-    stroke-dasharray: 166;
-    stroke-dashoffset: 166;
-    stroke-width: 2.5;
-    stroke-miterlimit: 10;
-    stroke: #63C642;
-    fill: none;
-    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2.5;
+  stroke-miterlimit: 10;
+  stroke: #63c642;
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
 
 .checkmark-check {
-    transform-origin: 50% 50%;
-    stroke-dasharray: 48;
-    stroke-dashoffset: 48;
-    animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-    stroke-width: 2.5;
-    stroke-miterlimit: 10;
-    stroke: #63C642;
-    fill: none;
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+  stroke-width: 2.5;
+  stroke-miterlimit: 10;
+  stroke: #63c642;
+  fill: none;
 }
 
 @keyframes stroke {
-    100% {
-        stroke-dashoffset: 0;
-    }
+  100% {
+    stroke-dashoffset: 0;
+  }
 }
 
 /* General Body Styling specific to briefing form */
 .briefing-form-container {
-    padding: 40px 0; /* Spacing around the form for better layout */
+  padding: 40px 0; /* Spacing around the form for better layout */
 }
 
 .briefing-form-container .main-container {
-    width: 80%;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 80%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .briefing-form-container form {
-    display: grid;
-    gap: 20px;
+  display: grid;
+  gap: 20px;
 }
 
 .briefing-form-container form div {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 }
 
 .briefing-form-container input[type="text"],
 .briefing-form-container input[type="date"],
 .briefing-form-container input[type="file"],
 .briefing-form-container select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
 }
 
 .briefing-form-container button,
 .briefing-form-container input[type="submit"] {
-    cursor: pointer;
-    padding: 10px 15px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    transition: background-color 0.3s ease;
+  cursor: pointer;
+  padding: 10px 15px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .briefing-form-container button:hover,
 .briefing-form-container input[type="submit"]:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
 .briefing-form-container h1 {
-    text-align: center;
-    color: #333;
+  text-align: center;
+  color: #333;
 }
 
 .briefing-form-container #day-time-entries-container div {
-    display: flex;
-    gap: 10px;
+  display: flex;
+  gap: 10px;
 }
 
 .briefing-form-container #day-time-entries-container input[type="text"] {
-    flex: 1;
+  flex: 1;
 }
 
 .briefing-form-container a {
-    color: #007bff;
-    text-decoration: none;
+  color: #007bff;
+  text-decoration: none;
 }
 
 .briefing-form-container a:hover {
-    text-decoration: underline;
+  text-decoration: underline;
 }
 
-
 .location-details-container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .location-details-title {
-    margin-bottom: 20px;
-    text-align: center;
-    color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
 }
 
 .location-detail {
-    margin-bottom: 10px;
-    font-size: 18px;
-    color: #666;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #666;
 }
 
 .location-detail strong {
-    color: #333;
+  color: #333;
 }
 
 .location-back-button {
-    display: inline-block;
-    margin-top: 20px;
-    padding: 10px 15px;
-    background-color: #4e73df;
-    color: #fff;
-    text-decoration: none;
-    border-radius: 5px;
-    transition: background-color 0.3s;
+  display: inline-block;
+  margin-top: 20px;
+  padding: 10px 15px;
+  background-color: #4e73df;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 .location-back-button:hover {
-    background-color: #3658a4;
+  background-color: #3658a4;
 }
 
 .fab {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #270eae; /* Primary blue or another color of your choice */
-    color: white;
-    border-radius: 50%; /* Makes the button round */
-    width: 70px; /* Diameter of the button */
-    height: 70px; /* Diameter of the button */
-    display: flex; /* Enables flexbox */
-    justify-content: center; /* Centers horizontally */
-    align-items: center; /* Centers vertically */
-    text-decoration: none; /* Removes underline from the link */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Adds a subtle shadow */
-    z-index: 1000; /* Ensures it floats above other content */
-    transition: background-color 0.3s, transform 0.2s; /* Adds smooth hover effects */
-    display: flex !important;
-    border: none;
-    cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #270eae; /* Primary blue or another color of your choice */
+  color: white;
+  border-radius: 50%; /* Makes the button round */
+  width: 70px; /* Diameter of the button */
+  height: 70px; /* Diameter of the button */
+  display: flex; /* Enables flexbox */
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  text-decoration: none; /* Removes underline from the link */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+  z-index: 1000; /* Ensures it floats above other content */
+  transition: background-color 0.3s, transform 0.2s; /* Adds smooth hover effects */
+  display: flex !important;
+  border: none;
+  cursor: pointer;
 }
 
 .vraag {
-    bottom: none;
-    right: 20px;
-left: 20px;
-top: 20px;
+  bottom: none;
+  right: 20px;
+  left: 20px;
+  top: 20px;
 }
 
 .map {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 20px;
-    background-color: #0056b3;
-    border-radius: 15px;
-    margin: 15px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 20px;
+  background-color: #0056b3;
+  border-radius: 15px;
+  margin: 15px;
 }
 
-.map a, .map i {
-    color: white;
-    font-size: 30px;
-    text-decoration: none;
+.map a,
+.map i {
+  color: white;
+  font-size: 30px;
+  text-decoration: none;
 }
 
 .fab:hover {
-    background-color: #0056b3; /* A darker shade on hover */
-    transform: scale(1.1); /* Slightly enlarges the button on hover */
+  background-color: #0056b3; /* A darker shade on hover */
+  transform: scale(1.1); /* Slightly enlarges the button on hover */
 }
 
 .fab i {
-    font-size: 24px; /* Adjust the size of the icon as needed */
-    display: flex !important;
+  font-size: 24px; /* Adjust the size of the icon as needed */
+  display: flex !important;
 }
 
 /* General settings for bar notes page */
 .bar-notes-body {
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 /* Container for the notes content */
 .bar-notes-container {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 90%;
-    max-width: 800px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 800px;
 }
 
 /* Styling the list of bars and notes */
 .bar-notes-list {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
+  list-style: none;
+  padding: 0;
+  margin-top: 20px;
 }
 
 .bar-notes-item {
-    background-color: #f8f8f8;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    padding: 20px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    transition: background-color 0.3s;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
 }
 
 .bar-notes-item:hover {
-    background-color: #e6f7ff;
-    cursor: pointer;
+  background-color: #e6f7ff;
+  cursor: pointer;
 }
 
 /* Header styles for bar notes */
 .bar-notes-header {
-    text-align: center;
-    color: #4E73DF;
-    margin-bottom: 20px;
+  text-align: center;
+  color: #4e73df;
+  margin-bottom: 20px;
 }
 
 .bar-notes-title {
-    color: #333;
-    font-weight: 500;
+  color: #333;
+  font-weight: 500;
 }
 
 /* Paragraph styles for notes and user information */
 .bar-notes-text {
-    font-size: 16px;
-    color: #666;
-    line-height: 1.5;
+  font-size: 16px;
+  color: #666;
+  line-height: 1.5;
 }
 
 .bar-notes-text strong {
-    color: #333;
+  color: #333;
 }
 
 /* Metadata style */
 .bar-notes-meta {
-    display: block;
-    margin-top: 10px;
-    font-size: 14px;
-    color: #888;
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+  color: #888;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    .bar-notes-container {
-        width: 100%;
-        padding: 10px;
-        border-radius: 0;
-    }
+  .bar-notes-container {
+    width: 100%;
+    padding: 10px;
+    border-radius: 0;
+  }
 }

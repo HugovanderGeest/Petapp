@@ -1,46 +1,47 @@
 body {
-    font-family: 'Arial', sans-serif;
-    line-height: 1.6;
-    background: #000; /* Changed to black */
-    margin: 0;
-    padding: 0;
+  font-family: "Arial", sans-serif;
+  line-height: 1.6;
+  background: #000; /* Changed to black */
+  margin: 0;
+  padding: 0;
 }
 
-h1, h2 {
-    color: #fff; /* Text color changed to white for visibility */
-    margin-left: 20px;
+h1,
+h2 {
+  color: #fff; /* Text color changed to white for visibility */
+  margin-left: 20px;
 }
 
-.modal-content, .modal {
-    background-color: #fff;
-    color: #333; /* Ensuring text inside modals is visible */
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.1);
+.modal-content,
+.modal {
+  background-color: #fff;
+  color: #333; /* Ensuring text inside modals is visible */
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 #mapContainer {
-    position: relative;
-    width: 100%; /* Make it responsive to the outer container */
-    padding-top: 100%; /* This maintains a 1:1 aspect ratio */
-    margin: 30px auto;
-    background-size: cover;
-    cursor: crosshair;
-    overflow: hidden; /* Ensures nothing leaks out */
+  position: relative;
+  width: 100%; /* Make it responsive to the outer container */
+  padding-top: 100%; /* This maintains a 1:1 aspect ratio */
+  margin: 30px auto;
+  background-size: cover;
+  cursor: crosshair;
+  overflow: hidden; /* Ensures nothing leaks out */
 }
 
-
 #mapImage {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%; /* Fill the entire container */
-    height: 100%; /* Fill the entire container */
-    object-fit: contain; /* This ensures the image covers the area without distortion */
-    cursor: crosshair;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Fill the entire container */
+  height: 100%; /* Fill the entire container */
+  object-fit: contain; /* This ensures the image covers the area without distortion */
+  cursor: crosshair;
 }
 
 .sluit-knop {
-    background-color: red;
+  background-color: red;
   padding: 20px;
   color: white;
   border: none;
@@ -49,122 +50,129 @@ h1, h2 {
   cursor: pointer;
 }
 
-.bar-marker, .bar-label {
-    position: absolute;
-    transform: translate(-50%, -100%);
+.bar-marker,
+.bar-label {
+  position: absolute;
+  transform: translate(-50%, -100%);
 }
 
 .bar-marker {
-    width: 10px;
-    height: 10px;
-    background-color: blue;
-    border-radius: 50%;
+  width: 10px;
+  height: 10px;
+  background-color: blue;
+  border-radius: 50%;
 }
 
 .bar-label {
-    background-color: blue;
-    padding: 2px 8px;
-    border-radius: 4px;
-    top: -20px; /* Offset to not overlap the marker */
-    white-space: nowrap;
-    font-size: 15px;
+  background-color: blue;
+  padding: 2px 8px;
+  border-radius: 4px;
+  top: -20px; /* Offset to not overlap the marker */
+  white-space: nowrap;
+  font-size: 15px;
 }
 
 .bar-label a {
-    color: #fff;
-    text-decoration: none;
-
+  color: #fff;
+  text-decoration: none;
 }
 
 .fab {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background-color: #270eae; /* Primary blue or another color of your choice */
-    color: white;
-    border-radius: 50%; /* Makes the button round */
-    width: 70px; /* Diameter of the button */
-    height: 70px; /* Diameter of the button */
-    display: flex; /* Enables flexbox */
-    justify-content: center; /* Centers horizontally */
-    align-items: center; /* Centers vertically */
-    text-decoration: none; /* Removes underline from the link */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* Adds a subtle shadow */
-    z-index: 1000; /* Ensures it floats above other content */
-    transition: background-color 0.3s, transform 0.2s; /* Adds smooth hover effects */
-    display: flex !important;
-    border: none;
-    cursor: pointer;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #270eae; /* Primary blue or another color of your choice */
+  color: white;
+  border-radius: 50%; /* Makes the button round */
+  width: 70px; /* Diameter of the button */
+  height: 70px; /* Diameter of the button */
+  display: flex; /* Enables flexbox */
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  text-decoration: none; /* Removes underline from the link */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a subtle shadow */
+  z-index: 1000; /* Ensures it floats above other content */
+  transition: background-color 0.3s, transform 0.2s; /* Adds smooth hover effects */
+  display: flex !important;
+  border: none;
+  cursor: pointer;
 }
 
 .fas.fa-question {
-    font-size: 20px;
+  font-size: 20px;
 }
 
-#myModal, .modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+#myModal,
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .modal-content {
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
 }
 
-.close, .close-upload {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.close,
+.close-upload {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
 }
 
-.close:hover, .close:focus, .close-upload:hover, .close-upload:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+.close:hover,
+.close:focus,
+.close-upload:hover,
+.close-upload:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
 }
 
-button, .settings-btn {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    display: block;
-    margin: 20px auto;
-    width: 150px;
+button,
+.settings-btn {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: block;
+  margin: 20px auto;
+  width: 150px;
 }
 
-button:hover, .settings-btn:hover {
-    background-color: #0056b3;
+button:hover,
+.settings-btn:hover {
+  background-color: #0056b3;
 }
 
 .settings-btn {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 10;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10;
 }
 
 .settings-panel {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 60px;
-    right: 20px;
-    background: white;
-    color: black;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    z-index: 9;
+  display: none; /* Hidden by default */
+  position: fixed;
+  top: 60px;
+  right: 20px;
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 9;
 }

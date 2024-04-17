@@ -1,16 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='briefing.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='briefing.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
     <title>View Location: {{ location.name }}</title>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="search-container">
-        <input type="text" id="userSearchInput" onkeyup="filterContent()" placeholder="Zoek mensen of info...">
+      <input
+        type="text"
+        id="userSearchInput"
+        onkeyup="filterContent()"
+        placeholder="Zoek mensen of info..."
+      />
     </div>
     <h1>{{ location.name }}</h1>
 
@@ -19,23 +29,23 @@
     <!-- Display attributes as a table if available -->
     {% if attributes %}
     <div class="attributes-section">
-        <h3>Info</h3>
-        <table class="attributes-table">
-            <thead>
-                <tr>
-                    <th>Wat</th>
-                    <th>Info</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for attr in attributes %}
-                <tr>
-                    <td>{{ attr.key }}</td>
-                    <td>{{ attr.value }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+      <h3>Info</h3>
+      <table class="attributes-table">
+        <thead>
+          <tr>
+            <th>Wat</th>
+            <th>Info</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for attr in attributes %}
+          <tr>
+            <td>{{ attr.key }}</td>
+            <td>{{ attr.value }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
     {% else %}
     <p class="no-data">No additional attributes available.</p>
@@ -43,62 +53,64 @@
 
     <!-- Display users associated with this location as a table -->
     <div class="users-section">
-        <h2>Mensen hier</h2>
-        {% if users %}
-        <table class="users-table">
-            <thead>
-                <tr>
-                    <th>Mensen</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.username }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        {% else %}
-        <p class="no-data">No users are currently associated with this location.</p>
-        {% endif %}
+      <h2>Mensen hier</h2>
+      {% if users %}
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Mensen</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+          <tr>
+            <td>{{ user.username }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="no-data">
+        No users are currently associated with this location.
+      </p>
+      {% endif %}
     </div>
 
     <!-- Button to edit the location details -->
     <!-- <button onclick="window.location.href='{{ url_for('edit_location', location_id=location.id) }}'">Edit Location</button> -->
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            function filterContent() {
-                var input = document.getElementById("userSearchInput");
-                var filter = input.value.toLowerCase();
-                var userTable = document.querySelector(".users-table tbody");
-                var attributeTable = document.querySelector(".attributes-table tbody");
-                filterTable(userTable, filter); // Filter user table
-                filterTable(attributeTable, filter); // Filter attributes table
-            }
-        
-            function filterTable(table, filter) {
-                var tr = table.getElementsByTagName("tr");
-                var foundInRow;
-                for (var i = 0; i < tr.length; i++) {
-                    foundInRow = false; // Reset found status for each row
-                    var tds = tr[i].getElementsByTagName("td");
-                    for (var j = 0; j < tds.length; j++) {
-                        if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
-                            foundInRow = true; // If found, set to true and stop checking this row
-                            break;
-                        }
-                    }
-                    tr[i].style.display = foundInRow ? "" : "none"; // Show or hide row based on search result
-                }
-            }
-        
-            var userInput = document.getElementById("userSearchInput");
-            userInput.onkeyup = filterContent; // Bind the function to the keyup event
-        });
-        </script>
-        
+      document.addEventListener("DOMContentLoaded", function () {
+        function filterContent() {
+          var input = document.getElementById("userSearchInput");
+          var filter = input.value.toLowerCase();
+          var userTable = document.querySelector(".users-table tbody");
+          var attributeTable = document.querySelector(
+            ".attributes-table tbody"
+          );
+          filterTable(userTable, filter); // Filter user table
+          filterTable(attributeTable, filter); // Filter attributes table
+        }
 
-</body>
+        function filterTable(table, filter) {
+          var tr = table.getElementsByTagName("tr");
+          var foundInRow;
+          for (var i = 0; i < tr.length; i++) {
+            foundInRow = false; // Reset found status for each row
+            var tds = tr[i].getElementsByTagName("td");
+            for (var j = 0; j < tds.length; j++) {
+              if (tds[j].textContent.toLowerCase().indexOf(filter) > -1) {
+                foundInRow = true; // If found, set to true and stop checking this row
+                break;
+              }
+            }
+            tr[i].style.display = foundInRow ? "" : "none"; // Show or hide row based on search result
+          }
+        }
+
+        var userInput = document.getElementById("userSearchInput");
+        userInput.onkeyup = filterContent; // Bind the function to the keyup event
+      });
+    </script>
+  </body>
 </html>

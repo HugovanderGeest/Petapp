@@ -1,113 +1,188 @@
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
-    <title>{{ location.name }}</title>
-</head>
+{% block content %}
 
-<body>
+<div class="search-container location-bar">
+    <form action="" method="get"> <!-- You may need to adjust the action attribute -->
+        <input type="text" id="barSearchInput" onkeyup="searchBars()" placeholder="Zoeken...">
+    </form>
+</div>
 
-    <div class="search-container location-bar">
-        <form action="" method="get"> <!-- You may need to adjust the action attribute -->
-            <input type="text" id="barSearchInput" onkeyup="searchBars()" placeholder="Zoeken...">
-        </form>
+{% if from_admin %}
+
+<div id="formContainer">
+    <form id="barLinkForm" method="POST">
+        <input type="text" name="bar_name" class="form-input" placeholder="Bar of container naam" required>
+        <input type="submit" value="Add Bar" class="submit-button">
+        <div id="errorText" class="error-text"></div> <!-- Error message will be displayed here -->
+    </form>
+</div>
+{% endif %}
+
+<ul id="barsList" class="bars-list">
+    {% for bar in bars %}
+    <li>
+        <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ bar.background_color }};">{{ bar.name }}</a>
+        {% if current_user.is_admin %}  <!-- Check if the user is an admin -->
+            <!-- Form for color selection, only allow changing from red to blue -->
+<!-- No need for an AJAX setup, simply use the form normally -->
+            <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
+                <select name="color" onchange="this.form.submit()">
+                    <option value="blue" {% if bar.background_color == '#270eae' %}selected{% endif %}>Bar</option>
+                    <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
+                </select>
+            </form>
+
+            <button class="removeBarBtn" data-bar-id="{{ bar.id }}">X</button>
+        {% endif %}
+    </li>
+{% endfor %}
+
+</ul>
+
+
+
+</div>
+
+<button id="infoBtn" class="fab"><i class="fas fa-question"></i></button>
+
+<div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+    <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
+        <b>Op deze pagina kun je aanklikken in welke bar jij een zak wilt inchecken,</b><br><br>
+        <b>Rood</b><br> zijn containers<br><br>
+        <b>Blauw</b><br> zijn barren<br><br>
+
+        Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
+        <button class="sluit-knop" onclick="closeLightbox()">Sluit</button> 
     </div>
+</div>
 
-    {% if from_admin %}
 
-    <div id="formContainer">
-        <form id="barLinkForm" method="POST">
-            <input type="text" name="bar_name" class="form-input" placeholder="Bar Name" required>
-            <input type="submit" value="Add Bar" class="submit-button">
-            <div id="errorText" class="error-text"></div> <!-- Error message will be displayed here -->
-        </form>
-    </div>
-    {% endif %}
+<a href="{{ url_for('map_page', location_id=location.id) }}">
+<button class="fab map-knop"><i class="fas fa-fas fa-map-marker-alt"></i></button>
+</a>
 
-    <!-- Button to remove bar, initially hidden -->
-    <button id="removeBarBtn" style="display: none;">Remove Bar</button>
+<div class="return-to-dashboard">
+    <a href="{{ url_for('dashboard', user_id=current_user.id) }}">
+        <button class="fab fabl"><i class="fas fa-user"></i></button>
+    </a>
+</div>
 
 
 
-    <ul id="barsList" class="bars-list">
-        {% for bar in bars %}
-        <li>
-            <!-- Conditionally render the URL based on the user's admin status -->
-            {% if current_user.is_admin %}
-            <a href="{{ url_for('bar', bar_id=bar.id, user_id=current_user.id, from_admin=true) }}"
-                class="bar-button">{{ bar.name }}</a>
-            {% else %}
-            <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button">{{ bar.name }}</a>
-            {% endif %}
-        </li>
-        {% endfor %}
-    </ul>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
-
-    </div>
-
-    <div class="map">
-        <a href="{{ url_for('map_page', location_id=location.id) }}">
-            <i class="fas fa-map-marker-alt"></i> <!-- Font Awesome map icon -->
-        </a>
-    </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            // Toggle form visibility when the gear icon is clicked
-            // Handle form submission
-            $('#barLinkForm').submit(function (e) {
-                e.preventDefault();
-                $.ajax({
-                    url: '/add_bar_to_location/{{ location.id }}',
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function (response) {
-                        $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-                        $('#errorText').text('');
-                    },
-                    error: function (response) {
-                        $('#errorText').text('Error: The bar could not be added.');
-                    }
-                });
+<script>
+    $(document).ready(function () {
+        // Toggle form visibility when the gear icon is clicked
+        // Handle form submission
+        $('#barLinkForm').submit(function (e) {
+            e.preventDefault();
+            $.ajax({
+                url: '/add_bar_to_location/{{ location.id }}',
+                type: 'POST',
+                data: $(this).serialize(),
+                success: function (response) {
+                    $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+                    $('#errorText').text('');
+                },
+                error: function (response) {
+                    $('#errorText').text('Error: The bar could not be added.');
+                }
             });
         });
-    </script>
+    });
+</script>
 
-    <script>
-        success: function(response) {
-            // Make sure `response` actually includes `bar_id`
-            $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-        }
-    </script>
+<script>
+    success: function(response) {
+        // Make sure `response` actually includes `bar_id`
+        $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+    }
+</script>
 
-    <script>
-        function searchBars() {
-            var input, filter, ul, li, a, i, txtValue;
-            input = document.getElementById("barSearchInput");
-            filter = input.value.toUpperCase();
-            ul = document.getElementById("barsList");
-            li = ul.getElementsByTagName("li");
-        
-            for (i = 0; i < li.length; i++) {
-                a = li[i].getElementsByTagName("a")[0];
-                txtValue = a.textContent || a.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    li[i].style.display = "";
-                } else {
-                    li[i].style.display = "none";
-                }
+<script>
+    function searchBars() {
+        var input, filter, ul, li, a, i, txtValue;
+        input = document.getElementById("barSearchInput");
+        filter = input.value.toUpperCase();
+        ul = document.getElementById("barsList");
+        li = ul.getElementsByTagName("li");
+
+        for (i = 0; i < li.length; i++) {
+            a = li[i].getElementsByTagName("a")[0];
+            txtValue = a.textContent || a.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                li[i].style.display = "";
+            } else {
+                li[i].style.display = "none";
             }
         }
-        </script>
-    
+    }
+</script>
 
-</body>
+<script>
+    $(document).ready(function () {
+        $('form').on('change', 'select', function (e) {
+            console.log("Handling form change event.");  // Debug message
+            e.preventDefault();  // Stop the default form submission
+
+            var form = $(this).closest('form');
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    console.log("Color update successful, reloading page.");  // Debug message
+                    window.location.reload();  // Reload the page to reflect the change
+                },
+                error: function () {
+                    console.log("Error updating color.");  // Debug message
+                    alert('Error updating color');
+                }
+            });
+        });
+    });
+</script>
 
 
-</html>
+
+<script>
+$(document).ready(function () {
+    $('.removeBarBtn').click(function () {
+        var barId = $(this).data('bar-id');
+        // Confirmation dialog
+        if (confirm('Are you sure you want to remove this bar?')) {
+            $.ajax({
+                url: '/remove_bar/' + barId,
+                type: 'POST',
+                success: function (response) {
+                    alert('Bar removed successfully!');
+                    window.location.reload();  // Reload the page to reflect the change
+                },
+                error: function () {
+                    alert('Error removing bar.');
+                }
+            });
+        }
+    });
+});
+
+</script>
+
+<script>
+    document.getElementById('infoBtn').addEventListener('click', function() {
+        document.getElementById('infoLightbox').style.display = 'block';
+    });
+
+    function closeLightbox() {
+        document.getElementById('infoLightbox').style.display = 'none';
+    }
+</script>
+
+
+
+
+
+
+{% endblock %}

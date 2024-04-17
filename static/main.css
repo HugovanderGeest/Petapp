@@ -62,7 +62,7 @@ body {
 }
 
 #barSearchInput {
-    width: 90vw;
+    width: 70vw;
     font-size: 20px;
     border-radius: 10px;
     border: none;
@@ -78,7 +78,7 @@ body {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -30%);
   }
 
 .login-container {
@@ -195,6 +195,9 @@ body {
     width: 100% !important;
 }
 
+.map-knop {
+    top: 20px;
+}
 
 .naame h2 {
     width: 100%;
@@ -248,9 +251,6 @@ body {
     margin-right: 10px;
 }
 
-.naame form {
-    width: 60vw !important;
-}
 
 .plus-icon:hover {
     background-color: #3658a4;
@@ -259,15 +259,37 @@ body {
 
 .login-form form {
     margin: 0 auto;
-    height: 320px;
     margin-bottom: 20px;
     width: 310px;
 
 }
 
+#infoLightbox {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;  /* High z-index to ensure it covers other elements */
+}
+
+.sluit-knop {
+    background-color: red;
+  padding: 20px;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+
 @media (max-width: 600px) {
     .login-form form {
-        height: 370px;
+        height: 100%;   
+    
     }
 }
 
@@ -283,18 +305,19 @@ body {
 }
 
 .sidebar {
-    height: 100vh;
+    height: 100vh; /* Fixed height to match the viewport height */
+    max-height: 100vh; /* Maximum height to ensure it doesn't exceed viewport */
+    overflow-y: auto; /* Enables vertical scrolling when content is taller than the sidebar */
     background-color: white;
     color: white;
-    width: 15vw;
-    position: absolute;
+    width: 15vw; /* Adjust width as needed */
+    position: fixed; /* Changed from absolute to fixed to stay within the view during scroll */
     bottom: 0;
     right: 0;
     border-radius: 0px 15px 0px 0px;
     padding: 20px;
-    z-index: 6;
-    display: block;
-    overflow: hidden;
+    z-index: 6; /* Ensure it's above other content but below modal overlays if any */
+    display: block; /* Confirm it's not set to none */
 }
 
 @media (max-width: 600px) {
@@ -306,6 +329,12 @@ body {
     }
 }
 
+.max-man {
+  max-height: 60vh;
+  overflow: scroll;
+    overflow-x: scroll;
+  overflow-x: hidden;
+}
 
 /* Style for the search input field */
 #userSearchInput {
@@ -896,6 +925,10 @@ input.check-button {
     color: #4E73DF;
 }
 
+.fabl {
+    left: 20px;
+}
+
 .list-section a,
 .links {
     font-size: 19px;
@@ -1040,6 +1073,20 @@ form input[type="submit"] {
     margin-top: 0;
 }
 
+.login-container.bigger {
+    max-width: 460px;
+  }
+
+.maakappp {
+    position: absolute;
+    bottom: 0;
+    color: white;
+    background-color: #270eae;
+    padding: 20px;
+    border-radius: 15px;
+    text-decoration: none;
+  }
+
 .top-boy {
     position: absolute;
     top: -17px;    
@@ -1156,7 +1203,7 @@ form input[type="submit"]:hover {
     object-fit: cover;
     opacity: 0.9;
     cursor: pointer;
-
+    max-width: 500px;
 }
 
 .bottom-navbar {
@@ -1169,7 +1216,7 @@ form input[type="submit"]:hover {
     justify-content: space-around;
     padding: 15px 0;
 
-    z-index: 1002; /* Ensure it's above other content */
+    z-index: 998; /* Ensure it's above other content */
     max-width: 500px;
 }
 
@@ -1660,6 +1707,7 @@ input[type="submit"] {
     top: 50px;
     z-index: 1;
     max-width: 500px;
+    border-radius: 10px;
 }
 
 /* Table Basic Styling */
@@ -1775,13 +1823,13 @@ input[type="submit"] {
     padding: 0px;
 }
 
-
 .zakkenField input {
     padding: 20px;
     border-radius: 20px;
     border: #4E73DF 3px solid;
     font-size: 30px;
     width: 40vw;
+    max-width: 270px;
   }
 
 .zakkenField button {
@@ -2005,7 +2053,7 @@ input[type="submit"] {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    background-color: #4e73df; /* Primary blue or another color of your choice */
+    background-color: #270eae; /* Primary blue or another color of your choice */
     color: white;
     border-radius: 50%; /* Makes the button round */
     width: 70px; /* Diameter of the button */
@@ -2018,6 +2066,15 @@ input[type="submit"] {
     z-index: 1000; /* Ensures it floats above other content */
     transition: background-color 0.3s, transform 0.2s; /* Adds smooth hover effects */
     display: flex !important;
+    border: none;
+    cursor: pointer;
+}
+
+.vraag {
+    bottom: none;
+    right: 20px;
+left: 20px;
+top: 20px;
 }
 
 .map {

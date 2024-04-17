@@ -31,7 +31,7 @@
 
     <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
 
-    <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}" alt="Profile Picture" id="profilePic">
+    <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}" alt="" id="profilePic">
 
     
 
@@ -45,8 +45,8 @@
             {% endif %}
             <h4>Dit is jouw pagina, hier kan jij zien waar je ingedeeld staat</h4>
             {% if user.location %}
-                <div> cv
-                    <p>View Assigned Location:</p>
+                <div> 
+                    <p>Informatie voor jou:</p>
                     <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}" class="btn-link">{{ location_name }}</a> 
                     <a href="{{ url_for('view_location', location_id=user.location.id) }}" class="btn-link">Informatie</a>
                 </div>

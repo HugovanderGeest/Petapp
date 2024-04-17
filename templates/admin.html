@@ -19,13 +19,13 @@
     <div class="gear-icon-container"> <i id="toggleSidebar" class="fa fa-bars"></i></div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ category }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
     {% endwith %}
 
     <div class="sidebar" style="display: none;">
@@ -37,24 +37,26 @@
         <h3>Controleur</h3>
         {% endif %}
 
-        <a href="#">
+        <div class="max-man">
+
+        <a href="{{ url_for('admin') }}">
             <div class="active side-link">
                 <i class="fas fa-user"></i>
-            <p>Admin</p>
+                <p>Admin</p>
             </div>
         </a>
 
         <a href="{{ url_for('change_log') }}">
             <div class="side-link">
-            <i class="fas fa-book"></i>
-            <p>Log</p>
+                <i class="fas fa-book"></i>
+                <p>Log</p>
             </div>
         </a>
 
         <a href="{{ url_for('check_ins') }}">
             <div class="side-link">
-            <i class="fas fa-check"></i>
-            <p>Check</p>
+                <i class="fas fa-check"></i>
+                <p>Check</p>
             </div>
         </a>
 
@@ -71,34 +73,40 @@
                 <p>Briefings</p>
             </div>
         </a>
-        
-        
-        <div class="side-bottom">
 
-            <div class="line"></div>
-    
+        <a href="{{ url_for('bar_notes') }}">
+            <div class="side-link">
+                <i class="fas fa-pen"></i>
+                <p>notities</p>
+            </div>
+        </a>
+
             <a href="{{ url_for('index') }}">
                 <div class="side-link">
-                <i class="fas fa-arrow-left"></i>
-                <p>Log-uit</p>
-            </div>
+                    <i class="fas fa-arrow-left"></i>
+                    <p>Log-uit</p>
+                </div>
             </a>
         </div>
     </div>
+</div>
 
 
 
 
     <div class="cube-container">
 
-        <div class="formenzo"> 
+        <div class="formenzo">
             <div class="login-form" id="userForm" style="display: none;">
                 <form method="POST">
                     <h2 class="cube-titel">Maak gebruiker aan</h2>
                     {{ form.hidden_tag() }}
                     {{ form.username.label }} {{ form.username() }} <br><br>
                     {{ form.password.label }} {{ form.password() }} <br><br>
+                    {{ form.email.label }} {{ form.email() }} <br><br>
+                    {{ form.phone_number.label }} {{ form.phone_number() }} <br><br>
                     {{ form.is_admin.label }} {{ form.is_admin() }} <br><br>
+
                     {{ form.submit() }}
                 </form>
             </div>
@@ -118,59 +126,62 @@
 
         </div>
 
-        </div>
-        
-
-        <a onclick="toggleForms()" class="fab" aria-label="Download">
-            <i class="fas fa-plus"></i>      
-      </a>
-
-        <div class="table-container">
-            <table class="custom-table">
-            <div class="search-container"></div>
-                <form action="{{ url_for('admin') }}" method="get">
-                    <input type="text" id="userSearchInput" onkeyup="sortUsers()" placeholder="Zoeke...">
-                    
-                    <!-- <button class="zoeken" type="submit">Zoeken</button> -->
-                </form>
-                
-                <thead>
-                    <tr>
-                        <th id="username-header" onclick="sortTable('username')">Gebruikersnaam</th>
-                        <th id="location-header" onclick="sortTable('location')">Locatie</th>
-                        <th id="admin-header" onclick="sortTable('admin')">Admin</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>
-                            <div class="user-info">
-                                <!-- Use the user's profile picture if available, otherwise default to stock.png -->
-                                <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}" alt="Profile Picture" class="user-profile-pic">
-                                <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
-                            </div>
-                        </td>
-                        <td>
-                            {% if user.location %}
-                            <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}?user_id=1&from_admin=true">
-                                {{ user.location.name }}
-                            </a>
-                            {% else %}
-                            Geen
-                            {% endif %}
-                        </td>
-                        <td>{{ 'Ja' if user.is_admin else 'Nee' }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-                
-                
-            </table>
-        </div>
     </div>
-    
-    
+
+
+    <a onclick="toggleForms()" class="fab" aria-label="plus">
+        <i class="fas fa-plus"></i>
+    </a>
+
+    <div class="table-container">
+        <table class="custom-table">
+            <div class="search-container"></div>
+            <form action="{{ url_for('admin') }}" method="get">
+                <input type="text" id="userSearchInput" onkeyup="sortUsers()" placeholder="Zoeke...">
+
+                <!-- <button class="zoeken" type="submit">Zoeken</button> -->
+            </form>
+
+            <thead>
+                <tr>
+                    <th id="username-header" onclick="sortTable('username')">Gebruikersnaam</th>
+                    <th id="location-header" onclick="sortTable('location')">Locatie</th>
+                    <th id="admin-header" onclick="sortTable('admin')">Admin</th>
+                    <th>Email</th> <!-- New header for email -->
+                    <th>Telefoonnummer</th> <!-- New header for phone number -->
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                        <div class="user-info">
+                            <img src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}"
+                                 alt="Profile Picture" class="user-profile-pic">
+                            <a href="{{ url_for('user_dashboard', user_id=user.id) }}">{{ user.username }}</a>
+                        </div>
+                    </td>
+                    <td>
+                        {% if user.location %}
+                        <a href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}?user_id=1&from_admin=true">
+                            {{ user.location.name }}
+                        </a>
+                        {% else %}
+                        Geen
+                        {% endif %}
+                    </td>
+                    <td>{{ 'Ja' if user.is_admin else 'Nee' }}</td>
+                    <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td> <!-- Email link -->
+                    <td><a href="tel:{{ user.phone_number }}">{{ user.phone_number }}</a></td> <!-- Phone link -->
+                </tr>
+                {% endfor %}
+            </tbody>
+            
+        </table>
+    </div>
+    </div>
+
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(document).ready(function () {
@@ -181,151 +192,151 @@
         });
     </script>
     <script>
-        $(document).ready(function() {
-            $('#createUserForm').submit(function(event) {
+        $(document).ready(function () {
+            $('#createUserForm').submit(function (event) {
                 event.preventDefault(); // Prevent the default form submission
                 $.ajax({
                     url: '/path/to/your/user/creation/route', // Update with your route
                     type: 'POST',
                     data: $(this).serialize(), // Serialize form data
-                    success: function(response) {
+                    success: function (response) {
                         // Assuming response contains user data, e.g., { id: 123, username: "newUser" }
                         $('#userList').append(`<li id="user-${response.id}"><a href="/user_dashboard/${response.id}">${response.username}</a></li>`);
                     },
-                    error: function(xhr, status, error) {
+                    error: function (xhr, status, error) {
                         // Handle errors (optional)
                         console.error("Error creating user:", status, error);
                     }
                 });
             });
         });
-        </script>
-        
-        <script>
-            function sortTable(column) {
-                var table, rows, switching, i, x, y, shouldSwitch;
-                table = document.querySelector(".custom-table tbody"); // Focus on tbody only
-                switching = true;
-                while (switching) {
-                    switching = false;
-                    rows = table.rows;
-                    for (i = 0; i < (rows.length - 1); i++) { // Adjusted loop to account for tbody rows only
-                        shouldSwitch = false;
-                        x = rows[i].getElementsByTagName("TD")[column === 'username' ? 0 : column === 'location' ? 1 : 2];
-                        y = rows[i + 1].getElementsByTagName("TD")[column === 'username' ? 0 : column === 'location' ? 1 : 2];
-                        if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) { // Using innerText for comparison
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-                    if (shouldSwitch) {
-                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                        switching = true;
-                    }
-                }
-            }
-
-
-        </script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-    $(document).ready(function() {
-        $('.toggle-button').click(function() {
-            var formContainer = $(this).next('.form-container');
-            // Debugging output
-            console.log(formContainer.length); // Should log 1 if the form container is correctly selected
-            
-            var isOpen = formContainer.css('max-height') !== '0px';
-            console.log('Is open:', isOpen); // Debugging: Check if detected as open
-            
-            if (isOpen) {
-                formContainer.css('max-height', 0);
-                $(this).text('+');
-            } else {
-                formContainer.css('max-height', 'none');
-                var scrollHeight = formContainer.prop('scrollHeight');
-                console.log('Scroll Height:', scrollHeight); // Should log a positive number
-                
-                formContainer.css('max-height', 0); // Ensure CSS transition can occur
-                setTimeout(() => {
-                    formContainer.css('max-height', scrollHeight + 'px');
-                    $(this).text('-');
-                }, 10);
-            }
-        });
-    });
-</script>
-
-<script>
-function toggleForms() {
-    var userForm = document.getElementById('userForm');
-    var locationForm = document.getElementById('locationForm');
-    var formenzo = document.querySelector('.formenzo');
-    var overlay = document.getElementById('overlay');
-
-    // Check if overlay exists, if not, create it
-    if (!overlay) {
-        overlay = document.createElement('div');
-        overlay.id = 'overlay';
-        overlay.className = 'overlay';
-        document.body.appendChild(overlay);
-    }
-
-    // Toggle forms display
-    userForm.style.display = userForm.style.display === 'none' ? 'block' : 'none';
-    locationForm.style.display = locationForm.style.display === 'none' ? 'block' : 'none';
-
-    // If either form is visible, show overlay and apply z-index to formenzo
-    if (userForm.style.display === 'block' || locationForm.style.display === 'block') {
-        overlay.style.display = 'block';
-        formenzo.classList.add('formenzo-active');
-    } else {
-        overlay.style.display = 'none';
-        formenzo.classList.remove('formenzo-active');
-    }
-
-    // When overlay is clicked, hide forms and remove overlay
-    overlay.onclick = function() {
-        userForm.style.display = 'none';
-        locationForm.style.display = 'none';
-        overlay.style.display = 'none';
-        formenzo.classList.remove('formenzo-active');
-    }
-}
-
-</script>
-
-<script>
-    function sortUsers() {
-        // Get the input field and its value (convert it to lowercase for case-insensitive comparison)
-        var input = document.getElementById("userSearchInput");
-        var filter = input.value.toLowerCase();
-        var table = document.querySelector(".custom-table tbody"); // Adjust selector as necessary
-        var tr = table.getElementsByTagName("tr");
-        
-        // Loop through all table rows, and hide those who don't match the search query
-        for (var i = 0; i < tr.length; i++) {
-            var tdUsername = tr[i].getElementsByTagName("td")[0]; // Username column
-            var tdLocation = tr[i].getElementsByTagName("td")[1]; // Location column
-            
-            if (tdUsername || tdLocation) {
-                // Get text content from both columns
-                var txtValueUsername = tdUsername ? tdUsername.textContent || tdUsername.innerText : "";
-                var txtValueLocation = tdLocation ? tdLocation.textContent || tdLocation.innerText : "";
-                
-                // Check if the row should be displayed based on the search query
-                if (txtValueUsername.toLowerCase().indexOf(filter) > -1 || txtValueLocation.toLowerCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                } else {
-                    tr[i].style.display = "none";
-                }
-            }       
-        }
-    }
     </script>
-    
-    
-        
+
+    <script>
+        function sortTable(column) {
+            var table, rows, switching, i, x, y, shouldSwitch;
+            table = document.querySelector(".custom-table tbody"); // Focus on tbody only
+            switching = true;
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 0; i < (rows.length - 1); i++) { // Adjusted loop to account for tbody rows only
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[column === 'username' ? 0 : column === 'location' ? 1 : 2];
+                    y = rows[i + 1].getElementsByTagName("TD")[column === 'username' ? 0 : column === 'location' ? 1 : 2];
+                    if (x.innerText.toLowerCase() > y.innerText.toLowerCase()) { // Using innerText for comparison
+                        shouldSwitch = true;
+                        break;
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                }
+            }
+        }
+
+
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.toggle-button').click(function () {
+                var formContainer = $(this).next('.form-container');
+                // Debugging output
+                console.log(formContainer.length); // Should log 1 if the form container is correctly selected
+
+                var isOpen = formContainer.css('max-height') !== '0px';
+                console.log('Is open:', isOpen); // Debugging: Check if detected as open
+
+                if (isOpen) {
+                    formContainer.css('max-height', 0);
+                    $(this).text('+');
+                } else {
+                    formContainer.css('max-height', 'none');
+                    var scrollHeight = formContainer.prop('scrollHeight');
+                    console.log('Scroll Height:', scrollHeight); // Should log a positive number
+
+                    formContainer.css('max-height', 0); // Ensure CSS transition can occur
+                    setTimeout(() => {
+                        formContainer.css('max-height', scrollHeight + 'px');
+                        $(this).text('-');
+                    }, 10);
+                }
+            });
+        });
+    </script>
+
+    <script>
+        function toggleForms() {
+            var userForm = document.getElementById('userForm');
+            var locationForm = document.getElementById('locationForm');
+            var formenzo = document.querySelector('.formenzo');
+            var overlay = document.getElementById('overlay');
+
+            // Check if overlay exists, if not, create it
+            if (!overlay) {
+                overlay = document.createElement('div');
+                overlay.id = 'overlay';
+                overlay.className = 'overlay';
+                document.body.appendChild(overlay);
+            }
+
+            // Toggle forms display
+            userForm.style.display = userForm.style.display === 'none' ? 'block' : 'none';
+            locationForm.style.display = locationForm.style.display === 'none' ? 'block' : 'none';
+
+            // If either form is visible, show overlay and apply z-index to formenzo
+            if (userForm.style.display === 'block' || locationForm.style.display === 'block') {
+                overlay.style.display = 'block';
+                formenzo.classList.add('formenzo-active');
+            } else {
+                overlay.style.display = 'none';
+                formenzo.classList.remove('formenzo-active');
+            }
+
+            // When overlay is clicked, hide forms and remove overlay
+            overlay.onclick = function () {
+                userForm.style.display = 'none';
+                locationForm.style.display = 'none';
+                overlay.style.display = 'none';
+                formenzo.classList.remove('formenzo-active');
+            }
+        }
+
+    </script>
+
+    <script>
+        function sortUsers() {
+            // Get the input field and its value (convert it to lowercase for case-insensitive comparison)
+            var input = document.getElementById("userSearchInput");
+            var filter = input.value.toLowerCase();
+            var table = document.querySelector(".custom-table tbody"); // Adjust selector as necessary
+            var tr = table.getElementsByTagName("tr");
+
+            // Loop through all table rows, and hide those who don't match the search query
+            for (var i = 0; i < tr.length; i++) {
+                var tdUsername = tr[i].getElementsByTagName("td")[0]; // Username column
+                var tdLocation = tr[i].getElementsByTagName("td")[1]; // Location column
+
+                if (tdUsername || tdLocation) {
+                    // Get text content from both columns
+                    var txtValueUsername = tdUsername ? tdUsername.textContent || tdUsername.innerText : "";
+                    var txtValueLocation = tdLocation ? tdLocation.textContent || tdLocation.innerText : "";
+
+                    // Check if the row should be displayed based on the search query
+                    if (txtValueUsername.toLowerCase().indexOf(filter) > -1 || txtValueLocation.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+
+
+
 </body>
 
 </html>

@@ -1,16 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <title>Bar {{ bar.name }} op {{ bar.location.name }}</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-</head>
+{% block content %}
 
-<body>
 
     <!-- <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2"> -->
     <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
@@ -88,20 +79,41 @@
 
     {% endif %}
 
+    <button id="infoBtn" class="fab vraag"><i class="fas fa-question"></i></button>
+
+        <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+            <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
+                <b>  Vul hier in hoeveel kg één of meerdere zakken wegen. </b><br> <br>
+               <b> Check-in </b><br>Als je langs een bar bent gelopen en geen zak hebt meegenomen.<br><br>
+               <b>   Foto's </b><br>Upload foto's van de omgeving of van dingen die je opvallen.<br> <br>
+                <b>  Notities </b><br>Wil je iets laten weten over een bar zodat wij daar rekening mee kunnen houden, zet het hier.<br> <br>
+                    <b>  +Zakken </b> <br>Voor als je meer dan één zak wilt inchecken.<br> <br>
+
+                Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
+                <button class="sluit-knop" onclick="closeLightbox()">Sluit</button> 
+            </div>
+        </div>
+
+
     <div class="bottom-navbar">
         <!-- Photo icon with text -->
+
+        <a href="{{ url_for('location', user_id=user.id, location_id=bar.location_id) }}" class="nav-item">
+            <i class="fas fa-arrow-left"></i><span>Terug</span>
+        </a>
+        
         <a href="javascript:void(0);" class="nav-item" id="photoIcon"
             onclick="document.getElementById('photoModal').style.display='block'">
-            <i class="fas fa-images"></i><span>Photos</span>
+            <i class="fas fa-images"></i><span>Foto's</span>
         </a>
         <!-- Note icon with text -->
         <a href="javascript:void(0);" class="nav-item" id="noteBtn"
             onclick="document.getElementById('noteModal').style.display='block'">
-            <i class="fas fa-file "></i><span>Notes</span>
+            <i class="fas fa-file "></i><span>Notities</span>
         </a>
 
         <a id="addZak" class="nav-item">
-            <i class="fas fa-plus"></i><span>Plus zakken</span>
+            <i class="fas fa-plus"></i><span>Zakken</span>
         </a>
     </div>
 
@@ -374,6 +386,29 @@
         showCheckmark();
     </script>
 
-</body>
+    <script>
+        $(document).ready(function () {
+    // When the user clicks the question mark button, show the info lightbox
+    $('#infoBtn').click(function () {
+        $('#infoLightbox').show();
+    });
 
-</html>
+    // Function to close the info lightbox when clicking on the close button inside it
+    function closeLightbox() {
+        $('#infoLightbox').hide();
+    }
+
+    // Attach the closeLightbox function to the button inside the infoLightbox
+    $('#infoLightbox button').click(closeLightbox);
+
+    // Close the info lightbox when clicking outside of it
+    $(window).click(function (event) {
+        if ($(event.target).attr('id') === 'infoLightbox') {
+            $('#infoLightbox').hide();
+        }
+    });
+});
+
+    </script>
+
+{% endblock %}

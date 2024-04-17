@@ -1,21 +1,58 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Map of {{ location.name }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='map.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='map.css') }}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<!-- Icon links -->
+<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='icons/apple-touch-icon.png') }}">
+<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='icons/favicon-32x32.png') }}">
+<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='icons/favicon-16x16.png') }}">
+<link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+<link rel="mask-icon" href="{{ url_for('static', filename='icons/safari-pinned-tab.svg') }}" color="#5bbad5">
+
+<!-- Color meta tags -->
+<meta name="msapplication-TileColor" content="#da532c">
+<meta name="theme-color" content="black">
+
+<!-- Service Worker -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('{{ url_for("static", filename="service-worker.js") }}')
+            .then(function(registration) {
+                console.log('Service Worker registered with scope:', registration.scope);
+            })
+            .catch(function(err) {
+                console.log('Service Worker registration failed:', err);
+            });
+        });
+    }
+</script>
 </head>
 <body>
+<!-- Splash Screen -->
+<div id="splash-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 9999; display: flex; justify-content: center; align-items: center;">
+    <img src="{{ url_for('static', filename='icons/icon-512x512.png') }}" alt="Loading..." style="width: 150px; height: 150px;">
+</div>
+
+<script>
+    window.addEventListener('load', function() {
+        // Hide the splash screen after the page is fully loaded
+        document.getElementById('splash-screen').style.display = 'none';
+    });
+</script>
+
     <h1>Map for {{ location.name }}</h1>
     <div id="mapContainer">
         {% if filename %}
         <img id="mapImage" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Map of {{ location.name }}">
-                    <p>No map image uploaded for this location.</p>
         {% endif %}
     </div>
 
+    {% if current_user.is_admin %}
     <button class="settings-btn" onclick="toggleSettings()">Settings</button>
     <div class="settings-panel" id="settingsPanel">
     <h2>Upload a Map Image</h2>
@@ -23,8 +60,10 @@
         <input type="file" name="map_photo" required>
         <button type="submit">Upload Image</button>
     </form>
+    {% endif %}
 
-    <button id="myBtn">Place a Bar on the Map</button>
+    <button style="display: none;" id="myBtn">Place a Bar on the Map</button>
+
     <div id="myModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -37,11 +76,25 @@
         </div>
     </div>
     </div>
+
+    <button id="infoBtn" class="fab vraag"><i class="fas fa-question"></i></button>
+
+    <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+        <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
+            <b>Op deze pagina kun je aanklikken in welke bar jij een zak wilt inchecken,</b><br><br>
+            <b>Rood</b><br> zijn containers<br><br>
+            <b>Blauw</b><br> zijn barren<br><br>
+    
+            Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
+            <button class="sluit-knop " onclick="closeLightbox()">Sluit</button> 
+        </div>
+    </div>
+
     <script>
         var modal = document.getElementById("myModal");
         var btn = document.getElementById("myBtn");
         var span = document.getElementsByClassName("close")[0];
-
+    
         btn.onclick = function() {
             modal.style.display = "block";
         }
@@ -53,21 +106,21 @@
                 modal.style.display = "none";
             }
         }
-
+    
         $(document).ready(function() {
             $('#mapImage').click(function(e) {
                 var posX = $(this).offset().left, posY = $(this).offset().top;
                 var x = e.pageX - posX;
                 var y = e.pageY - posY;
-
+    
                 var mapWidth = $(this).width();
                 var mapHeight = $(this).height();
-
+    
                 var xPercent = (x / mapWidth) * 100;
                 var yPercent = (y / mapHeight) * 100;
                 var barId = $('#barSelect').val();
                 var barName = $('#barSelect option:selected').text();
-
+    
                 $.post('{{ url_for("save_bar_location") }}', {
                     x: xPercent,
                     y: yPercent,
@@ -76,7 +129,7 @@
                     if (data.success) {
                         alert('Bar placed at ' + xPercent + '%, ' + yPercent + '%');
                         modal.style.display = "none";
-
+    
                         var marker = $('<div class="bar-marker"></div>');
                         var label = $('<div class="bar-label"><a href="/bar/' + barId + '">' + barName + '</a></div>');
                         
@@ -88,7 +141,7 @@
                             'left': xPercent + '%',
                             'top': yPercent + '%'
                         });
-
+    
                         $('#mapContainer').append(marker);
                         $('#mapContainer').append(label);
                     } else {
@@ -96,9 +149,10 @@
                     }
                 });
             });
-
+    
             // Load existing bars and place them on the map
-            $.getJSON('{{ url_for("get_bars") }}', function(bars) {
+            var locationId = "{{ location.id }}"; // Ensure location.id is dynamically injected into your JavaScript
+            $.getJSON('{{ url_for("get_bars", location_id=location.id) }}', function(bars) {
                 bars.forEach(function(bar) {
                     if (bar.x && bar.y) {
                         var marker = $('<div class="bar-marker"></div>');
@@ -106,13 +160,15 @@
                         
                         marker.css({
                             'left': bar.x + '%',
-                            'top': bar.y + '%'
+                            'top': bar.y + '%',
+                            'background-color': bar.background_color // Assuming background_color is sent from server
                         });
                         label.css({
                             'left': bar.x + '%',
-                            'top': bar.y + '%'
+                            'top': bar.y + '%',
+                            'background-color': bar.background_color // Assuming background_color is sent from server
                         });
-
+    
                         $('#mapContainer').append(marker);
                         $('#mapContainer').append(label);
                     }
@@ -120,38 +176,45 @@
             });
         });
     </script>
+    
+<!-- Remove the hardcoded button from HTML -->
+<!-- <button class="settings-btn" onclick="toggleSettings()">Settings</button> -->
 
-    <script>
-        $(window).resize(function() {
-    // Adjust map container padding-top based on its current width to maintain aspect ratio
-    var currentWidth = $('#mapContainer').width();
-    var desiredHeight = currentWidth / 2; // Change '2' based on your desired aspect ratio
-    var paddingPercentage = (desiredHeight / currentWidth) * 100;
-    $('#mapContainer').css('padding-top', paddingPercentage + '%');
-});
-
-function toggleSettings() {
+<script>
+    function toggleSettings() {
         var panel = document.getElementById("settingsPanel");
         panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
+
+        var myBtn = document.getElementById("myBtn");
+        myBtn.style.display = (panel.style.display === 'block') ? 'block' : 'none';
     }
-// Simulate checking if the user is an admin
-var isAdmin = true; // This would be dynamically set based on your authentication system
 
-window.onload = function() {
-    if (isAdmin) {
-        var button = document.createElement('button');
-        button.className = 'settings-btn';
-        button.innerText = 'Settings';
-        button.onclick = function() { toggleSettings(); };
-        document.body.appendChild(button);
-    }
-};
+    window.onload = function() {
+        // Check if the user is an admin
+        var isAdmin = false; // You will need to set this based on your authentication system
 
-function toggleSettings() {
-    var panel = document.getElementById('settingsPanel');
-    panel.style.display = (panel.style.display === 'none' || panel.style.display === '') ? 'block' : 'none';
-}
+        if (isAdmin) {
+            var button = document.createElement('button');
+            button.className = 'settings-btn';
+            button.innerText = 'Settings';
+            button.onclick = function() { toggleSettings(); };
+            document.body.appendChild(button);
+        }
+    };
+</script>
 
+
+    
+    <script>
+        document.getElementById('infoBtn').addEventListener('click', function() {
+            document.getElementById('infoLightbox').style.display = 'block';
+        });
+    
+        function closeLightbox() {
+            document.getElementById('infoLightbox').style.display = 'none';
+        }
     </script>
-</body>
-</html>
+    
+
+    </body>
+    </html>

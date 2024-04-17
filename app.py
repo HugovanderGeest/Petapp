@@ -27,6 +27,9 @@ from flask_login import UserMixin, login_user, login_required, logout_user, curr
 from wtforms_sqlalchemy.fields import QuerySelectMultipleField
 from wtforms import SelectMultipleField, widgets
 from forms import SimpleForm  # Import the form you just defined
+from wtforms.validators import DataRequired, Email
+import email
+
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -56,11 +59,15 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
     group = db.Column(db.String(120), nullable=True)
     badges = db.Column(db.Integer, default=0)
     profile_picture = db.Column(db.String(255), nullable=True)
-    
+    email = db.Column(db.String(120), unique=True, nullable=False)  # New email field
+    phone_number = db.Column(db.String(20), nullable=True)  # New phone number field    
+    has_accessed_briefing = db.Column(db.Boolean, default=False)
 
-    def __init__(self, username, password, location_id=None, group=None, badges=0, is_admin=False):
+    def __init__(self, username, password, email, phone_number, location_id=None, group=None, badges=0, is_admin=False):
         self.username = username
         self.password = generate_password_hash(password)
+        self.email = email
+        self.phone_number = phone_number
         self.location_id = location_id
         self.group = group
         self.badges = badges
@@ -69,10 +76,11 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
+    email = StringField('Email', validators=[DataRequired(), Email()])
+    phone_number = StringField('Phone Number')
     location = QuerySelectField('Location', query_factory=lambda: Location.query, allow_blank=True, get_label='name')
-    is_admin = BooleanField('Admin')  # Add this line to include an admin checkbox
+    is_admin = BooleanField('Admin')
     submit = SubmitField('Update')
-
 
 class ChangeLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -200,19 +208,8 @@ class PostForm(FlaskForm):
 
 class Bar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    zakken_gekregen = db.Column(db.Integer, default=0)
-    volle_zakken_opgehaald = db.Column(db.Integer, default=0)
-    kg_van_zak = db.Column(db.Integer, default=0)
-    url = db.Column(db.String)
-    link = db.Column(db.String)
-    note = db.Column(db.String, nullable=True)  # Add this line to include a note field
-    change_log = db.Column(db.String, default="", nullable=True)
-    activity_log = db.relationship('ActivityLog', backref='bar', lazy=True)
-    last_checked_in = db.Column(db.DateTime, nullable=True)
-    last_checked_in_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
-    last_checked_in_user = db.relationship('User', foreign_keys=[last_checked_in_user_id], backref='checked_in_bars')
-    id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    background_color = db.Column(db.String(10), default='blue')  # New field to store color
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
@@ -220,6 +217,11 @@ class Bar(db.Model):
     x = db.Column(db.Float, nullable=True)  # X coordinate as percentage
     y = db.Column(db.Float, nullable=True)  # Y coordinate as percentage
     note = db.Column(db.String(1000))  # Assuming note is just a text field for simplicity
+    url = db.Column(db.String)
+    link = db.Column(db.String)
+    last_checked_in = db.Column(db.DateTime, nullable=True)
+    last_checked_in_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    last_checked_in_user = db.relationship('User', foreign_keys=[last_checked_in_user_id], backref='checked_in_bars')
 
     def __init__(self, name, location_id, zakken=0, bekers=0):
         self.name = name
@@ -249,6 +251,18 @@ def update_location_link(bar_id):
     flash('Location link updated successfully!')
     return redirect(url_for('some_view_function', bar_id=bar.id))
 
+@app.route('/access-briefing/<int:user_id>')
+@login_required
+def access_briefing(user_id):
+    user = User.query.get_or_404(user_id)
+    if not user.has_accessed_briefing:
+        user.has_accessed_briefing = True
+        db.session.commit()
+        flash('Briefing accessed.', 'success')
+    else:
+        flash('Briefing already accessed.', 'info')
+    return redirect(url_for('dashboard'))
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -260,9 +274,12 @@ def admin():
         user = User(
             username=form.username.data,
             password=form.password.data,
+            email=form.email.data,
+            phone_number=form.phone_number.data if form.phone_number.data else None,
             location_id=form.location.data.id if form.location.data else None,
             is_admin=form.is_admin.data
         )
+
         db.session.add(user)
         db.session.commit()
         flash('User created successfully!', 'success')
@@ -345,25 +362,39 @@ def view_photos():
 
 @app.route('/export_zakken_kg_logs')
 def export_zakken_kg_logs():
-    # Query your data; this is just an example, adjust it according to your actual data
-    logs = ZakkenKGLog.query.all()
+    # Extend the query to include the location name associated with each bar
+    logs = db.session.query(
+        ZakkenKGLog.kg_submitted,
+        ZakkenKGLog.timestamp,
+        User.username.label('user_name'),
+        Bar.name.label('bar_name'),
+        Location.name.label('location_name')  # Fetch the location name
+    ).join(User, ZakkenKGLog.user_id == User.id)\
+     .join(Bar, ZakkenKGLog.bar_id == Bar.id)\
+     .join(Location, Bar.location_id == Location.id).all()  # Ensure Bar is linked to Location
+
     # Convert log data into a list of dictionaries for easier DataFrame creation
     data = [{
-            "User ID": log.user_id, 
-            "Bar ID": log.bar_id, 
+            "User Name": log.user_name, 
+            "Bar Name": log.bar_name, 
+            "Location Name": log.location_name,  # Add the location name to the data
             "KG Submitted": log.kg_submitted, 
             "Timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S")
         } for log in logs]
+    
     # Convert list of dictionaries into a pandas DataFrame
     df = pd.DataFrame(data)
+    
     # Define the file path; consider using os.path or similar for more complex paths
     directory = os.path.join(app.root_path, 'static')
     filepath = os.path.join(directory, 'zakken_kg_logs.xlsx')
+    
     # Write the DataFrame to an Excel file
     df.to_excel(filepath, index=False)
     
     # Corrected send_from_directory call
     return send_from_directory(directory=directory, path='zakken_kg_logs.xlsx', as_attachment=True, download_name='zakken_kg_logs.xlsx')
+
 
 @app.route('/photos/<filename>')
 def uploaded_photos(filename):
@@ -838,6 +869,16 @@ def update_location(location_id):
     db.session.commit()
     return redirect(url_for('view_location', location_id=location_id))
 
+@app.route('/bar/<int:bar_id>/update_color', methods=['POST'])
+def update_bar_color(bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+    new_color = request.form.get('color')
+    bar.background_color = new_color
+    db.session.commit()
+    # Assuming each bar has a location_id attribute to find its associated location
+    # Redirect back to the location details page
+    return redirect(url_for('admin'))
+
 @app.route('/bar/<int:bar_id>', methods=['GET', 'POST'])
 def bar(bar_id):
     from_admin = request.args.get('from_admin', 'false').lower() == 'true'
@@ -848,6 +889,7 @@ def bar(bar_id):
         return redirect(url_for('bar', bar_id=bar_id))
     link = bar.link if bar.link else Bar.query.first().link  # Fallback to the first bar's link if none set.
     return render_template('bar.html', bar=bar, link=link, user=user, from_admin=from_admin)
+
 
 @app.route('/bar/<int:bar_id>/update', methods=['POST'])
 def update_bar(bar_id):
@@ -901,11 +943,26 @@ def save_bar_location():
     except Exception as e:
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
+    
 
-@app.route('/get_bars', methods=['GET'])
-def get_bars():
-    bars = Bar.query.filter(Bar.x.isnot(None), Bar.y.isnot(None)).all()
-    bars_data = [{'id': bar.id, 'name': bar.name, 'x': bar.x, 'y': bar.y} for bar in bars]
+
+@app.route('/get_bars/<int:location_id>', methods=['GET'])
+def get_bars(location_id):
+    # Fetch only bars that belong to the given location ID and have valid x, y coordinates
+    bars = Bar.query.filter(
+        Bar.location_id == location_id,
+        Bar.x != None,
+        Bar.y != None
+    ).all()
+
+    bars_data = [{
+        'id': bar.id,
+        'name': bar.name,
+        'x': bar.x,
+        'y': bar.y,
+        'background_color': bar.background_color
+    } for bar in bars]
+
     return jsonify(bars_data)
 
 @app.route('/bar_notes')
@@ -913,8 +970,6 @@ def bar_notes():
     # Ensure the query includes a join to User if not automatically handled by a relationship
     bars_with_notes = Bar.query.filter(Bar.note.isnot(None)).all()
     return render_template('bar_notes.html', bars=bars_with_notes)
-
-
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
 def update_bar_details(bar_id):
@@ -959,6 +1014,7 @@ def update_bar_details(bar_id):
     return redirect(url_for('bar', bar_id=bar_id))
 
 @app.route('/map/<int:location_id>', methods=['GET', 'POST'])
+@login_required
 def map_page(location_id):
     location = Location.query.get_or_404(location_id)
     bars = Bar.query.filter_by(location_id=location_id).all()
@@ -980,7 +1036,6 @@ def map_page(location_id):
     filename = location.map_image  # Retrieve the filename from the database to display
     if filename is None:
         flash('No map photo available. Please upload one.')
-        return render_template('map.html', location=location, bars=bars, filename=None)
     
     return render_template('map.html', location=location, bars=bars, filename=filename)
 
@@ -1063,12 +1118,7 @@ def activity_log():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-@app.route('/remove_bar_from_location/<int:bar_id>', methods=['POST'])
-def remove_bar(bar_id):
-    bar_to_remove = Bar.query.get_or_404(bar_id)  # Get the bar or return 404 if not found
-    db.session.delete(bar_to_remove)  # Remove the bar from the database
-    db.session.commit()  # Commit the changes to the database
-    return jsonify({'success': 'Bar removed successfully'}), 200
+
 
 @app.route('/submit_link', methods=['POST'])
 def submit_link():
@@ -1115,12 +1165,23 @@ def assign_location(user_id):
     
     return render_template('assign_location.html', form=form)
 
+@app.route('/static/<path:filename>')
+def static_files(filename):
+    return send_from_directory(app.config['STATIC_FOLDER'], filename)
+
+
 @app.route('/jemaiseenbar')
 def drop_database():
     db.drop_all()
     db.create_all()  # Optional: Recreate the database tables after dropping them
     return "Database dropped and recreated."
 
+@app.route('/remove_bar/<int:bar_id>', methods=['POST'])
+def remove_bar(bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+    db.session.delete(bar)
+    db.session.commit()
+    return jsonify({'success': 'Bar removed successfully'}), 200
 
 if __name__ == '__main__':
     app.run(debug=True)  

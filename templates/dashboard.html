@@ -56,21 +56,28 @@
         <h3>Admin</h3>
         {% else %}
         <h3>Controleur</h3>
-        {% endif %}
-        <h4>Dit is jouw pagina</h4>
-        {% if user.location %}
+        {% endif %} {% if user.location %}
         <div>
-          <p>Informatie voor jou:</p>
+          <br /><br /><br /><br />
+          <p><b>Evenement</b></p>
           <a
             href="{{ url_for('location', user_id=user.id, location_id=user.location.id) }}"
-            class="btn-link"
+            class="btn-link ora"
             >{{ location_name }}</a
           >
+          <br /><br /><br /><br />
+          <p><b>Briefing</b></p>
           <a
             href="{{ url_for('view_location', location_id=user.location.id) }}"
             class="btn-link"
-            >Informatie</a
+            >{{ location_name }}</a
           >
+          <h4>
+            <em
+              >Let op: lees de briefing voorafgaand aan het evenement zorgvuldig
+              door
+            </em>
+          </h4>
         </div>
         {% else %}
         <p>Je hebt nog geen locatie</p>
@@ -80,10 +87,10 @@
 
     <div class="bottom-navbar">
       <a href="{{ url_for('index') }}" class="nav-item"
-        ><i class="fas fa-arrow-left"></i><span>Log uit</span></a
+        ><i class="fas fa-arrow-left"></i><span>Uitloggen</span></a
       >
       <a href="#settings" class="nav-item"
-        ><i class="fas fa-cog"></i><span>Settings</span></a
+        ><i class="fas fa-cog"></i><span>Instellingen</span></a
       >
     </div>
 
@@ -103,12 +110,12 @@
         <!-- Close button -->
         <!-- Your existing Change Password form here -->
         <div class="password-change-form">
-          <h3>Change Password</h3>
+          <h3>Verander wachtwoord</h3>
           <form
             action="{{ url_for('change_password', user_id=user.id) }}"
             method="post"
           >
-            <label for="new_password">New Password:</label>
+            <label for="new_password">Nieuw wachtwoord:</label>
             <input
               type="password"
               id="new_password"
@@ -116,7 +123,7 @@
               required
             />
 
-            <label for="confirm_password">Confirm New Password:</label>
+            <label for="confirm_password">Opnieuwe nieuwe wachtwoord:</label>
             <input
               type="password"
               id="confirm_password"
@@ -124,7 +131,7 @@
               required
             />
 
-            <button type="submit">Change Password</button>
+            <button type="submit">Verstuur</button>
           </form>
         </div>
       </div>

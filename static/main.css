@@ -772,6 +772,14 @@ input.check-button {
   max-height: 500px;
 }
 
+.ora {
+  background-color: var(--cs) !important;
+}
+
+.btn-link {
+  font-size: 30px;
+}
+
 /* Additional CSS for gear icon and form transition */
 .gear-icon-container {
   position: fixed;

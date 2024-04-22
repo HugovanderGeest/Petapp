@@ -27,7 +27,7 @@
         <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ bar.background_color if bar.background_color in ['#1700a1', '#ff8547'] else '#1700a1' if bar.background_color == 'blue' else '#ff8547' if bar.background_color == 'red' else 'initial' }};">{{ bar.name }}</a>
         {% if current_user.is_admin %}  <!-- Check if the user is an admin -->
             <!-- Form for color selection, only allow changing from red to blue -->
-<!-- No need for an AJAX setup, simply use the form normally -->
+                <!-- No need for an AJAX setup, simply use the form normally -->
             <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
                 <select name="color" onchange="this.form.submit()">
                     <option value="blue" {% if bar.background_color == '#1700a1' %}selected{% endif %}>Bar</option>
@@ -46,12 +46,12 @@
 
 </div>
 
-<!-- <button id="infoBtn" class="fab"><i class="fas fa-question"></i></button> -->
+<!-- <button id="infoBtn" class="fab"><i class="fas fa-question"></i><b/button> -->
 
 <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
     <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
-        <b>Op deze pagina kun je aanklikken in welke bar jij een zak wilt inchecken,</b><br><br>
-        <b>Oranja</b><br> zijn containers<br><br>
+        <b>Op deze pagina kun je aanklikken in welke bar jij heen wil</b><br><br>
+        <b>Oranje</b><br> zijn containers<br><br>
         <b>Blauw</b><br> zijn barren<br><br>
 
         Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>

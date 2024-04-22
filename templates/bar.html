@@ -2,14 +2,14 @@
 
 <!-- <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2"> -->
 <!-- <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a> -->
-<h2 class="top-boy">Bar {{ bar.name }} op/in {{ bar.location.name }}</h2>
+<h2 class="top-boy">Bar {{ bar.name }} | {{ bar.location.name }}</h2>
 
 <form
   class="check-in"
   action="{{ url_for('check_in_bar', bar_id=bar.id) }}"
   method="post"
 >
-  <input class="check-button" type="submit" value="IN CHECKEN" />
+  <input class="check-button" type="submit" value="Inchecken" />
 </form>
 
 {% if from_admin %}
@@ -96,13 +96,13 @@
   <div style="background: white; margin: 100px auto; padding: 20px; width: 50%">
     <b> Vul hier in hoeveel kg één of meerdere zakken wegen. </b><br />
     <br />
-    <b> Check-in </b><br />Als je langs een bar bent gelopen en geen zak hebt
+    <b>Inchecken</b><br />Als je langs een bar bent gelopen en geen zak hebt
     meegenomen.<br /><br />
     <b> Foto's </b><br />Upload foto's van de omgeving of van dingen die je
     opvallen.<br />
     <br />
-    <b> Notities </b><br />Wil je iets laten weten over een bar zodat wij daar
-    rekening mee kunnen houden, zet het hier.<br />
+    <b> Notities </b><br />Maak hier notities van alles wat je opvalt bij iedere
+    bar, geef input over bijv. retoursysteem, barpersoneel, terrein etc.<br />
     <br />
     <b> +Zakken </b> <br />Voor als je meer dan één zak wilt inchecken.<br />
     <br />
@@ -158,7 +158,7 @@
       <div id="zakkenFieldsContainer">
         <div id="zakkenFields">
           <div class="zakkenField" data-index="0">
-            <label>Zak 1 in KG:</label> <br />
+            <label>Zak (KG)</label> <br />
             <input type="text" name="zakken[0].kg" required />
             <button type="button" class="removeZak">X</button>
           </div>
@@ -182,14 +182,14 @@
       <!-- Modal content -->
       <div class="modal-content">
         <span class="close">&times;</span>
-        <h2>Upload Photo</h2>
+        <h2>Upload Foto</h2>
         <form
           action="{{ url_for('upload_photo', bar_id=bar.id) }}"
           method="post"
           enctype="multipart/form-data"
         >
           <input class="file-boy" type="file" name="photo" />
-          <input type="submit" value="Upload Photo" />
+          <input type="submit" value="Upload" />
         </form>
       </div>
     </div>
@@ -381,7 +381,7 @@
       zakIndex++;
       $("#zakkenFields").append(`
                 <div class="zakkenField" data-index="${zakIndex}">
-                    <label>Zak ${zakIndex + 1} in KG:</label> <br>
+                    <label>Zak (KG)</label> <br>
                     <input type="text" name="zakken[${zakIndex}].kg" required>
                     <button type="button" class="removeZak">X</button>
                 </div>

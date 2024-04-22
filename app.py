@@ -210,7 +210,7 @@ class Bar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
     total_kg = db.Column(db.Integer, default=0)  # Total kilograms of zakken collected
-    background_color = db.Column(db.String(10), default='blue')  # New field to store color
+    background_color = db.Column(db.String(10), default='#1700a1')  # New field to store color
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
@@ -631,7 +631,7 @@ def log_activity():
     return jsonify({'success': 'Activity logged successfully'}), 200
 
 @app.template_filter('time_since')
-def time_since(dt, default="just now"):
+def time_since(dt, default="Geen tijd"):
     now = datetime.utcnow()
     diff = now - dt if dt else None
 
@@ -765,7 +765,9 @@ def update_bar_details_and_check_in(bar_id):
         flash('An error occurred while processing your submission. Please try again.', 'error')
         return redirect(url_for('bar', bar_id=bar_id))
 
-    return redirect(url_for('bar', bar_id=bar_id))
+    # Redirect to the location route after processing
+    return redirect(url_for('location', user_id=current_user.id, location_id=bar.location_id))
+
 
 class DayTimeEntryForm(FlaskForm):
     day = StringField('Day', validators=[DataRequired()])
@@ -850,19 +852,37 @@ def change_log():
 
 @app.route('/export_check_ins')
 def export_check_ins():
-    check_ins = CheckInLog.query.all()
-    data = [{
-        "Bar ID": check_in.bar_id, 
-        "User ID": check_in.user_id, 
-        "Timestamp": check_in.timestamp.strftime("%Y-%m-%d %H:%M:%S")
-    } for check_in in check_ins]
-    df = pd.DataFrame(data)
+    try:
+        check_ins = db.session.query(
+            CheckInLog.bar_id, Bar.name.label('bar_name'),
+            CheckInLog.user_id, User.username.label('user_name'),
+            CheckInLog.timestamp
+        ).join(Bar, CheckInLog.bar_id == Bar.id)\
+         .join(User, CheckInLog.user_id == User.id)\
+         .all()
 
-    # Define the file path; consider using Flask's app.instance_path or similar for file storage
-    filepath = os.path.join(current_app.root_path, 'static', 'check_ins.xlsx')
-    df.to_excel(filepath, index=False)
-    
-    return send_from_directory(directory=os.path.join(current_app.root_path, 'static'), path='check_ins.xlsx', as_attachment=True, download_name='check_ins.xlsx')
+        if not check_ins:
+            flash('No check-in data available to export.', 'info')
+            return redirect(url_for('check_ins'))
+
+        data = [{
+            "Bar ID": log.bar_id,
+            "Bar Name": log.bar_name,
+            "User ID": log.user_id,
+            "User Name": log.user_name,
+            "Timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S") if log.timestamp else "No timestamp"
+        } for log in check_ins]
+
+        df = pd.DataFrame(data)
+        print(df)  # Debug: Print DataFrame content
+
+        filepath = os.path.join(current_app.root_path, 'static', 'check_ins.xlsx')
+        df.to_excel(filepath, index=False)
+
+        return send_from_directory(directory=os.path.join(current_app.root_path, 'static'), path='check_ins.xlsx', as_attachment=True, download_name='check_ins.xlsx')
+    except Exception as e:
+        flash(f'An error occurred while exporting check-ins: {str(e)}', 'error')
+        return redirect(url_for('check_ins'))
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
@@ -1004,7 +1024,7 @@ def check_in_bar(bar_id):
     bar.last_checked_in_user_id = current_user.id  # Save the user who checked in
     db.session.commit()
     flash('Successfully checked in.', 'success')
-    return redirect(url_for('bar', bar_id=bar_id))
+    return redirect(url_for('location', user_id=current_user.id, location_id=bar.location_id))
 
 @app.route('/save_bar_location', methods=['POST'])
 def save_bar_location():

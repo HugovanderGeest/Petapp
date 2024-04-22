@@ -175,6 +175,30 @@ button {
   margin-bottom: 10px;
 }
 
+.attributes-section {
+  max-height: 501px;
+  overflow: scroll;
+  margin-top: 70px;
+}
+
+#backButton {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  padding: 15px;
+  font-size: 24px;
+  color: white;
+  background-color: var(--pc);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+#backButton:hover {
+  background-color: #0056b3;
+}
+
 .attributes-list {
   list-style: none;
   padding: 0;
@@ -304,6 +328,11 @@ th {
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
+}
+
+.users-section {
+  overflow: scroll;
+  max-height: 500px;
 }
 
 .sidebar {

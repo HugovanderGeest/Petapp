@@ -22,9 +22,8 @@
         placeholder="Zoek mensen of info..."
       />
     </div>
-    <h1>{{ location.name }}</h1>
 
-    <!-- Photo Display Section -->
+    <!-- Photo Display Section
     <div class="photo-gallery">
       <h2>Foto's</h2>
       {% if photos %}
@@ -41,14 +40,20 @@
       {% else %}
       <p class="no-data">Geen foto's beschikbaar.</p>
       {% endif %}
-    </div>
+    </div> -->
 
     <!-- Search Field -->
+
+    <button
+      id="backButton"
+      onclick="window.history.back();"
+      class="fa fa-arrow-left"
+    ></button>
 
     <!-- Display attributes as a table if available -->
     {% if attributes %}
     <div class="attributes-section">
-      <h3>Info</h3>
+      <h3>Info {{ location.name }}</h3>
       <table class="attributes-table">
         <thead>
           <tr>
@@ -72,7 +77,7 @@
 
     <!-- Display users associated with this location as a table -->
     <div class="users-section">
-      <h2>Mensen hier</h2>
+      <h2>controleurs op locatie</h2>
       {% if users %}
       <table class="users-table">
         <thead>

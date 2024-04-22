@@ -34,53 +34,56 @@
 
         <div class="max-man">
 
-        <a href="{{ url_for('admin') }}">
-            <div class="side-link">
-                <i class="fas fa-user"></i>
-                <p>Admin</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('change_log') }}">
-            <div class="side-link">
-                <i class="fas fa-book"></i>
-                <p>Log</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('check_ins') }}">
-            <div class="active side-link">
-                <i class="fas fa-check"></i>
-                <p>Check</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('view_photos') }}">
-            <div class="side-link">
-                <i class="fas fa-images"></i>
-                <p>Photos</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('show_briefings') }}">
-            <div class="side-link">
-                <i class="fas fa-file"></i>
-                <p>Briefings</p>
-            </div>
-        </a>
-
-        <a href="{{ url_for('bar_notes') }}">
-            <div class="side-link">
-                <i class="fas fa-pen"></i>
-                <p>notities</p>
-            </div>
-        </a>
-
-            <a href="{{ url_for('index') }}">
+            <a href="{{ url_for('admin') }}">
                 <div class="side-link">
-                    <i class="fas fa-arrow-left"></i>
-                    <p>Log-uit</p>
+                    <i class="fas fa-user"></i>
+                    <p>Admin</p>
                 </div>
+            </a>
+    
+            <a href="{{ url_for('change_log') }}">
+                <div class="side-link">
+                    <i class="fas fa-book"></i>
+                    <p>Data</p>
+                </div>
+            </a>
+    
+            <a href="{{ url_for('check_ins') }}">
+                <div class="active side-link">
+                    <i class="fas fa-check"></i>
+                    <p>Check</p>
+                </div>
+            </a>
+    
+            <a href="{{ url_for('view_photos') }}">
+                <div class="side-link">
+                    <i class="fas fa-images"></i>
+                    <p>Foto's</p>
+                </div>
+            </a>
+    
+            <a href="{{ url_for('show_briefings') }}">
+                <div class="side-link">
+                    <i class="fas fa-file"></i>
+                    <p>Briefings</p>
+                </div>
+            </a>
+    
+            <a href="{{ url_for('bar_notes') }}">
+                <div class="side-link">
+                    <i class="fas fa-pen"></i>
+                    <p>Notities</p>
+                </div>
+            </a>
+    
+                <a href="{{ url_for('index') }}">
+                    <div class="side-link">
+                        <i class="fas fa-arrow-left"></i>
+                        <p>Log-uit</p>
+                    </div>
+                </a>
+            <a href="{{ url_for('export_check_ins') }}" class="fab" aria-label="Download">
+                <i class="fas fa-download"></i>
             </a>
         </div>
     </div>
@@ -88,7 +91,7 @@
         <div class="location-filters">
             <form action="{{ url_for('check_ins') }}" method="get">
                 <select name="location_id" onchange="this.form.submit()">
-                    <option value="">Select a Location</option>
+                    <option value="">Selecteer een locatie</option>
                     {% for location in locations %}
                         <option value="{{ location.id }}">{{ location.name }}</option>
                         {% endfor %}
@@ -109,11 +112,11 @@
                    {% elif hours_since_checkin > 1 %}orange; color: white;
                    {% else %}white;
                    {% endif %}">       
-                <h3>Bar: {{ bar.name }} bij {{ bar.location.name }}</h3>
-                <p>Last checked in: {{ bar.last_checked_in | time_since }}</p>
+                <h3>{{ bar.name }} | {{ bar.location.name }}</h3>
+                <p>{{ bar.last_checked_in | time_since }}</p>
                 {% if bar.last_checked_in_user %}
-                <p>Checked in by: <a href="{{ url_for('user_dashboard', user_id=bar.last_checked_in_user.id) }}">{{ bar.last_checked_in_user.username }}</a></p>                {% else %}
-                <p>Checked in by: N/A</p>
+                <p>Checkin door: <a href="{{ url_for('user_dashboard', user_id=bar.last_checked_in_user.id) }}">{{ bar.last_checked_in_user.username }}</a></p>                {% else %}
+                <p>Checkin door: N/A</p>
                 {% endif %}
                 <!-- Optional: Uncomment if you want to enable manual check-in -->
                 <!-- <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">

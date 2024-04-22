@@ -83,7 +83,7 @@
     </a> -->
 
     <a href="{{ url_for('map_page', location_id=location.id) }}" class="nav-item">
-        <i class="fas fa-fas fa-map-marker-alt"></i><span>Kaart</span>
+        <i class="fas fa-fas fa-map-marker-alt"></i><span>Map</span>
     </a>
 
     <a id="infoBtn" class="nav-item">
@@ -181,10 +181,7 @@ $(document).ready(function () {
                 success: function (response) {
                     alert('Bar removed successfully!');
                     window.location.reload();  // Reload the page to reflect the change
-                },
-                error: function () {
-                    alert('Error removing bar.');
-                }
+                },  
             });
         }
     });
@@ -215,6 +212,17 @@ $(document).ready(function () {
     }
 </script>
 
-
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+    %} {% for category, message in messages %} {% if category == 'success' %}
+    <div class="alert alert-success" role="alert">{{ message }}</div>
+    {% elif category == 'error' %}
+    <div class="alert alert-danger" role="alert">{{ message }}</div>
+    {% elif category == 'info' %}
+    <div class="alert alert-info" role="alert">{{ message }}</div>
+    {% elif category == 'warning' %}
+    <div class="alert alert-warning" role="alert">{{ message }}</div>
+    {% else %}
+    <div class="alert alert-primary" role="alert">{{ message }}</div>
+    {% endif %} {% endfor %} {% endif %} {% endwith %}
 
 {% endblock %}

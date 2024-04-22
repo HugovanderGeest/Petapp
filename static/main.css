@@ -748,7 +748,7 @@ input.check-button {
 }
 
 .alert-success {
-  background-color: var(--pc); /* Your button color */
+  background-color: green; /* Your button color */
 }
 
 .alert-error {
@@ -1725,13 +1725,19 @@ input[type="submit"] {
   /* Spacing around the table container */
   width: 90%;
   /* Adjust the table container width on smaller screens */
-  overflow-x: auto;
+  overflow-x: visible;
   /* Enable horizontal scrolling on small devices */
   position: absolute;
   top: 50px;
   z-index: 1;
   max-width: 500px;
   border-radius: 10px;
+}
+
+@media (max-width: 768px) {
+  .table-container {
+    overflow-x: auto;
+  }
 }
 
 /* Table Basic Styling */
@@ -1900,60 +1906,6 @@ input[type="submit"] {
 
 #zakkenFields {
   max-width: 400px;
-}
-
-.checkmark-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  visibility: hidden;
-  transition: opacity 0.5s, visibility 0s linear 0.5s;
-}
-
-.checkmark-container.show {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 0.5s;
-}
-
-.checkmark {
-  width: 150px; /* Increased size */
-  height: 150px; /* Increased size */
-}
-
-.checkmark-circle {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-width: 2.5;
-  stroke-miterlimit: 10;
-  stroke: #63c642;
-  fill: none;
-  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-}
-
-.checkmark-check {
-  transform-origin: 50% 50%;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
-  stroke-width: 2.5;
-  stroke-miterlimit: 10;
-  stroke: #63c642;
-  fill: none;
-}
-
-@keyframes stroke {
-  100% {
-    stroke-dashoffset: 0;
-  }
 }
 
 /* General Body Styling specific to briefing form */
@@ -2270,3 +2222,4 @@ fff;
 #kgForm input[type="submit"]:hover {
   background-color: #117aeb; /* Darker shade of green */
 }
+

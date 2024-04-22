@@ -2,19 +2,21 @@
 
 {% block content %}
 
+
+
 <div class="search-container location-bar">
-    <form action="" method="get"> <!-- You may need to adjust the action attribute -->
+    <form action="" method="get">
         <input type="text" id="barSearchInput" onkeyup="searchBars()" placeholder="Zoeken...">
     </form>
 </div>
 
 {% if from_admin %}
-
 <div id="formContainer">
     <form id="barLinkForm" method="POST">
-        <input type="text" name="bar_name" class="form-input" placeholder="Bar of container naam" required>
-        <input type="submit" value="Add Bar" class="submit-button">
-        <div id="errorText" class="error-text"></div> <!-- Error message will be displayed here -->
+        <input type="text" name="bar_name" class="form-input jamooi" placeholder="Bar of container naam" required>
+        <button type="button" onclick="removeForm()" class="remove-button">X</button>
+        <input type="submit" value="+ Bar" class=" submit-button jamooi">
+        <div id="errorText" class="error-text"></div>
     </form>
 </div>
 {% endif %}
@@ -22,14 +24,14 @@
 <ul id="barsList" class="bars-list">
     {% for bar in bars %}
     <li>
-        <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ bar.background_color }};">{{ bar.name }}</a>
+        <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ bar.background_color if bar.background_color in ['#1700a1', '#ff8547'] else '#1700a1' if bar.background_color == 'blue' else '#ff8547' if bar.background_color == 'red' else 'initial' }};">{{ bar.name }}</a>
         {% if current_user.is_admin %}  <!-- Check if the user is an admin -->
             <!-- Form for color selection, only allow changing from red to blue -->
 <!-- No need for an AJAX setup, simply use the form normally -->
             <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
                 <select name="color" onchange="this.form.submit()">
-                    <option value="blue" {% if bar.background_color == '#270eae' %}selected{% endif %}>Bar</option>
-                    <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
+                    <option value="blue" {% if bar.background_color == '#1700a1' %}selected{% endif %}>Bar</option>
+                    <option value="red" {% if bar.background_color == '#ff8547' %}selected{% endif %}>Container</option>
                 </select>
             </form>
 
@@ -44,12 +46,12 @@
 
 </div>
 
-<button id="infoBtn" class="fab"><i class="fas fa-question"></i></button>
+<!-- <button id="infoBtn" class="fab"><i class="fas fa-question"></i></button> -->
 
 <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
     <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
         <b>Op deze pagina kun je aanklikken in welke bar jij een zak wilt inchecken,</b><br><br>
-        <b>Rood</b><br> zijn containers<br><br>
+        <b>Oranja</b><br> zijn containers<br><br>
         <b>Blauw</b><br> zijn barren<br><br>
 
         Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
@@ -58,19 +60,39 @@
 </div>
 
 
-<a href="{{ url_for('map_page', location_id=location.id) }}">
+<!-- <a href="{{ url_for('map_page', location_id=location.id) }}">
 <button class="fab map-knop"><i class="fas fa-fas fa-map-marker-alt"></i></button>
-</a>
+</a> -->
 
-<div class="return-to-dashboard">
+<!-- <div class="return-to-dashboard">
     <a href="{{ url_for('dashboard', user_id=current_user.id) }}">
         <button class="fab fabl"><i class="fas fa-user"></i></button>
     </a>
+</div> -->
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<div class="bottom-navbar">
+    <a href="{{ url_for('dashboard', user_id=current_user.id) }}" class="nav-item">
+        <i class="fas fa-user"></i><span>Jij</span>
+    </a>
+
+    <!-- <a href="{{ url_for('upload_photo_page') }}" class="nav-item">
+        <i class="fas fa-camera"></i><span>Foto's</span>
+    </a> -->
+
+    <a href="{{ url_for('map_page', location_id=location.id) }}" class="nav-item">
+        <i class="fas fa-fas fa-map-marker-alt"></i><span>Kaart</span>
+    </a>
+
+    <a id="infoBtn" class="nav-item">
+        <i class="fas fa-question"></i><span>Vragen</span>
+    </a>
+
 </div>
 
 
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
     $(document).ready(function () {
@@ -181,7 +203,17 @@ $(document).ready(function () {
 </script>
 
 
-
+<script>
+    // JavaScript to remove the formContainer div
+    function removeForm() {
+        var formContainer = document.getElementById('formContainer');
+        if (formContainer.style.display === 'none') {
+            formContainer.style.display = 'block';  // Optionally toggle visibility instead of removing
+        } else {
+            formContainer.style.display = 'none';
+        }
+    }
+</script>
 
 
 

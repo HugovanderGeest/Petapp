@@ -34,24 +34,23 @@
 </head>
 <body onload="loadExistingFields()">
     <h1>Update {{ location.name }}</h1>
-    <form method="POST" action="{{ url_for('add_user_to_location', location_id=location.id) }}">
+    <form class="overflow-scroll" method="POST" action="{{ url_for('add_user_to_location', location_id=location.id) }}">
         <h3>Add User to Location</h3>
         {% for user in all_users %}
             <input type="checkbox" id="user_{{ user.id }}" name="user_id[]" value="{{ user.id }}">
             <label for="user_{{ user.id }}">{{ user.username }}</label><br>
         {% endfor %}
-        <button type="submit">Add User</button>
+        <button type="submit">Voeg deze toe aan {{ location.name }}</button>
     </form>
     <form method="post">
         {{ form.hidden_tag() }}
         <div id="fieldsContainer">
             <!-- Dynamic fields will be added here -->
         </div>
-        <button type="button" onclick="addField()">Add Field</button>
+        <button type="button" onclick="addField()">Voeg meer details toe</button>
         <br>
         {{ form.submit }}
     </form>
-    <a href="/">Back to All Locations</a>
     <script>
         function loadExistingFields() {
             {% for attr in location.attributes %}

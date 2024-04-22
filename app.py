@@ -209,6 +209,7 @@ class PostForm(FlaskForm):
 class Bar(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False)
+    total_kg = db.Column(db.Integer, default=0)  # Total kilograms of zakken collected
     background_color = db.Column(db.String(10), default='blue')  # New field to store color
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
@@ -303,6 +304,89 @@ def admin():
 
     locations = Location.query.all()
     return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, search_query=search_query)
+
+# @app.route('/zakkeneerst')
+# def zakkeneerst():
+#     # Fetch all bars from the database
+#     bars = Bar.query.all()
+#     return render_template('zakkeneerst.html', bars=bars)
+
+@app.route('/upload_photo_page', methods=['GET', 'POST'])
+@login_required  # Ensure this page requires user login
+def upload_photo_page():
+    if request.method == 'POST':
+        file = request.files['photo']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            flash('Photo uploaded successfully!')
+            return redirect(url_for('some_page_to_view_photos'))  # Redirect to a page to view the uploaded photos
+    return render_template('upload_photo.html')
+
+@app.route('/upload_photo_to_view', methods=['POST'])
+@login_required  # Ensure this page requires user login
+def upload_photo_to_view():
+    file = request.files['photo']
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        flash('Photo uploaded successfully!')
+        return redirect(url_for('view_photos'))  # Assuming view_photos is the correct endpoint to show uploaded photos
+    else:
+        flash('Invalid file type or no file uploaded.')
+        return redirect(request.url)
+
+
+# @app.route('/submit_kg', methods=['POST'])
+# @login_required  # Ensure that the route can only be accessed by logged-in users
+# def submit_kg():
+#     bar_id = request.form.get('bar_id')
+#     kg_list = request.form.getlist('kg[]')  # Assuming your input fields are named 'kg[]' in the HTML form
+
+#     if bar_id:
+#         bar = Bar.query.get_or_404(bar_id)
+#         if bar:
+#             total_kg = sum(int(kg) for kg in kg_list)  # Summing up all kg inputs
+
+#             # Ensure there is a logged-in user
+#             if not current_user.is_authenticated:
+#                 flash('You must be logged in to submit kg.', 'error')
+#                 return redirect(url_for('login'))  # Redirect to login page or appropriate error page
+
+#             # Update the total kg for the bar
+#             bar.total_kg += total_kg
+
+#             # Create log entries for each kg submission
+#             for kg in kg_list:
+#                 log_entry = ZakkenKGLog(bar_id=bar.id, user_id=current_user.id, kg_submitted=int(kg))
+#                 db.session.add(log_entry)
+
+#             db.session.commit()
+#             flash(f'Successfully submitted {total_kg} KG for {bar.name}.', 'success')
+#         else:
+#             flash('Bar not found.', 'error')
+#     else:
+#         flash('No bar selected.', 'error')
+
+#     return redirect(url_for('zakkeneerst'))
+
+
+# @app.route('/update_zakken_kg/<int:bar_id>/<int:kg>', methods=['POST'])
+# def update_zakken_kg(bar_id, kg):
+#     bar = Bar.query.get_or_404(bar_id)
+#     if bar:
+#         # Update the total kg for the bar
+#         bar.total_kg += kg
+#         # Create a log entry for the submission
+#         log_entry = ZakkenKGLog(bar_id=bar.id, kg_submitted=kg)
+#         db.session.add(log_entry)
+#         db.session.commit()
+#         flash(f'Successfully submitted {kg} KG for {bar.name}.', 'success')
+#     else:
+#         flash('Bar not found.', 'error')
+#     return redirect(url_for('zakkeneerst'))
 
 
 @app.route('/bar/<int:bar_id>/upload_photo', methods=['POST'])
@@ -706,33 +790,44 @@ def show_briefings():
     return render_template('briefings.html', briefings=all_briefings)
 
 
+from flask import request, render_template
+
 @app.route('/change_log')
 def change_log():
-    # Fetch all changes with bar names and user names for ChangeLog entries
-    changes_with_bar_names = db.session.query(
+    location_id = request.args.get('location_id')
+
+    # Start constructing the query for ChangeLog and associated tables
+    query = db.session.query(
         ChangeLog, Bar.name.label('bar_name')
-    ).join(Bar, ChangeLog.bar_id == Bar.id).all()
+    ).join(Bar, ChangeLog.bar_id == Bar.id)
 
-    # Group changes by user
-    changes_grouped_by_user = {}
-    for change, bar_name in changes_with_bar_names:
-        user_changes = changes_grouped_by_user.setdefault(change.user, [])
-        user_changes.append((change, bar_name))
+    # Apply the location filter if a location ID is provided
+    if location_id and location_id.strip():
+        query = query.join(Location, Bar.location_id == Location.id).filter(Location.id == location_id)
 
-    # Group changes by bar
+    changes_with_bar_names = query.all()
+
+    # Group changes by bar to display in the template
     changes_grouped_by_bar = {}
     for change, bar_name in changes_with_bar_names:
         bar_changes = changes_grouped_by_bar.setdefault(bar_name, [])
         bar_changes.append(change)
 
-    # New logic to group ZakkenKGLog entries by bars and calculate totals for each bar
-    zakken_kg_logs_grouped = db.session.query(
+    # Similarly, handle the query for ZakkenKGLog entries
+    zakken_kg_log_query = db.session.query(
         ZakkenKGLog.bar_id, Bar.name, db.func.sum(ZakkenKGLog.kg_submitted).label('total_kg')
-    ).join(Bar, ZakkenKGLog.bar_id == Bar.id)\
-     .group_by(ZakkenKGLog.bar_id, Bar.name)\
-     .order_by(Bar.name).all()
+    ).join(Bar, ZakkenKGLog.bar_id == Bar.id)
 
-    # Fetching detailed logs for each bar separately
+    if location_id and location_id.strip():
+        zakken_kg_log_query = zakken_kg_log_query.join(Location, Bar.location_id == Location.id)\
+                                                 .filter(Location.id == location_id)
+
+    zakken_kg_logs_grouped = zakken_kg_log_query.group_by(ZakkenKGLog.bar_id, Bar.name).order_by(Bar.name).all()
+
+    # Fetch locations for the dropdown filter
+    locations = Location.query.all()
+
+    # Fetch detailed logs for each bar separately
     detailed_logs_by_bar = {}
     for bar_id, _, _ in zakken_kg_logs_grouped:
         detailed_logs = db.session.query(
@@ -745,27 +840,13 @@ def change_log():
          .order_by(ZakkenKGLog.timestamp.desc()).all()
         detailed_logs_by_bar[bar_id] = detailed_logs
 
-    # Fetch ZakkenKGLog entries with user and bar names, ordered by timestamp
-    # This is kept for backward compatibility if needed elsewhere in the template
-    zakken_kg_logs = db.session.query(
-        ZakkenKGLog,
-        User.username,
-        Bar.name.label('bar_name')
-    ).join(User, ZakkenKGLog.user_id == User.id)\
-     .join(Bar, ZakkenKGLog.bar_id == Bar.id)\
-     .order_by(ZakkenKGLog.timestamp.desc()).all()
-
-    # Calculate the total KG submitted (across all bars, for backward compatibility)
-    total_kg_submitted = sum(log.kg_submitted for log, _, _ in zakken_kg_logs)
-
-    # Pass all fetched data, including the new grouped data and the totals for each bar, to the template
-    return render_template('change_log.html', 
-                           changes_grouped_by_user=changes_grouped_by_user, 
+    # Render the template with all necessary data
+    return render_template('change_log.html',
                            changes_grouped_by_bar=changes_grouped_by_bar,
-                           zakken_kg_logs=zakken_kg_logs,  # Original, comprehensive list of logs
-                           total_kg_submitted=total_kg_submitted,  # Total across all bars
-                           zakken_kg_logs_grouped=zakken_kg_logs_grouped,  # New, grouped by bars with totals
-                           detailed_logs_by_bar=detailed_logs_by_bar)  # Detailed logs for each bar
+                           zakken_kg_logs_grouped=zakken_kg_logs_grouped,
+                           detailed_logs_by_bar=detailed_logs_by_bar,
+                           locations=locations)  # Include locations in the context for the dropdown
+
 
 @app.route('/export_check_ins')
 def export_check_ins():
@@ -1118,8 +1199,6 @@ def activity_log():
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
-
-
 @app.route('/submit_link', methods=['POST'])
 def submit_link():
     link = request.form['link']
@@ -1132,11 +1211,11 @@ def submit_link():
 
 @app.route('/delete_log/<int:log_id>', methods=['POST'])
 def delete_log(log_id):
-    log = ChangeLog.query.get_or_404(log_id)
+    log = ZakkenKGLog.query.get_or_404(log_id)
     db.session.delete(log)
     db.session.commit()
     flash('Log entry deleted successfully.', 'success')
-    return redirect(url_for('change_log'))
+    return redirect(url_for('change_log'))  # Redirect to the change log page or wherever appropriate
 
 
 @app.route('/dashboard', methods=['GET'])

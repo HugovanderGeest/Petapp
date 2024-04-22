@@ -24,6 +24,25 @@
     </div>
     <h1>{{ location.name }}</h1>
 
+    <!-- Photo Display Section -->
+    <div class="photo-gallery">
+      <h2>Foto's</h2>
+      {% if photos %}
+      <div class="photos-container">
+        {% for photo in photos %}
+        <div class="photo">
+          <img
+            src="{{ url_for('static', filename='uploads/' + photo.filename) }}"
+            alt="Uploaded Photo"
+          />
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="no-data">Geen foto's beschikbaar.</p>
+      {% endif %}
+    </div>
+
     <!-- Search Field -->
 
     <!-- Display attributes as a table if available -->

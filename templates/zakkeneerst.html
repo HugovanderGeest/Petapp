@@ -1,0 +1,96 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="bottom-navbar">
+  <a
+    href="{{ url_for('dashboard', user_id=current_user.id) }}"
+    class="nav-item"
+  >
+    <i class="fas fa-user"></i><span>Gebruiker</span>
+  </a>
+  <a id="infoBtn" class="nav-item">
+    <i class="fas fa-question"></i><span>Vragen</span>
+  </a>
+</div>
+
+<form id="kgForm" class="check-in" action="/submit_kg" method="post">
+  <div id="kgInputContainer">
+    <div class="input-group">
+      <label for="kg0">Zak KG</label>
+      <input type="number" id="kg0" name="kg[]" required />
+    </div>
+  </div>
+  <button type="button" id="addKg" class="add-button">
+    Voeg meer zakken toe
+  </button>
+  <div class="input-group">
+    <label for="barSelect">Bar</label>
+    <select id="barSelect" name="bar_id">
+      <div>
+        <ul>
+
+          <div class="input-group">
+            <label for="barSelect">Bar</label>
+            <select id="barSelect" name="bar_id">
+              {% for bar in bars %}
+                <option value="{{ bar.id }}">{{ bar.name }}</option>
+                <p>Location ID: {{ location.name }}</p>
+
+              {% endfor %}
+            </select>
+            <!-- Temporary check to display location ID -->
+          </div>
+                    
+          
+      </div>
+    </select>
+  </div>
+  <input class="check-button" type="submit" value="Verstuur" />
+</form>
+
+<div
+  id="infoLightbox"
+  style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+  "
+>
+  <div style="background: white; margin: 100px auto; padding: 20px; width: 50%">
+    <b
+      >Op deze pagina kun je aanklikken in welke bar jij een zak wilt
+      inchecken,</b
+    ><br /><br />
+    <b>Rood</b> zijn containers<br /><br />
+    <b>Blauw</b> zijn barren<br /><br />
+    Vragen? app: <a href="tel:0639865297">0639865297</a><br /><br /><br />
+    <button class="sluit-knop" onclick="closeLightbox()">Sluit</button>
+  </div>
+</div>
+
+<script>
+  document.getElementById("addKg").addEventListener("click", function () {
+    var container = document.getElementById("kgInputContainer");
+    var newInputCount = container.children.length;
+    var newInputGroup = document.createElement("div");
+    newInputGroup.classList.add("input-group");
+    newInputGroup.innerHTML = `
+      <label for="kg${newInputCount}">Zak KG:</label>
+      <input type="number" id="kg${newInputCount}" name="kg[]" required />
+    `;
+    container.appendChild(newInputGroup);
+  });
+
+  document.getElementById("infoBtn").addEventListener("click", function () {
+    document.getElementById("infoLightbox").style.display = "block";
+  });
+
+  function closeLightbox() {
+    document.getElementById("infoLightbox").style.display = "none";
+  }
+</script>
+
+{% endblock %}

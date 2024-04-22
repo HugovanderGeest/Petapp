@@ -25,31 +25,33 @@
 
     <div class="sidebar" style="display: none;">
         <!-- BEGIN: Changed the initial display to none -->
-            <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
-                {% if current_user.is_admin %}
-                    <h3>Admin</h3>
-                    {% else %}
-                <h3>Controleur</h3>
-            {% endif %}
+        <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
+        {% if current_user.is_admin %}
+        <h3>Admin</h3>
+        {% else %}
+        <h3>Controleur</h3>
+        {% endif %}
+
+        <div class="max-man">
 
         <a href="{{ url_for('admin') }}">
             <div class="side-link">
                 <i class="fas fa-user"></i>
-            <p>Admin</p>
+                <p>Admin</p>
             </div>
         </a>
 
         <a href="{{ url_for('change_log') }}">
             <div class="side-link">
-            <i class="fas fa-book"></i>
-            <p>Log</p>
+                <i class="fas fa-book"></i>
+                <p>Log</p>
             </div>
         </a>
 
         <a href="{{ url_for('check_ins') }}">
-            <div class=" active side-link">
-            <i class="fas fa-check"></i>
-            <p>Check</p>
+            <div class="active side-link">
+                <i class="fas fa-check"></i>
+                <p>Check</p>
             </div>
         </a>
 
@@ -67,21 +69,20 @@
             </div>
         </a>
 
-        <div class="side-bottom">
+        <a href="{{ url_for('bar_notes') }}">
+            <div class="side-link">
+                <i class="fas fa-pen"></i>
+                <p>notities</p>
+            </div>
+        </a>
 
-            <div class="line"></div>
-    
             <a href="{{ url_for('index') }}">
                 <div class="side-link">
-                <i class="fas fa-arrow-left"></i>
-                <p>Log-uit</p>
-            </div>
+                    <i class="fas fa-arrow-left"></i>
+                    <p>Log-uit</p>
+                </div>
             </a>
         </div>
-    
-                <a href="{{ url_for('export_check_ins') }}" class="fab" aria-label="Download">
-            <i class="fas fa-download"></i>
-        </a>
     </div>
 
         <div class="location-filters">

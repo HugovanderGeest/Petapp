@@ -1,3 +1,9 @@
+:root {
+  --pc: #1700a1; /* A shade of blue */
+  --cs: #ff8547; /* A darker shade of blue for hover effects */
+  --bc: #fff; /* A light grey for backgrounds */
+}
+
 body {
   font-family: "Arial", sans-serif;
   line-height: 1.6;
@@ -14,7 +20,7 @@ h2 {
 
 .modal-content,
 .modal {
-  background-color: #fff;
+  background-color: var(--bc);
   color: #333; /* Ensuring text inside modals is visible */
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
@@ -40,8 +46,23 @@ h2 {
   cursor: crosshair;
 }
 
+.add-button {
+  background-color: var(--pc);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin: 10px 0;
+  transition: background-color 0.3s;
+}
+
+.add-button:hover {
+  background-color: var(--pc);
+}
+
 .sluit-knop {
-  background-color: red;
+  background-color: var(--cs);
   padding: 20px;
   color: white;
   border: none;
@@ -59,12 +80,12 @@ h2 {
 .bar-marker {
   width: 10px;
   height: 10px;
-  background-color: blue;
+  background-color: var(--pc);
   border-radius: 50%;
 }
 
 .bar-label {
-  background-color: blue;
+  background-color: var(--pc);
   padding: 2px 8px;
   border-radius: 4px;
   top: -20px; /* Offset to not overlap the marker */
@@ -81,7 +102,9 @@ h2 {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  background-color: #270eae; /* Primary blue or another color of your choice */
+  background-color: var(
+    --pc
+  ); /* Primary blue or another color of your choice */
   color: white;
   border-radius: 50%; /* Makes the button round */
   width: 70px; /* Diameter of the button */
@@ -141,7 +164,7 @@ h2 {
 
 button,
 .settings-btn {
-  background-color: #007bff;
+  background-color: var(--pc);
   color: white;
   padding: 10px 20px;
   border: none;
@@ -154,7 +177,7 @@ button,
 
 button:hover,
 .settings-btn:hover {
-  background-color: #0056b3;
+  background-color: var(--pc);
 }
 
 .settings-btn {

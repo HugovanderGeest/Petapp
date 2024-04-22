@@ -76,6 +76,28 @@
     <a href="javascript:history.back()" class="back-button"><i class="fas fa-arrow-left"></i></a>
     <div class="gear-icon-container"> <i id="toggleSidebar" class="fa fa-bars"></i></div>
 
+
+    <!-- Inside the admin.html template -->
+
+<!-- Add this inside the <div class="content-container"> or at a suitable place -->
+    <div class="location-filters">
+        <form action="{{ url_for('change_log') }}" method="get"> <!-- Ensure the action points to the correct endpoint -->
+            <select name="location_id" onchange="this.form.submit()">
+                <option value="">All Locations</option>
+                {% for location in locations %}
+                <option value="{{ location.id }}" {{ 'selected' if location.id|string == location_id }}>{{ location.name }}</option>
+                {% endfor %}
+            </select>            
+        </form>
+    </div>
+    
+<script>
+    document.getElementById('locationFilter').addEventListener('change', function() {
+        var locationId = this.value;
+        window.location.href = "{{ url_for('admin') }}" + (locationId ? '?location_id=' + locationId : '');
+    });
+</script>
+
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             {% for category, message in messages %}
@@ -161,6 +183,7 @@
                                 <th>User</th>
                                 <th>KG</th>
                                 <th>Timestamp</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -169,12 +192,18 @@
                                 <td>{{ username }}</td>
                                 <td>{{ log.kg_submitted }}</td>
                                 <td>{{ log.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td>
+                                <td>
+                                    <form action="{{ url_for('delete_log', log_id=log.id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
+                                        <button type="submit" class="btn btn-danger">X</button>
+                                    </form>
+                                </td>
                             </tr>
                             {% else %}
                             <tr>
                                 <td colspan="4">No entries found.</td>
                             </tr>
                             {% endfor %}
+                            
                             
                         </tbody>
                     </table>

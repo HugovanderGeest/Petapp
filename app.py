@@ -29,6 +29,8 @@ from wtforms import SelectMultipleField, widgets
 from forms import SimpleForm  # Import the form you just defined
 from wtforms.validators import DataRequired, Email
 import email
+import csv
+from flask import Response
 
 
 app = Flask(__name__)
@@ -194,12 +196,14 @@ def create_bar_link():
 
 class CheckInLog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    bar_id = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
 
     def __repr__(self):
         return f'<CheckInLog bar_id={self.bar_id}, user_id={self.user_id}, timestamp={self.timestamp}>'
+
 
 class PostForm(FlaskForm):
     text = StringField('Text', validators=[DataRequired()])
@@ -592,6 +596,7 @@ def change_password(user_id):
 
     return render_template('dashboard.html', user=user)
 
+from datetime import datetime, timedelta
 
 @app.route('/check_ins')
 def check_ins():
@@ -600,9 +605,40 @@ def check_ins():
         bars = Bar.query.filter_by(location_id=location_id).all()
     else:
         bars = Bar.query.all()
-    
-    locations = Location.query.all()  
+
+    now = datetime.utcnow()
+    for bar in bars:
+        if bar.last_checked_in:
+            delta = now - bar.last_checked_in
+            bar.last_check_in_time_ago = humanize_time_since(bar.last_checked_in)
+            # Calculate the percentage of the color change (0 to 120 minutes)
+            minutes = min(delta.total_seconds() / 60, 120)
+            bar.color_intensity = int((minutes / 120) * 100)  # from 0% to 100%
+        else:
+            bar.last_check_in_time_ago = "Nog geen"
+            bar.color_intensity = 0  # No color if never checked in
+
+    locations = Location.query.all()
     return render_template('check_ins.html', bars=bars, locations=locations)
+
+
+@app.template_filter('humanize')
+def humanize_time_since(dt):
+    now = datetime.utcnow()
+    diff = now - dt if dt else None
+
+    if diff is None:
+        return "Nog geen"
+
+    if diff.days > 0:
+        return f"{diff.days} Dagen Geleden"
+    elif diff.seconds >= 3600:
+        return f"{diff.seconds // 3600} Uur. Geleden"
+    elif diff.seconds >= 60:
+        return f"{diff.seconds // 60} Min. Geleden"
+    else:
+        return "Zojuist"
+
 
 @app.route('/log_activity', methods=['POST'])
 def log_activity():
@@ -631,27 +667,18 @@ def log_activity():
     return jsonify({'success': 'Activity logged successfully'}), 200
 
 @app.template_filter('time_since')
-def time_since(dt, default="Geen tijd"):
+def time_since(dt):
     now = datetime.utcnow()
-    diff = now - dt if dt else None
+    diff = now - dt
 
-    if diff is None:
-        return default
-
-    periods = [
-        (diff.days // 365, "year", "years"),
-        (diff.days // 30, "month", "months"),
-        (diff.days, "day", "days"),
-        (diff.seconds // 3600, "hour", "hours"),
-        (diff.seconds // 60, "minute", "minutes"),
-        (diff.seconds, "second", "seconds"),
-    ]
-
-    for period, singular, plural in periods:
-        if period:
-            return f"{period} {singular if period == 1 else plural} ago"
-
-    return default
+    if diff.days > 0:
+        return f"{diff.days} days ago"
+    elif diff.seconds >= 3600:
+        return f"{diff.seconds // 3600} hours ago"
+    elif diff.seconds >= 60:
+        return f"{diff.seconds // 60} minutes ago"
+    else:
+        return "Just now"
 
 @app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
@@ -850,39 +877,52 @@ def change_log():
                            locations=locations)  # Include locations in the context for the dropdown
 
 
+from io import BytesIO
+import pandas as pd
+from flask import send_file, flash, redirect, url_for
+
 @app.route('/export_check_ins')
 def export_check_ins():
-    try:
-        check_ins = db.session.query(
-            CheckInLog.bar_id, Bar.name.label('bar_name'),
-            CheckInLog.user_id, User.username.label('user_name'),
-            CheckInLog.timestamp
-        ).join(Bar, CheckInLog.bar_id == Bar.id)\
-         .join(User, CheckInLog.user_id == User.id)\
-         .all()
+    # Fetch data from CheckInLog with additional details
+    logs = db.session.query(
+        User.username,
+        Bar.name.label('bar_name'),
+        Location.name.label('location_name'),
+        CheckInLog.timestamp
+    ).join(User, User.id == CheckInLog.user_id) \
+    .join(Bar, Bar.id == CheckInLog.bar_id) \
+    .join(Location, Location.id == Bar.location_id) \
+    .all()
 
-        if not check_ins:
-            flash('No check-in data available to export.', 'info')
-            return redirect(url_for('check_ins'))
-
-        data = [{
-            "Bar ID": log.bar_id,
-            "Bar Name": log.bar_name,
-            "User ID": log.user_id,
-            "User Name": log.user_name,
-            "Timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S") if log.timestamp else "No timestamp"
-        } for log in check_ins]
-
-        df = pd.DataFrame(data)
-        print(df)  # Debug: Print DataFrame content
-
-        filepath = os.path.join(current_app.root_path, 'static', 'check_ins.xlsx')
-        df.to_excel(filepath, index=False)
-
-        return send_from_directory(directory=os.path.join(current_app.root_path, 'static'), path='check_ins.xlsx', as_attachment=True, download_name='check_ins.xlsx')
-    except Exception as e:
-        flash(f'An error occurred while exporting check-ins: {str(e)}', 'error')
+    if not logs:
+        flash('No check-in data available to export.', 'info')
         return redirect(url_for('check_ins'))
+
+    # Convert data to DataFrame
+    df = pd.DataFrame([{
+        'User Name': username,
+        'Bar Name': bar_name,
+        'Location Name': location_name,
+        'Timestamp': timestamp.strftime("%Y-%m-%d %H:%M:%S")
+    } for username, bar_name, location_name, timestamp in logs])
+
+    # Convert DataFrame to Excel
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+        df.to_excel(writer, index=False, sheet_name='Check-In Logs')
+
+    output.seek(0)
+
+    # Set the download headers
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        as_attachment=True,
+        download_name="check-in_logs.xlsx"
+    )
+
+
+
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
@@ -986,10 +1026,17 @@ def bar(bar_id):
     session['bar_id'] = bar_id  # Store bar_id in session
     bar = Bar.query.get_or_404(bar_id)
     user = User.query.get_or_404(bar.location.users[0].id)  # Fetch the first user of the bar's location
+
+    # Ensure that the link fallbacks correctly if bar.link is not set
+    link = bar.link if bar.link else (Bar.query.first().link if Bar.query.first() else "")
+
     if request.method == 'POST':
+        # If the method is POST, handle the form submission here (if any forms exist)
         return redirect(url_for('bar', bar_id=bar_id))
-    link = bar.link if bar.link else Bar.query.first().link  # Fallback to the first bar's link if none set.
+
+    # Pass the bar object to the template, which includes the last_checked_in field
     return render_template('bar.html', bar=bar, link=link, user=user, from_admin=from_admin)
+
 
 
 @app.route('/bar/<int:bar_id>/update', methods=['POST'])
@@ -1017,14 +1064,28 @@ def update_bar(bar_id):
         return jsonify({'error': 'Invalid field or increment value'}), 400
     
 @app.route('/bar/<int:bar_id>/check_in', methods=['POST'])
-@login_required
 def check_in_bar(bar_id):
+    print(f"Attempting to check in at bar ID: {bar_id} by user ID: {current_user.id}")
+    # Retrieve the bar instance
     bar = Bar.query.get_or_404(bar_id)
+
+    # Update the last_checked_in timestamp for the bar
     bar.last_checked_in = datetime.utcnow()
-    bar.last_checked_in_user_id = current_user.id  # Save the user who checked in
+    bar.last_checked_in_user_id = current_user.id
+
+    # Log the check-in in a separate log table
+    new_check_in = CheckInLog(bar_id=bar_id, user_id=current_user.id, timestamp=bar.last_checked_in)
+    db.session.add(new_check_in)
+
+    # Commit the changes to the database
     db.session.commit()
+
+    print(f"Check-in logged: {new_check_in}")
     flash('Successfully checked in.', 'success')
+
+    # Redirect to a relevant page, such as a location overview or back to the bar details
     return redirect(url_for('location', user_id=current_user.id, location_id=bar.location_id))
+
 
 @app.route('/save_bar_location', methods=['POST'])
 def save_bar_location():

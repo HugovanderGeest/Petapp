@@ -44,6 +44,12 @@
   --bc: #fff; /* A light grey for backgrounds */
 }
 
+:root {
+  --bar-color: #1700a1; /* A shade of blue */
+  --container-color: #ff8547; /* A shade of red */
+}
+
+
 body {
   font-family: "Roboto", sans-serif;
   background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
@@ -141,6 +147,7 @@ body {
   transition: 0.2s ease-in-out;
   cursor: pointer;
 }
+
 
 .overlay {
   position: fixed;
@@ -909,6 +916,7 @@ input.check-button {
 
 /* List container styling */
 
+
 .bars-list {
   display: flex;
   flex-wrap: wrap;
@@ -941,9 +949,9 @@ input.check-button {
   transition: background-color 0.3s ease;
   min-width: 50px;
   text-align: center;
-  font-size: 20px;
+  font-size: 1em !important;
   font-weight: bold;
-  border-radius: 50px;
+  border-radius: 5px;
   width: fit-content;
   padding: 16px 48px;
   max-width: 50px;
@@ -1073,6 +1081,10 @@ form {
   /* Center form on the page */
 }
 
+.minderm {
+  padding: 0;
+}
+
 form label,
 form select,
 form input[type="submit"] {
@@ -1098,7 +1110,7 @@ form select {
 form input[type="submit"] {
   padding: 0.5em 1em;
   border: none;
-  border-radius: 5px;
+  border-radius: 15px 15px 0px 0px;
   background-color: var(--cs); /* Your button color */
   color: white;
   cursor: pointer;
@@ -1576,6 +1588,8 @@ input[type="submit"] {
 .location-filters {
   text-align: center;
   margin-bottom: 20px;
+  position: fixed;
+  bottom: 0;
 }
 
 @media (max-width: 768px) {
@@ -2223,3 +2237,12 @@ fff;
   background-color: #117aeb; /* Darker shade of green */
 }
 
+.min-gel {
+  margin: 0;
+  font-size: 15px;
+  text-align: center;
+  background-color: var(--cs);
+  color: white;
+  border-radius: 0px 0px 15px 15px;
+  padding: 0px 0px 10px 0px;
+}

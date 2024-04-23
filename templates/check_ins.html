@@ -100,31 +100,63 @@
             </form>
 
         </div>
-    
-        <div class="bars-container">
+
+        <div class="bar-list">
             {% for bar in bars %}
-            {% set hours_since_checkin = bar.last_checked_in | hours_since %}
-            <div class="bar-item" 
-            style="background-color: 
-                   {% if hours_since_checkin is none or hours_since_checkin < 0.1 %}white;
-                   {% elif hours_since_checkin <= 0.1 %}white; 
-                   {% elif hours_since_checkin > 2 %}red; color: white;
-                   {% elif hours_since_checkin > 1 %}orange; color: white;
-                   {% else %}white;
-                   {% endif %}">       
-                <h3>{{ bar.name }} | {{ bar.location.name }}</h3>
-                <p>{{ bar.last_checked_in | time_since }}</p>
-                {% if bar.last_checked_in_user %}
-                <p>Checkin door: <a href="{{ url_for('user_dashboard', user_id=bar.last_checked_in_user.id) }}">{{ bar.last_checked_in_user.username }}</a></p>                {% else %}
-                <p>Checkin door: N/A</p>
-                {% endif %}
-                <!-- Optional: Uncomment if you want to enable manual check-in -->
-                <!-- <form action="{{ url_for('check_in_bar', bar_id=bar.id) }}" method="post">
-                    <button type="submit">Check In</button>
-                </form> -->
-            </div>
+            <div class="bar-item" style="background-color: rgb({{ 255 - 2.55 * bar.color_intensity }}, {{ 255 - 2.55 * bar.color_intensity }}, 255);">
+                    <div class="whiter">
+                <h2>{{ bar.name }}</h2>
+                <p>Last Checked-in: {{ bar.last_checked_in | humanize }} by
+                    {% if bar.last_checked_in_user %}
+                        <a href="{{ url_for('user_dashboard', user_id=bar.last_checked_in_user.id) }}">{{ bar.last_checked_in_user.username }}</a>
+                    {% else %}
+                        Unknown
+                    {% endif %}
+                </p>
+            </div></div>
             {% endfor %}
         </div>
+        
+        
+        
+        <style>
+
+            .whiter {
+                background-color: white;
+                text-align: center;
+                padding: 10px;
+                border-radius: 15px;
+                width: 80%;
+            }
+            .bar-list {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-around; /* Adjusts spacing between items */
+                padding: 0;
+                margin: 0;
+                list-style: none;
+                max-height: 80vh;
+                overflow: scroll;
+            }
+            
+            .bar-item {
+                flex: 1 1 300px; /* Each bar item can grow and shrink but start at 300px */
+                margin: 10px;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                border-radius: 8px; /* Adds rounded corners to the bar items */
+                background-color: #f9f9f9; /* Light background for each item */
+
+            }
+            .bar-item {
+                transition: background-color 300ms ease-in-out; /* Smooth transition for background color change */
+                color: black; /* Ensure text is readable */
+                margin: 10px;
+                border-radius: 8px;
+
+            }
+
+            </style>
+            
     
         </div>
 

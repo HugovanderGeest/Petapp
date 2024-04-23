@@ -45,7 +45,7 @@
     });
 </script>
 
-    <h1>Map for {{ location.name }}</h1>
+    <h1> {{ location.name }}</h1>
     <div id="mapContainer">
         {% if filename %}
         <img id="mapImage" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Map of {{ location.name }}">
@@ -53,14 +53,18 @@
     </div>
 
     {% if current_user.is_admin %}
+    
     <button class="settings-btn" onclick="toggleSettings()">Settings</button>
     <div class="settings-panel" id="settingsPanel">
     <h2>Upload a Map Image</h2>
     <form action="{{ url_for('map_page', location_id=location.id) }}" method="post" enctype="multipart/form-data">
         <input type="file" name="map_photo" required>
-        <button type="submit">Upload Image</button>
+        <button type="submit">Upload Map</button>
     </form>
+    
+    
     {% endif %}
+    
 
     <button style="display: none;" id="myBtn">Place a Bar on the Map</button>
 
@@ -76,14 +80,31 @@
         </div>
     </div>
     </div>
-
-    <button id="infoBtn" class="fab vraag"><i class="fas fa-question"></i></button>
+    
+    <div class="bottom-navbar">
+        <a href="{{ url_for('dashboard', user_id=current_user.id) }}" class="nav-item">
+            <i class="fas fa-user"></i><span>Jij</span>
+        </a>
+    
+        <!-- <a href="{{ url_for('upload_photo_page') }}" class="nav-item">
+            <i class="fas fa-camera"></i><span>Foto's</span>
+        </a> -->
+    
+        <a href="javascript:history.back()" class="nav-item">
+            <i class="fas fa-list"></i><span>Lijst</span>
+        </a>
+    
+        <a id="infoBtn" class="nav-item">
+            <i class="fas fa-question"></i><span>Vragen</span>
+        </a>
+      </div>
 
     <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
         <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
             <b>Hier is een overzicht met een plattegrond waarop de locaties van alle barren en containers staan aangegeven</b><br><br>
             <b>Oranje</b><br> zijn containers<br><br>
             <b>Blauw</b><br> zijn barren<br><br>
+            <p>Tip: Zoek in op telefoon op alles beter te kunnen lezen</p>
     
             Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
             <button class="sluit-knop " onclick="closeLightbox()">Sluit</button> 

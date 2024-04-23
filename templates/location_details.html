@@ -1,62 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='briefing.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='briefing.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
     <title>Update {{ location.name }}</title>
     <script>
-        function addField(key, value) {
-            var container = document.getElementById("fieldsContainer");
-            var keyInput = document.createElement("input");
-            keyInput.type = "text";
-            keyInput.name = "dynamicField_key[]";
-            keyInput.placeholder = "Titel";
-            keyInput.value = key || '';
-            keyInput.className = "key-input";  // Assigning class name to the keyInput element
-            container.appendChild(keyInput);
+      function addField(key, value) {
+        var container = document.getElementById("fieldsContainer");
+        var keyInput = document.createElement("input");
+        keyInput.type = "text";
+        keyInput.name = "dynamicField_key[]";
+        keyInput.placeholder = "Titel";
+        keyInput.value = key || "";
+        keyInput.className = "key-input"; // Assigning class name to the keyInput element
 
-            
-            var valueInput = document.createElement("input");
-            valueInput.type = "text";
-            valueInput.name = "dynamicField_value[]";
-            valueInput.placeholder = "Inhoud";
-            valueInput.value = value || '';
-            
-            var lineBreak = document.createElement("br");
+        var valueInput = document.createElement("input");
+        valueInput.type = "text";
+        valueInput.name = "dynamicField_value[]";
+        valueInput.placeholder = "Inhoud";
+        valueInput.value = value || "";
 
-            container.appendChild(keyInput);
-            container.appendChild(valueInput);
-            container.appendChild(lineBreak);
-        }
+        var lineBreak = document.createElement("br");
+
+        container.appendChild(keyInput);
+        container.appendChild(valueInput);
+        container.appendChild(lineBreak);
+      }
     </script>
-</head>
-<body onload="loadExistingFields()">
+  </head>
+  <body onload="loadExistingFields()">
     <h1>Update {{ location.name }}</h1>
-    <form class="overflow-scroll" method="POST" action="{{ url_for('add_user_to_location', location_id=location.id) }}">
-        <h3>Add User to Location</h3>
-        {% for user in all_users %}
-            <input type="checkbox" id="user_{{ user.id }}" name="user_id[]" value="{{ user.id }}">
-            <label for="user_{{ user.id }}">{{ user.username }}</label><br>
-        {% endfor %}
-        <button type="submit">Voeg deze toe aan {{ location.name }}</button>
-    </form>
+    <!-- <form
+      class="overflow-scroll"
+      method="POST"
+      action="{{ url_for('add_user_to_location', location_id=location.id) }}"
+    >
+      <h3>Add User to Location</h3>
+      <input
+        type="text"
+        id="searchInput"
+        onkeyup="searchUsers()"
+        placeholder="Search for names..."
+      />
+      <table id="userTable">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set sorted_users = all_users|sort(attribute='username') %} {% for
+          user in sorted_users %}
+          <tr>
+            <td>
+              <input
+                type="checkbox"
+                id="user_{{ user.id }}"
+                name="user_id[]"
+                value="{{ user.id }}"
+              />
+            </td>
+            <td><label for="user_{{ user.id }}">{{ user.username }}</label></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <button type="submit">Voeg deze toe aan {{ location.name }}</button>
+    </form> -->
     <form method="post">
-        {{ form.hidden_tag() }}
-        <div id="fieldsContainer">
-            <!-- Dynamic fields will be added here -->
-        </div>
-        <button type="button" onclick="addField()">Voeg meer details toe</button>
-        <br>
-        {{ form.submit }}
+      {{ form.hidden_tag() }}
+      <div id="fieldsContainer">
+        <!-- Dynamic fields will be added here -->
+      </div>
+      <button type="button" onclick="addField()">Voeg meer details toe</button>
+      <br />
+      {{ form.submit }}
     </form>
-    <script>
-        function loadExistingFields() {
-            {% for attr in location.attributes %}
-            addField('{{ attr.key }}', '{{ attr.value }}');
-            {% endfor %}
-        </end{script>
+    <a href="{{ url_for('edit_location', location_id=location.id) }}"
+      ><button>Edit Location</button></a
+    >
 
-</body>
+    <script>
+      function loadExistingFields() {
+          {% for attr in location.attributes %}
+          addField('{{ attr.key }}', '{{ attr.value }}');
+          {% endfor %}
+    </script>
+    <script>
+      function searchUsers() {
+        var input, filter, userTable, users, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        userTable = document.getElementById("userTable");
+        users = userTable.getElementsByTagName("tr");
+        for (i = 0; i < users.length; i++) {
+          var username = users[i].getElementsByTagName("label")[0];
+          if (username) {
+            txtValue = username.textContent || username.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              users[i].style.display = "";
+            } else {
+              users[i].style.display = "none";
+            }
+          }
+        }
+      }
+    </script>
+  </body>
 </html>

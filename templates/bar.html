@@ -10,6 +10,7 @@
   method="post"
 >
   <input class="check-button" type="submit" value="Inchecken" />
+  <p class="min-gel">{{ bar.last_checked_in | humanize }}</p>
 </form>
 
 {% if from_admin %}
@@ -132,7 +133,7 @@
   >
     <i class="fas fa-camera"></i><span>Foto's</span>
   </a>
-  <!-- Note icon with text -->
+
   <a
     href="javascript:void(0);"
     class="nav-item"

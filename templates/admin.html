@@ -6,12 +6,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
     <title>Admin</title>
+
     <style>
-        .hidden {
-            display: none;
-        }
+.custom-table a {
+    pointer-events: auto;
+    touch-action: auto;  
+}
+
+
     </style>
+
 </head>
+
 
 <body>
 
@@ -132,6 +138,7 @@
     <a onclick="toggleForms()" class="fab" aria-label="plus">
         <i class="fas fa-plus"></i>
     </a>
+
 
     <div class="table-container">
         <table class="custom-table">
@@ -266,6 +273,7 @@
             });
         });
     </script>
+    
 
     <script>
         function toggleForms() {
@@ -335,7 +343,14 @@
         }
     </script>
 
+<script>
+    document.querySelector(".custom-table").addEventListener("click", function(event) {
+    if (event.target.tagName !== 'A') {
+        event.stopPropagation(); // Stop propagation only if it's not an <a> tag
+    }
+});
 
+</script>
 
 </body>
 

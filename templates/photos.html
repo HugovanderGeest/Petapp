@@ -39,43 +39,48 @@
       <h3>Controleur</h3>
       {% endif %}
 
-      <a href="{{ url_for('admin') }}">
-        <div class="side-link">
-          <i class="fas fa-user"></i>
-          <p>Admin</p>
-        </div>
-      </a>
+      <div class="max-man">
+        <a href="{{ url_for('admin') }}">
+          <div class="side-link">
+            <i class="fas fa-user"></i>
+            <p>Admin</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('change_log') }}">
-        <div class="side-link">
-          <i class="fas fa-book"></i>
-          <p>Log</p>
-        </div>
-      </a>
+        <a href="{{ url_for('change_log') }}">
+          <div class="side-link">
+            <i class="fas fa-book"></i>
+            <p>Data</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('check_ins') }}">
-        <div class="side-link">
-          <i class="fas fa-check"></i>
-          <p>Check</p>
-        </div>
-      </a>
+        <a href="{{ url_for('check_ins') }}">
+          <div class="side-link">
+            <i class="fas fa-check"></i>
+            <p>Check</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('view_photos') }}">
-        <div class="active side-link">
-          <i class="fas fa-images"></i>
-          <p>Photos</p>
-        </div>
-      </a>
+        <a href="{{ url_for('view_photos') }}">
+          <div class="active side-link">
+            <i class="fas fa-images"></i>
+            <p>Foto's</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('show_briefings') }}">
-        <div class="side-link">
-          <i class="fas fa-file"></i>
-          <p>Briefings</p>
-        </div>
-      </a>
+        <a href="{{ url_for('show_briefings') }}">
+          <div class="side-link">
+            <i class="fas fa-file"></i>
+            <p>Briefings</p>
+          </div>
+        </a>
 
-      <div class="side-bottom">
-        <div class="line"></div>
+        <a href="{{ url_for('bar_notes') }}">
+          <div class="side-link">
+            <i class="fas fa-pen"></i>
+            <p>Notities</p>
+          </div>
+        </a>
 
         <a href="{{ url_for('index') }}">
           <div class="side-link">
@@ -86,19 +91,33 @@
       </div>
     </div>
 
-    <div class="photos-container">
-      {% for photo in photos %}
-      <div class="photo-item">
-        <img
-          src="{{ url_for('uploaded_photos', filename=photo.filename) }}"
-          alt="Photo"
-          style="cursor: pointer"
-        />
-        <p>Uploaded at: {{ photo.uploaded_at }}</p>
-        <p>Bar: {{ photo.bar.name }}</p>
-      </div>
+<!-- Add a dropdown for filtering by location -->
+<div class="filter-container">
+  <form method="GET" action="{{ url_for('view_photos') }}">
+    <select name="location_filter" onchange="this.form.submit()">
+      <option value="">All Locations</option>
+      {% for location in locations %}
+      <option value="{{ location.id }}" {% if request.args.get('location_filter')|string == location.id|string %}selected{% endif %}>
+        {{ location.name }}
+      </option>
       {% endfor %}
-    </div>
+    </select>
+    
+  </form>
+</div>
+
+<!-- Display photos with location name -->
+<div class="photos-container">
+  {% for photo in photos %}
+  <div class="photo-item">
+    <img src="{{ url_for('uploaded_photos', filename=photo.filename) }}" alt="Photo" style="cursor: pointer" onclick="openModal(this.src)"/>
+    <p>Uploaded at: {{ photo.uploaded_at }}</p>
+    <p>Bar: {{ photo.bar.name }}</p>
+    <p>Location: {{ photo.bar.location.name }}</p> <!-- Display the location name -->
+  </div>
+  {% endfor %}
+</div>
+
 
     <div id="lightboxModal" class="lightbox-modal">
       <span class="close-lightbox" onclick="closeModal()">&times;</span>

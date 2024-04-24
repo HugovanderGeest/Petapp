@@ -7,29 +7,132 @@
       rel="stylesheet"
       href="{{ url_for('static', filename='main.css') }}"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+    />
     <title>Bar Notes</title>
+    <script>
+      // Function to submit the form when the dropdown changes
+      function submitForm() {
+        document.getElementById('filterForm').submit();
+      }
+    </script>
   </head>
-
   <body class="bar-notes-body">
-    <div class="bar-notes-container">
-      <h1 class="bar-notes-header">Notes on Bars</h1>
-      <ul class="bar-notes-list">
-        {% for bar in bars %}
-        <li class="bar-notes-item">
-          <h3 class="bar-notes-title">
-            {{ bar.name }} - {{ bar.location.name }}
-          </h3>
-          <p class="bar-notes-text"><strong>Note:</strong> {{ bar.note }}</p>
-          {% if bar.user %}
-          <p class="bar-notes-meta">Left by: {{ bar.user.username }}</p>
-          {% else %}
-          <p class="bar-notes-meta">Left by: Unknown</p>
-          {% endif %}
-        </li>
-        {% else %}
-        <p>No notes available.</p>
-        {% endfor %}
-      </ul>
+    <img
+    src="{{ url_for('static', filename='logo.png') }}"
+    alt="CircularPET Logo"
+    class="logo2"
+  />
+  <div class="gear-icon-container">
+    <i id="toggleSidebar" class="fa fa-bars"></i>
+  </div>
+
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %} {% for category, message in messages %}
+  <div class="alert alert-{{ category }}">{{ message }}</div>
+  {% endfor %} {% endif %} {% endwith %}
+
+  <div class="sidebar" style="display: none">
+    <!-- BEGIN: Changed the initial display to none -->
+    <h2 class="side-titel">
+      {{ current_user.username if current_user.is_authenticated else 'Admin'
+      }}
+    </h2>
+    {% if current_user.is_admin %}
+    <h3>Admin</h3>
+    {% else %}
+    <h3>Controleur</h3>
+    {% endif %}
+
+    <div class="max-man">
+      <a href="{{ url_for('admin') }}">
+        <div class=" side-link">
+          <i class="fas fa-user"></i>
+          <p>Admin</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('change_log') }}">
+        <div class="side-link">
+          <i class="fas fa-book"></i>
+          <p>Data</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('check_ins') }}">
+        <div class="side-link">
+          <i class="fas fa-check"></i>
+          <p>Check</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('view_photos') }}">
+        <div class="side-link">
+          <i class="fas fa-images"></i>
+          <p>Foto's</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('show_briefings') }}">
+        <div class="side-link">
+          <i class="fas fa-file"></i>
+          <p>Briefings</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('bar_notes') }}">
+        <div class="active side-link">
+          <i class="fas fa-pen"></i>
+          <p>Notities</p>
+        </div>
+      </a>
+
+      <a href="{{ url_for('index') }}">
+        <div class="side-link">
+          <i class="fas fa-arrow-left"></i>
+          <p>Log-uit</p>
+        </div>
+      </a>
     </div>
+  </div>
+
+
+    <div class="bar-notes-container">
+        <h1 class="bar-notes-header">Notities</h1>
+
+        <!-- Filter form with JavaScript event -->
+        <form id="filterForm" action="{{ url_for('bar_notes') }}" method="get">
+            <select name="location" onchange="submitForm()">
+                <option value="">Select a Location</option>
+                {% for location in locations %}
+                <option value="{{ location.name }}" {% if request.args.get('location') == location.name %}selected{% endif %}>{{ location.name }}</option>
+                {% endfor %}
+            </select>
+        </form>
+
+        <!-- List of bars and notes -->
+        <ul class="bar-notes-list">
+            {% for bar in bars %}
+            <li class="bar-notes-item">
+                <h3 class="bar-notes-title">{{ bar.name }} - {{ bar.location.name }}</h3>
+                <p class="bar-notes-text"><strong>Note:</strong> {{ bar.note }}</p>
+                <p class="bar-notes-meta">Left by: {{ bar.user.username if bar.user else 'Unknown' }}</p>
+            </li>
+            {% else %}
+            <p>No notes available.</p>
+            {% endfor %}
+        </ul>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#toggleSidebar").click(function () {
+          // Toggle the visibility of the sidebar with a slide animation
+          $(".sidebar").slideToggle();
+        });
+      });
+    </script>
   </body>
 </html>

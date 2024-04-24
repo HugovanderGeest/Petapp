@@ -191,8 +191,7 @@
                             <tr>
                                 <td>{{ username }}</td>
                                 <td>{{ log.kg_submitted }}</td>
-                                <td>{{ log.timestamp.strftime("%Y-%m-%d %H:%M:%S") }}</td>
-                                <td>
+                                <td>{{ log.timestamp|to_local }}</td>  <!-- Applying the timezone conversion -->                                <td>
                                     <form class="minderm" action="{{ url_for('delete_log', log_id=log.id) }}" method="post" onsubmit="return confirm('Are you sure you want to delete this entry?');">
                                         <button type="submit" class="btn btn-danger">X</button>
                                     </form>

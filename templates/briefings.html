@@ -40,43 +40,48 @@
       <h3>Controleur</h3>
       {% endif %}
 
-      <a href="{{ url_for('admin') }}">
-        <div class="side-link">
-          <i class="fas fa-user"></i>
-          <p>Admin</p>
-        </div>
-      </a>
+      <div class="max-man">
+        <a href="{{ url_for('admin') }}">
+          <div class="side-link">
+            <i class="fas fa-user"></i>
+            <p>Admin</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('change_log') }}">
-        <div class="side-link">
-          <i class="fas fa-book"></i>
-          <p>Log</p>
-        </div>
-      </a>
+        <a href="{{ url_for('change_log') }}">
+          <div class="side-link">
+            <i class="fas fa-book"></i>
+            <p>Data</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('check_ins') }}">
-        <div class="side-link">
-          <i class="fas fa-check"></i>
-          <p>Check</p>
-        </div>
-      </a>
+        <a href="{{ url_for('check_ins') }}">
+          <div class="side-link">
+            <i class="fas fa-check"></i>
+            <p>Check</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('view_photos') }}">
-        <div class="side-link">
-          <i class="fas fa-images"></i>
-          <p>Photos</p>
-        </div>
-      </a>
+        <a href="{{ url_for('view_photos') }}">
+          <div class="side-link">
+            <i class="fas fa-images"></i>
+            <p>Foto's</p>
+          </div>
+        </a>
 
-      <a href="{{ url_for('show_briefings') }}">
-        <div class="active side-link">
-          <i class="fas fa-file"></i>
-          <p>Briefings</p>
-        </div>
-      </a>
+        <a href="{{ url_for('show_briefings') }}">
+          <div class="active side-link">
+            <i class="fas fa-file"></i>
+            <p>Briefings</p>
+          </div>
+        </a>
 
-      <div class="side-bottom">
-        <div class="line"></div>
+        <a href="{{ url_for('bar_notes') }}">
+          <div class="side-link">
+            <i class="fas fa-pen"></i>
+            <p>Notities</p>
+          </div>
+        </a>
 
         <a href="{{ url_for('index') }}">
           <div class="side-link">

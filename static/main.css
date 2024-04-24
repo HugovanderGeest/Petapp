@@ -258,13 +258,20 @@ body {
   align-items: center;
   background: whitesmoke;
   overflow: scroll;
-  padding-left: 10px;
-  max-width: 800px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin-left: 10px;
+  border: 1px #dadada solid;
+  border-radius: 5px;
   
   /* Apply max-width only for phones */
   @media only screen and (max-width: 600px) {
     max-width: 400px;
   }
+}
+
+.user-info:nth-child(odd) {
+  background: #ffffff; /* Change this to your preferred darker color */
 }
 
 .usersenzo {
@@ -280,6 +287,7 @@ body {
 
 .user-info a:hover {
   background-color: lightgray;
+  border-radius: 5px;
 }
 
 .fijv {
@@ -295,16 +303,17 @@ body {
   position: absolute;
   top: 145px;
   display: flex;
+  left: 100px;
 }
 
 .titels p {
-  margin-right: 110px;
-  margin-left: 0;
+    margin-left: 90px;
+      margin-right: 10px;
 
   @media only screen and (max-width: 600px) {
     margin-left: 20px;
     margin-right: 0;
-
+    left: 0;
   }
 }
 
@@ -414,7 +423,6 @@ body {
   background-repeat: no-repeat;
   background-position: 10px center;
   padding-left: 50px;
-  max-width: 500px;
   position: relative;
   top: 50%;
   left: 50%;
@@ -444,6 +452,12 @@ body {
   border: none;
   color: white;
   margin: 5px;
+}
+
+.zoekenn {
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 #userSearchInput {
@@ -589,7 +603,7 @@ input.check-button {
 }
 
 .fijv {
-  padding: 20px;
+  padding: 10px 25px;
 }
 
 .side-link {

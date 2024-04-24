@@ -31,6 +31,7 @@ from wtforms.validators import DataRequired, Email
 import email
 import csv
 from flask import Response
+import pytz
 
 
 app = Flask(__name__)
@@ -48,6 +49,18 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 db = SQLAlchemy(app)
+
+local_tz = pytz.timezone('Europe/Berlin')  # Change 'Europe/Berlin' to your timezone
+def utc_to_local(utc_dt):
+    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
+    return local_tz.normalize(local_dt) 
+
+@app.template_filter('to_local')
+def to_local_filter(utc_dt):
+    local_dt = utc_to_local(utc_dt)
+    return local_dt.strftime("%Y-%m-%d %H:%M:%S")  # Format as Year-Month-Day Hour:Minute:Second
+
+
 
 migrate = Migrate(app, db)
 
@@ -445,8 +458,19 @@ def upload_photo(bar_id):
 
 @app.route('/photos')
 def view_photos():
-    photos = BarPhoto.query.all()
-    return render_template('photos.html', photos=photos)
+    locations = Location.query.all()  # Ensure this query is correctly fetching data
+    location_filter = request.args.get('location_filter')
+    if location_filter:
+        photos = BarPhoto.query.join(Bar).join(Location).filter(Location.id == location_filter).all()
+    else:
+        photos = BarPhoto.query.all()
+    
+    if not locations:  # Debugging line to check if locations are fetched
+        print("No locations found!")  # Check your console logs
+
+    return render_template('photos.html', photos=photos, locations=locations)
+
+
 
 @app.route('/export_zakken_kg_logs')
 def export_zakken_kg_logs():
@@ -1129,9 +1153,17 @@ def get_bars(location_id):
 
 @app.route('/bar_notes')
 def bar_notes():
-    # Ensure the query includes a join to User if not automatically handled by a relationship
-    bars_with_notes = Bar.query.filter(Bar.note.isnot(None)).all()
-    return render_template('bar_notes.html', bars=bars_with_notes)
+    location_query = request.args.get('location')  # Get location name from query parameters
+    if location_query:
+        # Filter bars by the location name
+        bars_with_notes = Bar.query.join(Location).filter(Location.name == location_query, Bar.note.isnot(None)).all()
+    else:
+        # No filter applied, fetch all bars with notes
+        bars_with_notes = Bar.query.filter(Bar.note.isnot(None)).all()
+
+    # Fetch all locations to populate the dropdown filter in the template
+    locations = Location.query.all()
+    return render_template('bar_notes.html', bars=bars_with_notes, locations=locations)
 
 @app.route('/bar/<int:bar_id>/update_details', methods=['POST'])
 def update_bar_details(bar_id):
@@ -1243,14 +1275,27 @@ def log_change(user_id, bar_id, field, old_value, new_value):
     db.session.commit()
 
 @app.route('/bar/<int:bar_id>/leave_note', methods=['POST'])
+@login_required
 def leave_note_for_bar(bar_id):
     bar = Bar.query.get_or_404(bar_id)
     note = request.form.get('bar_note')
     if note:
-        # Assuming you have a notes or similar attribute in your Bar model to store the note
-        # You might need to adjust this part according to your data model
-        bar.note = note  # Add or update the note for the bar
+        # Save the note in the database (if you're doing this)
+        bar.note = note
         db.session.commit()
+
+        # Save the note to a text file
+        with open("notes_log.txt", "a") as file:
+            # Prepare the data to be written
+            timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S")
+            user_info = f"{current_user.username} (ID: {current_user.id})"
+            bar_info = f"{bar.name} (ID: {bar.id})"
+            location_info = f"{bar.location.name} (ID: {bar.location.id})"
+            note_info = note.replace('\n', ' ').replace('\r', '')  # Flatten the note into one line
+
+            # Write the data
+            file.write(f"{timestamp} | {user_info} | {location_info} | {bar_info} | Note: {note_info}\n")
+
         flash('Your note has been saved!', 'success')
     else:
         flash('Please enter a note before submitting.', 'error')

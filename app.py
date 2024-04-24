@@ -1379,11 +1379,11 @@ def static_files(filename):
     return send_from_directory(app.config['STATIC_FOLDER'], filename)
 
 
-@app.route('/jemaiseenbar')
-def drop_database():
-    db.drop_all()
-    db.create_all()  # Optional: Recreate the database tables after dropping them
-    return "Database dropped and recreated."
+# @app.route('/jemaiseenbar')
+# def drop_database():
+#     db.drop_all()
+#     db.create_all()  # Optional: Recreate the database tables after dropping them
+#     return "Database dropped and recreated."
 
 @app.route('/remove_bar/<int:bar_id>', methods=['POST'])
 def remove_bar(bar_id):

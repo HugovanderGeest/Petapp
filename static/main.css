@@ -256,13 +256,42 @@ body {
 .user-info {
   display: flex;
   align-items: center;
+  background: whitesmoke;
+  overflow: scroll;
+  padding-left: 10px;
+  
+  /* Apply max-width only for phones */
+  @media only screen and (max-width: 600px) {
+    max-width: 350px;
+  }
 }
+
+.usersenzo {
+  margin-top: 200px;
+}
+
 .user-info img {
-  width: 40px; /* Example size */
-  height: 40px; /* Maintain aspect ratio */
-  border-radius: 50%; /* Circular pictures */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   margin-right: 10px;
 }
+
+.user-info a {
+  text-decoration: none; /* Optional */
+}
+
+.user-info a:hover {
+  background-color: lightgray;
+}
+
+.fijv {
+  width: 140px;
+  margin-right: 10px;
+}
+
+
+
 
 .plus-icon:hover {
   background-color: var(--pc); /* Your button color */
@@ -421,6 +450,22 @@ body {
   justify-content: left;
 }
 
+.beetje {
+  align-items: center;
+  display: flex;
+  justify-content: left;
+  margin-top: 100px;
+  width: 80vw;
+  justify-content: center;
+  position: absolute;
+  top: 0px;
+}
+
+.beetje form {
+  padding: 0px !important;
+  background-color: transparent;
+}
+
 form .no-submit {
   width: 180px;
   align-items: center;
@@ -515,6 +560,10 @@ input.check-button {
   font-size: 20px;
   color: #777778;
   font-weight: 100;
+}
+
+.fijv {
+  padding: 20px;
 }
 
 .side-link {
@@ -925,11 +974,20 @@ input.check-button {
   list-style: none;
   padding: 0;
   margin-top: -120px;
-  padding-top: 300px;
+  padding-top: 230px;
   padding-bottom: 300px;
   max-height: 70vh;
   overflow-y: auto;
   max-width: 500px;
+}
+
+
+.grayboy p {
+  color: black;
+  font-size: 15px;
+  margin: 20px;
+  padding: 20px;
+z-index: 1000;
 }
 
 /* List item styling */
@@ -1731,22 +1789,6 @@ input[type="submit"] {
   font-size: 16px;
 }
 
-/* Table Container */
-.table-container {
-  padding: 20px;
-  /* Matches your container border-radius */
-  margin: 20px 0;
-  /* Spacing around the table container */
-  width: 90%;
-  /* Adjust the table container width on smaller screens */
-  overflow-x: visible;
-  /* Enable horizontal scrolling on small devices */
-  position: absolute;
-  top: 50px;
-  z-index: 1;
-  max-width: 500px;
-  border-radius: 10px;
-}
 
 @media (max-width: 768px) {
   .table-container {
@@ -1754,38 +1796,6 @@ input[type="submit"] {
   }
 }
 
-/* Table Basic Styling */
-.custom-table {
-  width: 100%;
-  /* Full width of its container */
-  border-collapse: collapse;
-  /* Collapse borders for a clean look */
-  margin-top: 20px;
-  /* Space from any content above */
-  background-color: var(--bc);
-  text-decoration: none;
-}
-
-.custom-table th,
-.custom-table td {
-  text-align: left;
-  /* Aligns text to the left */
-  padding: 12px;
-  /* Padding inside cells */
-  border-bottom: 1px solid #ccc;
-  /* Border for each cell */
-  text-decoration: none;
-}
-
-/* Table Header Styling */
-.custom-table th {
-  background-color: var(--pc);
-  /* Header background color */
-  color: white;
-  /* Text color for headers */
-  font-size: 16px;
-  text-decoration: none;
-}
 
 .form-container {
   transition: max-height 0.5s ease-out;

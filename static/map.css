@@ -227,6 +227,10 @@ button:hover,
   transition: transform 0.2s;
 }
 
+.rietje {
+  padding-right: 30px !important;
+}
+
 .nav-item i {
   display: block;
   margin: 0 auto;

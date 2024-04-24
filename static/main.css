@@ -259,10 +259,11 @@ body {
   background: whitesmoke;
   overflow: scroll;
   padding-left: 10px;
+  max-width: 800px;
   
   /* Apply max-width only for phones */
   @media only screen and (max-width: 600px) {
-    max-width: 350px;
+    max-width: 400px;
   }
 }
 
@@ -277,22 +278,47 @@ body {
   margin-right: 10px;
 }
 
-.user-info a {
-  text-decoration: none; /* Optional */
-}
-
 .user-info a:hover {
   background-color: lightgray;
 }
 
 .fijv {
-  width: 140px;
+  width: 80px;
   margin-right: 10px;
 }
 
+.rietje {
+  padding-right: 30px !important;
+}
+
+.titels {
+  position: absolute;
+  top: 145px;
+  display: flex;
+}
+
+.titels p {
+  margin-right: 110px;
+  margin-left: 0;
+
+  @media only screen and (max-width: 600px) {
+    margin-left: 20px;
+    margin-right: 0;
+
+  }
+}
 
 
+.minderje form {
+  background-color: transparent;
+  padding: 0;
+  margin-top: 100px;
+}
 
+.meerje {
+  width: 300px;
+  margin-left: 20px;
+}
 .plus-icon:hover {
   background-color: var(--pc); /* Your button color */
   transform: scale(1.05);
@@ -392,7 +418,7 @@ body {
   position: relative;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -10%);
+  transform: translate(-50%, -30%);
   padding-left: 50px;
   background-size: 20px;
   background-repeat: no-repeat;
@@ -463,7 +489,7 @@ body {
 
 .beetje form {
   padding: 0px !important;
-  background-color: transparent;
+  background-color: white;
 }
 
 form .no-submit {

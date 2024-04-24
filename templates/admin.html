@@ -126,7 +126,7 @@
       <i class="fas fa-plus"></i>
     </a>
 
-    <div class="search-container">
+    <div class="search-container minderje">
       <form action="{{ url_for('admin') }}" method="get">
         <input
           type="text"
@@ -136,9 +136,17 @@
         />
       </form>
     </div>
+
+    <div class="titels">
+      <p>Naam</p>
+      <p>Locatie</p>
+      <p>Email</p>
+      <p>Telefoon</p>
+    </div>
+
     {% for user in users %}
 
-    <section class="user-info">
+    <div class="user-info">
       <img
         src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}"
         alt="Profile Picture"
@@ -162,25 +170,25 @@
       </a>
 
       {% else %}
-      <p>Geen</p>
+      <a href="#">
+        <div class="fijv">
+          <p>Geen</p>
+        </div>
+      </a>
       {% endif %}
 
-      <div class="fijv">
-        <p>{{ 'Ja' if user.is_admin else 'Nee' }}</p>
-      </div>
-
       <a href="mailto:{{ user.email }}">
-        <div class="fijv">
+        <div class="fijv meerje">
           <p>{{ user.email }}</p>
         </div>
       </a>
 
       <a href="tel:{{ user.phone_number }}">
-        <div class="fijv">
+        <div class="fijv rietje">
           <p>{{ user.phone_number }}</p>
         </div>
       </a>
-    </section>
+    </div>
     {% endfor %}
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -321,35 +329,28 @@
 
     <script>
       function sortUsers() {
-        // Get the input field and its value (convert it to lowercase for case-insensitive comparison)
         var input = document.getElementById("userSearchInput");
         var filter = input.value.toLowerCase();
-        var table = document.querySelector(".custom-table tbody"); // Adjust selector as necessary
-        var tr = table.getElementsByTagName("tr");
+        var userDivs = document.getElementsByClassName("user-info");
 
-        // Loop through all table rows, and hide those who don't match the search query
-        for (var i = 0; i < tr.length; i++) {
-          var tdUsername = tr[i].getElementsByTagName("td")[0]; // Username column
-          var tdLocation = tr[i].getElementsByTagName("td")[1]; // Location column
+        // Loop through all user-info divs and toggle display based on match
+        for (var i = 0; i < userDivs.length; i++) {
+          // Check if username or location contains the search term
+          var usernameDiv = userDivs[i].getElementsByClassName("fijv")[0];
+          var username = usernameDiv.textContent || usernameDiv.innerText;
 
-          if (tdUsername || tdLocation) {
-            // Get text content from both columns
-            var txtValueUsername = tdUsername
-              ? tdUsername.textContent || tdUsername.innerText
-              : "";
-            var txtValueLocation = tdLocation
-              ? tdLocation.textContent || tdLocation.innerText
-              : "";
+          var locationDiv = userDivs[i].getElementsByClassName("fijv")[1];
+          var location = locationDiv
+            ? locationDiv.textContent || locationDiv.innerText
+            : "";
 
-            // Check if the row should be displayed based on the search query
-            if (
-              txtValueUsername.toLowerCase().indexOf(filter) > -1 ||
-              txtValueLocation.toLowerCase().indexOf(filter) > -1
-            ) {
-              tr[i].style.display = "";
-            } else {
-              tr[i].style.display = "none";
-            }
+          if (
+            username.toLowerCase().indexOf(filter) > -1 ||
+            location.toLowerCase().indexOf(filter) > -1
+          ) {
+            userDivs[i].style.display = "";
+          } else {
+            userDivs[i].style.display = "none";
           }
         }
       }

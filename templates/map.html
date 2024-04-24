@@ -46,6 +46,12 @@
 </script>
 
     <h1> {{ location.name }}</h1>
+    <div id="sliderContainer" style="display: none; position: fixed; bottom: 10%; left: 10px; z-index: 1000; background-color: white; padding: 10px; border-radius: 5px;">
+        <label for="fontSizeSlider">Font</label>
+        <input type="range" id="fontSizeSlider" min="1" max="10" value="1"> <!-- default size 14px -->
+    </div>
+    
+    
     <div id="mapContainer">
         {% if filename %}
         <img id="mapImage" src="{{ url_for('static', filename='uploads/' + filename) }}" alt="Map of {{ location.name }}">
@@ -86,10 +92,6 @@
             <i class="fas fa-user"></i><span>Jij</span>
         </a>
     
-        <!-- <a href="{{ url_for('upload_photo_page') }}" class="nav-item">
-            <i class="fas fa-camera"></i><span>Foto's</span>
-        </a> -->
-    
         <a href="javascript:history.back()" class="nav-item">
             <i class="fas fa-list"></i><span>Lijst</span>
         </a>
@@ -97,7 +99,13 @@
         <a id="infoBtn" class="nav-item">
             <i class="fas fa-question"></i><span>Vragen</span>
         </a>
-      </div>
+    
+        <!-- Font Size Adjustment Icon -->
+        <a id="fontSizeBtn" class="nav-item">
+            <i class="fas fa-text-height"></i><span>Font</span>
+        </a>
+    </div>
+    
 
     <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
         <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
@@ -110,6 +118,16 @@
             <button class="sluit-knop " onclick="closeLightbox()">Sluit</button> 
         </div>
     </div>
+
+    <script>
+        $(document).ready(function() {
+            $('#fontSizeBtn').click(function() {
+                var sliderContainer = $('#sliderContainer');
+                sliderContainer.toggle(); // This toggles the visibility of the font size slider
+            });
+        });
+    </script>
+    
 
     <script>
         var modal = document.getElementById("myModal");
@@ -171,31 +189,52 @@
                 });
             });
     
-            // Load existing bars and place them on the map
-            var locationId = "{{ location.id }}"; // Ensure location.id is dynamically injected into your JavaScript
-            $.getJSON('{{ url_for("get_bars", location_id=location.id) }}', function(bars) {
-                bars.forEach(function(bar) {
-                    if (bar.x && bar.y) {
+                // Load existing bars
+                loadBars();
+
+            // Check for saved font size in localStorage
+            if (localStorage.getItem('mapFontSize')) {
+                var savedSize = localStorage.getItem('mapFontSize');
+                $('#fontSizeSlider').val(savedSize); // Set the slider position
+                $('.bar-label, .bar-label a').css('font-size', savedSize + 'px'); // Apply saved font size
+            }
+
+            // Font size slider change event
+            $('#fontSizeSlider').on('input change', function() {
+                var newSize = $(this).val() + 'px';
+                $('.bar-label, .bar-label a').css('font-size', newSize); // Change font size for all labels
+                localStorage.setItem('mapFontSize', $(this).val()); // Save the new font size to localStorage
+            });
+
+            function loadBars() {
+                $.getJSON('{{ url_for("get_bars", location_id=location.id) }}', function(bars) {
+                    bars.forEach(function(bar) {
                         var marker = $('<div class="bar-marker"></div>');
-                        var label = $('<div class="bar-label"><a href="/bar/' + bar.id + '">' + bar.name + '</a></div>');
-                        
+                        var label;
+
+                        if (bar.background_color === 'red') {
+                            label = $('<div class="bar-label" style="background-color: orange; color: white;">' + bar.name + '</div>');
+                        } else {
+                            label = $('<div class="bar-label"><a href="/bar/' + bar.id + '" style="color: white; background-color: #1700a1;">' + bar.name + '</a></div>');
+                        }
+
                         marker.css({
                             'left': bar.x + '%',
                             'top': bar.y + '%',
-                            'background-color': bar.background_color // Assuming background_color is sent from server
+                            'background-color': (bar.background_color === 'red' ? 'orange' : '#1700a1')
                         });
                         label.css({
                             'left': bar.x + '%',
-                            'top': bar.y + '%',
-                            'background-color': bar.background_color // Assuming background_color is sent from server
+                            'top': bar.y + '%'
                         });
-    
+
                         $('#mapContainer').append(marker);
                         $('#mapContainer').append(label);
-                    }
+                    });
                 });
+            }
             });
-        });
+
     </script>
     
 <!-- Remove the hardcoded button from HTML -->
@@ -235,7 +274,27 @@
             document.getElementById('infoLightbox').style.display = 'none';
         }
     </script>
-    
+
+    <style>
+    #sliderContainer {
+        display: none;
+        position: fixed;
+        bottom: 10%;
+        left: 10px;
+        z-index: 1000;
+        background-color: white;
+        padding: 10px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2); /* Optional: adds shadow for better visibility */
+    }
+
+    #fontSizeSlider {
+        width: 200px; /* Adjust the width as necessary */
+    }
+</style>
+
+    </style>
+
 
     </body>
     </html>

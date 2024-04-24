@@ -25,9 +25,15 @@
     {% set sorted_bars = bars | sort(attribute='name') %}
     {% for bar in sorted_bars %}
     <li>
-        <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ 'var(--bar-color)' if bar.background_color == 'blue' else 'var(--container-color)' if bar.background_color == 'red' else 'var(--bar-color)' }};">
-            {{ bar.name }}
-        </a>
+        {% if bar.background_color == 'red' %}
+            <span class="bar-button" style="display: none;">
+                {{ bar.name }}
+            </span>
+        {% else %}
+            <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ 'var(--bar-color)' if bar.background_color == 'blue' else 'var(--bar-color)' }};">
+                {{ bar.name }}
+            </a>
+        {% endif %}
         {% if current_user.is_admin %}
         <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
             <select name="color" onchange="this.form.submit()">
@@ -35,14 +41,20 @@
                 <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
             </select>
         </form>
-        
             <button class="removeBarBtn" data-bar-id="{{ bar.id }}">X</button>
         {% endif %}
     </li>
     {% endfor %}
+    
 </ul>
 
 </div>
+
+<div id="fontSizeContainer" style="display: none; position: fixed; bottom: 10%; right: 10px; z-index: 1000; background-color: white; padding: 10px; border-radius: 5px;">
+    <label for="fontSizeSlider">Adjust Font Size:</label>
+    <input type="range" id="fontSizeSlider" min="1" max="10" value="1"> <!-- default size -->
+</div>
+
 
 <!-- <button id="infoBtn" class="fab"><i class="fas fa-question"></i><b/button> -->
 
@@ -209,6 +221,7 @@ $(document).ready(function () {
         }
     }
 </script>
+
 
 {% with messages = get_flashed_messages(with_categories=true) %} {% if messages
     %} {% for category, message in messages %} {% if category == 'success' %}

@@ -253,6 +253,14 @@ body {
   margin: 0;
 }
 
+.bar-button {
+  padding: 25px;
+  text-decoration: none;
+  color: #4e73df;
+  border-radius: 15px;
+  color: white;
+}
+
 .user-info {
   display: flex;
   align-items: center;

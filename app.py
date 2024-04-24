@@ -282,11 +282,17 @@ def access_briefing(user_id):
     return redirect(url_for('dashboard'))
 
 
+
 @app.route('/admin', methods=['GET', 'POST'])
+@login_required
 def admin():
+    if not current_user.is_admin:
+        flash('You must be an admin to access this page.', 'error')
+        return redirect(url_for('index'))  # Redirect to a safe page like the homepage or dashboard
+
     form = UserForm()
     location_form = LocationForm()
-    search_query = request.args.get('search', '')  # Get the search query from request arguments
+    search_query = request.args.get('search', '')
 
     if form.validate_on_submit():
         user = User(
@@ -297,14 +303,12 @@ def admin():
             location_id=form.location.data.id if form.location.data else None,
             is_admin=form.is_admin.data
         )
-
         db.session.add(user)
         db.session.commit()
         flash('User created successfully!', 'success')
         return redirect(url_for('admin'))
 
     if search_query:
-        # Adjust this filter to match your User and Location model relationships and fields
         users = User.query.filter(
             User.username.ilike('%{}%'.format(search_query)) | 
             User.location.has(Location.name.ilike('%{}%'.format(search_query))) | 

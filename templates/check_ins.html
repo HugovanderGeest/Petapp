@@ -106,7 +106,7 @@
             <div class="bar-item" style="background-color: rgb({{ 255 - 2.55 * bar.color_intensity }}, {{ 255 - 2.55 * bar.color_intensity }}, 255);">
                     <div class="whiter">
                 <h2>{{ bar.name }}</h2>
-                <p>Last Checked-in: {{ bar.last_checked_in | humanize }} by
+                <p>Last Checked-in: {{ bar.last_checked_in | humanize }} by <br>
                     {% if bar.last_checked_in_user %}
                         <a href="{{ url_for('user_dashboard', user_id=bar.last_checked_in_user.id) }}">{{ bar.last_checked_in_user.username }}</a>
                     {% else %}

@@ -49,7 +49,6 @@
   --container-color: #ff8547; /* A shade of red */
 }
 
-
 body {
   font-family: "Roboto", sans-serif;
   background: linear-gradient(to bottom, #73c8fb 0%, #e0f2ff 100%);
@@ -95,8 +94,7 @@ body {
 
 .login-container {
   text-align: center;
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -147,7 +145,6 @@ body {
   transition: 0.2s ease-in-out;
   cursor: pointer;
 }
-
 
 .overlay {
   position: fixed;
@@ -271,10 +268,13 @@ body {
   margin-left: 10px;
   border: 1px #dadada solid;
   border-radius: 5px;
-  
+  max-height: 69px;
+  overflow-y: hidden;
+
   /* Apply max-width only for phones */
   @media only screen and (max-width: 600px) {
     max-width: 400px;
+    max-height: none;
   }
 }
 
@@ -315,8 +315,8 @@ body {
 }
 
 .titels p {
-    margin-left: 90px;
-      margin-right: 10px;
+  margin-left: 90px;
+  margin-right: 10px;
 
   @media only screen and (max-width: 600px) {
     margin-left: 20px;
@@ -324,7 +324,6 @@ body {
     left: 0;
   }
 }
-
 
 .minderje form {
   background-color: transparent;
@@ -1013,7 +1012,6 @@ input.check-button {
 
 /* List container styling */
 
-
 .bars-list {
   display: flex;
   flex-wrap: wrap;
@@ -1029,13 +1027,12 @@ input.check-button {
   max-width: 500px;
 }
 
-
 .grayboy p {
   color: black;
   font-size: 15px;
   margin: 20px;
   padding: 20px;
-z-index: 1000;
+  z-index: 1000;
 }
 
 /* List item styling */
@@ -1441,8 +1438,7 @@ form input[type="submit"]:hover {
 
 .content-container {
   width: 80%;
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
@@ -1471,8 +1467,7 @@ form input[type="submit"]:hover {
 }
 
 .cube-container {
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   /* Light background for the form */
   border-radius: 10px;
   /* Rounded corners */
@@ -1662,8 +1657,7 @@ input[type="submit"] {
 
 /* Style for each bar item */
 .bar-item {
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -1782,8 +1776,7 @@ input[type="submit"] {
   height: 300px;
   overflow: hidden;
   /* Ensures the content fits within the specified dimensions */
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   /* Light background for contrast */
   border-radius: 10px;
   /* Rounded corners for a softer look */
@@ -1837,13 +1830,11 @@ input[type="submit"] {
   font-size: 16px;
 }
 
-
 @media (max-width: 768px) {
   .table-container {
     overflow-x: auto;
   }
 }
-
 
 .form-container {
   transition: max-height 0.5s ease-out;
@@ -1871,8 +1862,7 @@ input[type="submit"] {
   border-radius: 5px;
   font-size: 16px;
   color: #495057;
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
@@ -1990,7 +1980,7 @@ input[type="submit"] {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-    background-color: var(--bc);
+  background-color: var(--bc);
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -2058,8 +2048,7 @@ input[type="submit"] {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -2163,8 +2152,7 @@ input[type="submit"] {
 
 /* Container for the notes content */
 .bar-notes-container {
-    background-color: var(--bc);
-;
+  background-color: var(--bc);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -2236,8 +2224,7 @@ input[type="submit"] {
 /* General Style for the Form */
 #kgForm {
   max-width: 400px;
-    background-color: var(--bc);
-fff;
+  background-color: var(--bc);
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);

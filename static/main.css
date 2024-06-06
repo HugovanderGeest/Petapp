@@ -278,6 +278,10 @@ body {
   }
 }
 
+#usersSection {
+  margin-bottom: 100px;
+}
+
 .bulk-download-button {
   background-color: transparent; /* or another color */
   border: none;

@@ -766,6 +766,7 @@ def delete_location(location_id):
 
 
 
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

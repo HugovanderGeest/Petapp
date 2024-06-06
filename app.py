@@ -751,10 +751,19 @@ def serve_user_profile_picture(filename):
 @app.route('/delete_location/<int:location_id>', methods=['POST'])
 def delete_location(location_id):
     location = Location.query.get_or_404(location_id)
+    
+    # Delete associated bars first
+    bars = Bar.query.filter_by(location_id=location_id).all()
+    for bar in bars:
+        db.session.delete(bar)
+    
+    # Delete the location
     db.session.delete(location)
     db.session.commit()
-    flash('Location has been deleted!', 'success')
+    
+    flash('Location and its associated bars have been deleted!', 'success')
     return redirect(url_for('admin'))
+
 
 
 @app.route('/login', methods=['GET', 'POST'])

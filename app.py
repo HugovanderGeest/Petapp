@@ -747,6 +747,16 @@ def delete_user(id):
 def serve_user_profile_picture(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
+
+@app.route('/delete_location/<int:location_id>', methods=['POST'])
+def delete_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    db.session.delete(location)
+    db.session.commit()
+    flash('Location has been deleted!', 'success')
+    return redirect(url_for('admin'))
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':

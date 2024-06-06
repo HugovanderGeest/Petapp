@@ -32,7 +32,13 @@ import email
 import csv
 from flask import Response
 import pytz
+import json
 
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s %(levelname)s: %(message)s', handlers=[
+    logging.StreamHandler()
+])
+
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 login_manager = LoginManager(app)
@@ -42,7 +48,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 app.config['GOOGLE_MAPS_API_KEY'] = 'AIzaSyDjyGyXUa6Wnapxt-7HOity5K4Ydnb--2w'
 app.config['UPLOAD_FOLDER'] = 'photos'
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -59,8 +65,6 @@ def utc_to_local(utc_dt):
 def to_local_filter(utc_dt):
     local_dt = utc_to_local(utc_dt)
     return local_dt.strftime("%Y-%m-%d %H:%M:%S")  # Format as Year-Month-Day Hour:Minute:Second
-
-
 
 migrate = Migrate(app, db)
 
@@ -87,6 +91,20 @@ class User(db.Model, UserMixin):  # Extend User model with UserMixin
         self.group = group
         self.badges = badges
         self.is_admin = is_admin
+
+class WorkRequest(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    status = db.Column(db.String(10), default='pending')  # pending, approved, denied
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', backref=db.backref('work_requests', lazy=True))
+    location = db.relationship('Location', backref=db.backref('work_requests', lazy=True))
+
+    def __repr__(self):
+        return f'<WorkRequest user_id={self.user_id}, location_id={self.location_id}, status={self.status}>'
+
 
 class UserForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
@@ -139,9 +157,20 @@ class UpdateLocationForm(FlaskForm):
     submit = SubmitField('Update')
 
 
+from flask_wtf import FlaskForm
+from wtforms import StringField, DateField, TimeField, IntegerField, SubmitField
+from wtforms.validators import Optional, URL
+
 class LocationForm(FlaskForm):
-    name = StringField('Location', validators=[DataRequired()])
+    name = StringField('Location', validators=[Optional()])
+    date = DateField('Date', format='%Y-%m-%d', validators=[Optional()])
+    address = StringField('Address', validators=[Optional()])
+    start_time = TimeField('Start Time', validators=[Optional()])
+    amount_of_days = IntegerField('Amount of Days', validators=[Optional()])
+    website_links = StringField('Website Links', validators=[Optional()])  # Removed URL validator
+    max_people = IntegerField('Max People', default=10, validators=[Optional()])
     submit = SubmitField('Create Location')
+
 
 class LocationSelectForm(FlaskForm):
     location = QuerySelectField('Location', query_factory=lambda: Location.query, get_label='name')
@@ -154,21 +183,44 @@ class BarForm(FlaskForm):
 
 
 class Location(db.Model):
-    __tablename__ = 'location'
-    __table_args__ = {'extend_existing': True}
-
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=True)
+    date = db.Column(db.Date, nullable=True)
+    address = db.Column(db.String(200), nullable=True)
+    start_time = db.Column(db.Time, nullable=True)
+    amount_of_days = db.Column(db.Integer, nullable=True)
+    website_links = db.Column(db.String(200), nullable=True)
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     url = db.Column(db.String(500), nullable=True)
     map_image = db.Column(db.String(255))  # New field to store the filename of the map image
+    max_people = db.Column(db.Integer, nullable=False, default=10)  # Maximum number of people that can be approved
 
-    def __init__(self, name, zakken=0, bekers=0, url=None):
+    def __init__(self, name=None, date=None, address=None, start_time=None, amount_of_days=None, website_links=None, zakken=0, bekers=0, url=None, map_image=None, max_people=10):
         self.name = name
+        self.date = date
+        self.address = address
+        self.start_time = start_time
+        self.amount_of_days = amount_of_days
+        self.website_links = website_links
         self.zakken = zakken
         self.bekers = bekers
         self.url = url
+        self.map_image = map_image
+        self.max_people = max_people
+
+
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'date': self.date.strftime('%Y-%m-%d') if self.date else None,
+            'address': self.address,
+            'start_time': self.start_time.strftime('%H:%M:%S') if self.start_time else None,
+            'amount_of_days': self.amount_of_days,
+            'website_links': self.website_links
+        }
 
 def location():
     location = Location.query.first()  # Replace with your logic to get the correct location
@@ -270,7 +322,6 @@ def update_location_link(bar_id):
     return redirect(url_for('some_view_function', bar_id=bar.id))
 
 @app.route('/access-briefing/<int:user_id>')
-@login_required
 def access_briefing(user_id):
     user = User.query.get_or_404(user_id)
     if not user.has_accessed_briefing:
@@ -282,55 +333,172 @@ def access_briefing(user_id):
     return redirect(url_for('dashboard'))
 
 
-
 @app.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin():
-    if not current_user.is_admin:
-        flash('You must be an admin to access this page.', 'error')
-        return redirect(url_for('index'))  # Redirect to a safe page like the homepage or dashboard
-
-    form = UserForm()
     location_form = LocationForm()
-    search_query = request.args.get('search', '')
+    user_form = UserForm()
 
-    if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            password=form.password.data,
-            email=form.email.data,
-            phone_number=form.phone_number.data if form.phone_number.data else None,
-            location_id=form.location.data.id if form.location.data else None,
-            is_admin=form.is_admin.data
-        )
-        db.session.add(user)
-        db.session.commit()
-        flash('User created successfully!', 'success')
-        return redirect(url_for('admin'))
-
-    if search_query:
-        users = User.query.filter(
-            User.username.ilike('%{}%'.format(search_query)) | 
-            User.location.has(Location.name.ilike('%{}%'.format(search_query))) | 
-            (User.is_admin == (search_query.lower() in ['true', 'yes', '1', 'admin']))
-        ).all()
-    else:
-        users = User.query.all()
-
+    logger.debug("Handling /admin route")
+    
     if location_form.validate_on_submit():
-        location = Location(name=location_form.name.data)
-        db.session.add(location)
-        db.session.commit()
-        flash('Location created successfully!', 'success')
+        logger.debug("Location form validated successfully")
+        logger.debug(f"Form data: name={location_form.name.data}, date={location_form.date.data}, address={location_form.address.data}, start_time={location_form.start_time.data}, amount_of_days={location_form.amount_of_days.data}, website_links={location_form.website_links.data}, max_people={location_form.max_people.data}")
+        
+        try:
+            # Log existing locations
+            existing_locations = Location.query.all()
+            logger.debug(f"Existing locations before insert: {[loc.name for loc in existing_locations]}")
+            
+            location = Location(
+                name=location_form.name.data,
+                date=location_form.date.data,
+                address=location_form.address.data,
+                start_time=location_form.start_time.data,
+                amount_of_days=location_form.amount_of_days.data,
+                website_links=location_form.website_links.data,
+                max_people=location_form.max_people.data
+            )
+            db.session.add(location)
+            db.session.commit()
+            
+            # Log new locations after insert
+            updated_locations = Location.query.all()
+            logger.debug(f"Existing locations after insert: {[loc.name for loc in updated_locations]}")
+            
+            flash('Location created successfully!', 'success')
+            return redirect(url_for('admin'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding location to the database', 'error')
+            logger.error(f"Error creating location: {e}", exc_info=True)
+    else:
+        logger.debug("Location form did not validate")
+        logger.debug(f"Form errors: {location_form.errors}")
 
+    users = User.query.all()
+    work_requests = WorkRequest.query.all()
     locations = Location.query.all()
-    return render_template('admin.html', form=form, location_form=location_form, users=users, locations=locations, search_query=search_query)
 
-# @app.route('/zakkeneerst')
-# def zakkeneerst():
-#     # Fetch all bars from the database
-#     bars = Bar.query.all()
-#     return render_template('zakkeneerst.html', bars=bars)
+    return render_template('admin.html', location_form=location_form, user_form=user_form, users=users, work_requests=work_requests, locations=locations)
+
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    form = UserForm()
+    if form.validate_on_submit():
+        try:
+            user = User(
+                username=form.username.data,
+                password=form.password.data,
+                email=form.email.data,
+                phone_number=form.phone_number.data if form.phone_number.data else None,
+                location_id=form.location.data.id if form.location.data else None,
+                is_admin=form.is_admin.data
+            )
+            db.session.add(user)
+            db.session.commit()
+            flash('User created successfully!', 'success')
+        except Exception as e:
+            db.session.rollback()
+            print(f"Error adding user to the database: {e}")  # Debug print
+            flash('Error adding user to the database', 'error')
+    else:
+        print("Form validation failed")  # Debug print
+        print(form.errors)  # Debug print
+    return redirect(url_for('admin'))
+
+
+import logging
+
+# Set up basic logging configuration
+logging.basicConfig(level=logging.INFO)
+
+# Create a logger for your application
+logger = logging.getLogger(__name__)
+
+@app.route('/add_location', methods=['POST'])
+def add_location():
+    location_form = LocationForm()
+    if location_form.validate_on_submit():
+        try:
+            location = Location(
+                name=location_form.name.data,
+                date=location_form.date.data,
+                address=location_form.address.data,
+                start_time=location_form.start_time.data,
+                amount_of_days=location_form.amount_of_days.data,
+                website_links=location_form.website_links.data,
+                max_people=location_form.max_people.data
+            )
+            db.session.add(location)
+            db.session.commit()
+            flash('Location created successfully!', 'success')
+            logger.info(f"Location created: {location.name}")
+        except Exception as e:
+            db.session.rollback()
+            flash('Error adding location to the database', 'error')
+            logger.error(f"Error creating location: {e}")
+    return redirect(url_for('admin'))
+
+from flask import Flask, render_template, redirect, request, url_for, flash, send_file
+import os
+import io
+import zipfile  # Correct import for the standard library
+# ... other imports ...
+
+@app.route('/download_photos')
+def download_photos():
+    location_filter = request.args.get('location_filter')
+    if location_filter:
+        photos = BarPhoto.query.join(Bar).join(Location).filter(Location.id == location_filter).all()
+    else:
+        photos = BarPhoto.query.all()
+    
+    if not photos:
+        flash('No photos available to download for the selected location.', 'info')
+        return redirect(url_for('view_photos'))
+    
+    # Create a zip file in memory
+    memory_file = io.BytesIO()
+    with zipfile.ZipFile(memory_file, 'w') as zf:
+        for photo in photos:
+            photo_path = os.path.join(app.config['UPLOAD_FOLDER'], photo.filename)
+            zf.write(photo_path, os.path.basename(photo_path))
+    
+    memory_file.seek(0)
+    
+    # Serve the zip file
+    return send_file(memory_file, mimetype='application/zip', as_attachment=True, download_name='photos.zip')
+
+
+
+@app.route('/respond_work_request/<int:request_id>', methods=['POST'])
+def respond_work_request(request_id):
+    work_request = WorkRequest.query.get_or_404(request_id)
+    if not current_user.is_admin:
+        flash('You must be an admin to perform this action.', 'error')
+        return redirect(url_for('index'))
+
+    action = request.form.get('action')
+    location = work_request.location
+    approved_requests_count = WorkRequest.query.filter_by(location_id=location.id, status='approved').count()
+
+    if action == 'approve':
+        if approved_requests_count < location.max_people:
+            work_request.status = 'approved'
+            user = User.query.get(work_request.user_id)
+            user.location_id = work_request.location_id
+            db.session.commit()
+            flash(f'Request approved. {user.username} is now assigned to {work_request.location.name}.', 'success')
+        else:
+            flash(f'Cannot approve request. The location {location.name} has reached its maximum capacity of {location.max_people} people.', 'error')
+    elif action == 'deny':
+        work_request.status = 'denied'
+        db.session.commit()
+        flash('Request denied.', 'info')
+    return redirect(url_for('admin'))
+
 
 @app.route('/upload_photo_page', methods=['GET', 'POST'])
 @login_required  # Ensure this page requires user login
@@ -358,6 +526,7 @@ def upload_photo_to_view():
     else:
         flash('Invalid file type or no file uploaded.')
         return redirect(request.url)
+
 
 
 # @app.route('/submit_kg', methods=['POST'])
@@ -411,7 +580,6 @@ def upload_photo_to_view():
 
 
 @app.route('/bar/<int:bar_id>/upload_photo', methods=['POST'])
-@login_required
 def upload_photo(bar_id):
     if 'photo' not in request.files:
         flash('No file part')
@@ -517,7 +685,6 @@ def uploaded_photos(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route('/user/<int:user_id>/upload_profile_picture', methods=['POST'])
-@login_required
 def upload_profile_picture(user_id):
     if 'profile_picture' not in request.files:
         return jsonify({'error': 'No file part'}), 400
@@ -580,27 +747,25 @@ def delete_user(id):
 def serve_user_profile_picture(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form.get('username')
-        password = request.form.get('password')
         user = User.query.filter_by(username=username).first()
-        if user and check_password_hash(user.password, password):
+        if user:
             login_user(user)
-            print(f"Logging in user: {user.username}, Admin: {user.is_admin}")  # Debug print
-            if user.is_admin:
-                return redirect(url_for('admin'))
+            app.logger.debug(f'User {username} logged in successfully (password not checked).')
+            flash('Logged in successfully!', 'success')
             return redirect(url_for('dashboard'))
         else:
-            flash('Verkeerd Naam of wachtwoord, vraag een admin om hulp', 'error')  # Flash a message if login fails
-            return redirect(url_for('index'))  # Redirect back to the index page
-    # Return a login template if the method is not POST or no valid conditions are met
+            app.logger.debug(f'User {username} not found.')
+            flash('Invalid username', 'error')
+        return redirect(url_for('index'))
     return render_template('login.html')
 
+
+
 @app.route('/change_password/<int:user_id>', methods=['GET', 'POST'])
-@login_required
 def change_password(user_id):
     # Ensure the current user is the one whose password is being changed or is an admin
     if current_user.id != user_id and not current_user.is_admin:
@@ -711,7 +876,7 @@ def time_since(dt):
 @app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
     user = User.query.get_or_404(user_id)
-    form = UserForm(obj=user)  
+    form = UserForm(obj=user)
 
     if form.validate_on_submit():
         user.username = form.username.data
@@ -728,6 +893,7 @@ def user_dashboard(user_id):
         return redirect(url_for('user_dashboard', user_id=user.id))
 
     return render_template('user_dashboard.html', user=user, form=form)
+
 
 @app.route('/location/<int:user_id>/<int:location_id>', methods=['GET', 'POST'])
 @login_required  # Use login_required to ensure the user is logged in
@@ -794,8 +960,9 @@ def log_change():
 
     return jsonify({'success': 'Change logged successfully'}), 200
 
+
+
 @app.route('/bar/<int:bar_id>/update_details_and_check_in', methods=['POST'])
-@login_required
 def update_bar_details_and_check_in(bar_id):
     # First, handle the check-in
     bar = Bar.query.get_or_404(bar_id)
@@ -949,16 +1116,18 @@ def export_check_ins():
         download_name="check-in_logs.xlsx"
     )
 
-
-
-
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):
     bar_name = request.form.get('bar_name')
+    
     if bar_name:
         new_bar = Bar(name=bar_name, location_id=location_id)
         db.session.add(new_bar)
         db.session.commit()
+        
+        # Log the creation of the bar
+        logger.info(f"Bar created: {new_bar.name} (ID: {new_bar.id})")
+        
         return jsonify({'success': 'Bar added successfully', 'bar_name': new_bar.name, 'bar_id': new_bar.id})
     return jsonify({'error': 'Missing data'}), 400
 
@@ -995,7 +1164,6 @@ def location_details(location_id):
 
     attributes = location.attributes
     return render_template('location_details.html', location=location, attributes=attributes, form=form, all_users=all_users)
-
 
 @app.route('/location/<int:location_id>/add_user', methods=['POST'])
 def add_user_to_location(location_id):
@@ -1212,7 +1380,6 @@ def update_bar_details(bar_id):
     return redirect(url_for('bar', bar_id=bar_id))
 
 @app.route('/map/<int:location_id>', methods=['GET', 'POST'])
-@login_required
 def map_page(location_id):
     location = Location.query.get_or_404(location_id)
     bars = Bar.query.filter_by(location_id=location_id).all()
@@ -1279,7 +1446,6 @@ def log_change(user_id, bar_id, field, old_value, new_value):
     db.session.commit()
 
 @app.route('/bar/<int:bar_id>/leave_note', methods=['POST'])
-@login_required
 def leave_note_for_bar(bar_id):
     bar = Bar.query.get_or_404(bar_id)
     note = request.form.get('bar_note')
@@ -1378,12 +1544,67 @@ def assign_location(user_id):
 def static_files(filename):
     return send_from_directory(app.config['STATIC_FOLDER'], filename)
 
+@app.route('/list_locations')
+def list_locations():
+    locations = Location.query.all()
+    locations_dict = [location.to_dict() for location in locations]
+    return render_template('list.html', locations=locations_dict)
 
-# @app.route('/jemaiseenbar')
-# def drop_database():
-#     db.drop_all()
-#     db.create_all()  # Optional: Recreate the database tables after dropping them
-#     return "Database dropped and recreated."
+
+@app.route('/request_to_work/<int:location_id>', methods=['POST'])
+def request_to_work(location_id):
+    location = Location.query.get_or_404(location_id)
+    request_exists = WorkRequest.query.filter_by(user_id=current_user.id, location_id=location_id).first()
+    if request_exists:
+        flash('You have already requested to work at this location.', 'info')
+    else:
+        new_request = WorkRequest(user_id=current_user.id, location_id=location_id)
+        db.session.add(new_request)
+        db.session.commit()
+        flash(f'Request to work at {location.name} submitted!', 'success')
+    return redirect(url_for('list_locations'))
+
+
+@app.route('/backup_and_restore_users', methods=['GET'])
+def backup_and_restore_users():
+    # Backup users
+    users = User.query.all()
+    users_data = []
+    for user in users:
+        user_data = {
+            'username': user.username,
+            'password': user.password,
+            'email': user.email,
+            'phone_number': user.phone_number,
+            'is_admin': user.is_admin
+        }
+        users_data.append(user_data)
+    
+    # Save to a temporary file
+    with open('users_backup.json', 'w') as f:
+        json.dump(users_data, f)
+    
+    # Drop all tables
+    db.drop_all()
+    
+    # Recreate all tables
+    db.create_all()
+    
+    # Restore users
+    with open('users_backup.json', 'r') as f:
+        users_data = json.load(f)
+        for user_data in users_data:
+            user = User(
+                username=user_data['username'],
+                password=user_data['password'],
+                email=user_data['email'],
+                phone_number=user_data['phone_number'],
+                is_admin=user_data['is_admin']
+            )
+            db.session.add(user)
+        db.session.commit()
+    
+    return 'Backup and restore completed successfully.'
 
 @app.route('/remove_bar/<int:bar_id>', methods=['POST'])
 def remove_bar(bar_id):

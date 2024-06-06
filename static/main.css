@@ -278,6 +278,22 @@ body {
   }
 }
 
+.bulk-download-button {
+  background-color: transparent; /* or another color */
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 10px 15px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.bulk-download-button i {
+  margin-right: 10px;
+}
+
 .user-info:nth-child(odd) {
   background: #ffffff; /* Change this to your preferred darker color */
 }
@@ -409,6 +425,32 @@ body {
   }
 }
 
+#formsSection {
+  overflow: scroll;
+  height: 80vh;
+}
+
+.form-group {
+  padding: 10px;
+  justify-content: center;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.form-group label {
+  font-size: 20px;
+  margin-right: 10px;
+  width: 100%;
+}
+
+.form-group input {
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-bottom: 10px;
+}
+
 .max-man {
   max-height: 60vh;
   overflow: scroll;
@@ -418,7 +460,7 @@ body {
 
 /* Style for the search input field */
 #userSearchInput {
-  width: 90vw;
+  width: 80vw;
   font-size: 20px;
   border-radius: 10px;
   border: none;
@@ -1471,7 +1513,6 @@ form input[type="submit"]:hover {
   /* Light background for the form */
   border-radius: 10px;
   /* Rounded corners */
-  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
   /* Subtle shadow for depth */
   width: 95vw;
   margin: auto;
@@ -1547,6 +1588,82 @@ input[type="submit"] {
 .cube-container.bottom-boy {
   height: 65vh;
   max-width: 500px;
+}
+
+.custom-form-container {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  z-index: 1001;
+}
+.custom-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+.custom-close-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
+.custom-floating-button {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  background-color: var(--pc);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+/* Location Card Styles */
+.location-card {
+  background-color: #1700a1;
+  color: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 10px 0;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.location-card h3 {
+  margin-top: 0;
+  font-size: 1.5em;
+  color: #fff;
+}
+
+.location-card p {
+  margin: 5px 0;
+}
+
+.location-card a {
+  color: #ffcc00; /* Change to your preferred link color */
+  text-decoration: none;
+}
+
+.location-card a:hover {
+  text-decoration: underline;
 }
 
 .modal {

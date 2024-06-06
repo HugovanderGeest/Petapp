@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: auto;
+      }
+      h1 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+      }
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+      .location-card {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+        transition: transform 0.2s;
+      }
+      .location-card:hover {
+        transform: translateY(-5px);
+      }
+      .location-card h2 {
+        margin-top: 0;
+        color: #007bff;
+      }
+      .location-card p {
+        margin: 5px 0;
+        color: #555;
+      }
+      .location-card a {
+        color: #007bff;
+        text-decoration: none;
+      }
+      .location-card a:hover {
+        text-decoration: underline;
+      }
+      .location-card button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+      .location-card button:hover {
+        background-color: #0056b3;
+      }
+      .success-message,
+      .already-requested-message {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        color: green;
+        font-size: 1.2em;
+        text-align: center;
+        animation: fadeIn 0.5s ease-in-out;
+        z-index: 1000;
+      }
+      .already-requested-message {
+        color: red;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Beschikbaren locaties</h1>
+      <div id="success-message" class="success-message">
+        Request sent successfully!
+      </div>
+      <div id="already-requested-message" class="already-requested-message">
+        You have already requested this location!
+      </div>
+      <ul>
+        {% for location in locations %}
+        <li>
+          <div class="location-card">
+            <h2>{{ location.name }}</h2>
+            <p>Date: {{ location.date }}</p>
+            <p>Address: {{ location.address }}</p>
+            <p>Start Time: {{ location.start_time }}</p>
+            <p>Days: {{ location.amount_of_days }}</p>
+            <p>
+              Website:
+              <a href="{{ location.website_links }}" target="_blank"
+                >{{ location.website_links }}</a
+              >
+            </p>
+            <form
+              action="{{ url_for('request_to_work', location_id=location.id) }}"
+              method="post"
+              onsubmit="handleRequest(event, '{{ location.id }}')"
+            >
+              <input
+                type="hidden"
+                name="location_id"
+                value="{{ location.id }}"
+              />
+              <button type="submit" id="button-{{ location.id }}">
+                Aanmelden
+              </button>
+            </form>
+          </div>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        // Disable buttons that have already been clicked
+        const locations = {{ locations | tojson | safe }};
+        locations.forEach(location => {
+          if (localStorage.getItem(`buttonPressed-${location.id}`)) {
+            document.getElementById(`button-${location.id}`).disabled = true;
+          }
+        });
+      });
+
+      function handleRequest(event, locationId) {
+        event.preventDefault();
+        const alreadyRequestedMessage = document.getElementById('already-requested-message');
+        const successMessage = document.getElementById('success-message');
+
+        if (localStorage.getItem(`buttonPressed-${locationId}`)) {
+          alreadyRequestedMessage.style.display = 'block';
+          setTimeout(() => {
+            alreadyRequestedMessage.style.display = 'none';
+          }, 2000);
+        } else {
+          successMessage.style.display = 'block';
+          localStorage.setItem(`buttonPressed-${locationId}`, 'true');
+          document.getElementById(`button-${locationId}`).disabled = true;
+          setTimeout(() => {
+            successMessage.style.display = 'none';
+            event.target.submit();
+          }, 1000); // Submit the form after 1 second
+        }
+      }
+    </script>
+
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+  %} {% for category, message in messages %} {% if category == 'success' %}
+  <div class="alert alert-success" role="alert">{{ message }}</div>
+  {% elif category == 'error' %}
+  <div class="alert alert-danger" role="alert">{{ message }}</div>
+  {% elif category == 'info' %}
+  <div class="alert alert-info" role="alert">{{ message }}</div>
+  {% elif category == 'warning' %}
+  <div class="alert alert-warning" role="alert">{{ message }}</div>
+  {% else %}
+  <div class="alert alert-primary" role="alert">{{ message }}</div>
+  {% endif %} {% endfor %} {% endif %} {% endwith %}
+
+{% endblock %}

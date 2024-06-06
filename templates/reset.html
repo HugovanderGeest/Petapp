@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reset Database</title>
+    <script>
+      function showPopup() {
+        var code = prompt("Please enter the code:");
+        if (code != null && code != "") {
+          var xhr = new XMLHttpRequest();
+          xhr.open("GET", "/reset_database?code=" + code, true);
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4) {
+              var response = JSON.parse(xhr.responseText);
+              if (xhr.status == 200) {
+                alert(response.message);
+              } else {
+                alert("Error: " + response.error);
+              }
+            }
+          };
+          xhr.send();
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <button onclick="showPopup()">Reset Database</button>
+  </body>
+</html>

@@ -70,6 +70,7 @@
             class="btn-link"
             >Briefing</a
           >
+          <!-- New Link -->
           <h4>
             <em
               >Let op: lees de briefing voorafgaand aan het evenement zorgvuldig
@@ -81,6 +82,9 @@
         <p>Je hebt nog geen locatie</p>
         {% endif %}
       </div>
+      <a href="{{ url_for('list_locations') }}" class="btn-link"
+        >List of Locations</a
+      >
     </div>
 
     <div class="bottom-navbar">

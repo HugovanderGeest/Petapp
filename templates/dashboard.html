@@ -36,13 +36,11 @@
       alt="Floating Cup"
       class="floating-cup"
     />
-
     <img
       src="{{ url_for('static', filename='logo.png') }}"
       alt="CircularPET Logo"
       class="logo2"
     />
-
     <img
       src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}"
       alt=""
@@ -54,6 +52,7 @@
         <h2>{{ username }}</h2>
         {% if current_user.is_admin %}
         <h3>Admin</h3>
+        <a href="{{ url_for('admin') }}" class="btn-link">Go to Admin Page</a>
         {% else %}
         <h3>Controleur</h3>
         {% endif %} {% if user.location %}
@@ -70,12 +69,11 @@
             class="btn-link"
             >Briefing</a
           >
-          <!-- New Link -->
           <h4>
             <em
               >Let op: lees de briefing voorafgaand aan het evenement zorgvuldig
-              door
-            </em>
+              door</em
+            >
           </h4>
         </div>
         {% else %}
@@ -104,13 +102,9 @@
       onchange="uploadPicture()"
     />
 
-    <!-- Lightbox container (hidden by default) -->
     <div id="passwordChangeLightbox" class="modal">
-      <!-- Lightbox content -->
       <div class="modal-content">
         <span class="close">&times;</span>
-        <!-- Close button -->
-        <!-- Your existing Change Password form here -->
         <div class="password-change-form">
           <h3>Verander wachtwoord</h3>
           <form
@@ -124,7 +118,6 @@
               name="new_password"
               required
             />
-
             <label for="confirm_password">Opnieuwe nieuwe wachtwoord:</label>
             <input
               type="password"
@@ -132,7 +125,6 @@
               name="confirm_password"
               required
             />
-
             <button type="submit">Verstuur</button>
           </form>
         </div>
@@ -147,7 +139,7 @@
       function uploadPicture() {
         var form_data = new FormData();
         var file_input = document.getElementById("profileInput");
-        var profile_pic_img = document.getElementById("profilePic"); // Get the profile picture img element
+        var profile_pic_img = document.getElementById("profilePic");
 
         if (file_input.files.length > 0) {
           form_data.append("profile_picture", file_input.files[0]);
@@ -158,15 +150,14 @@
           })
             .then((response) => {
               if (!response.ok) {
-                throw new Error("Network response was not ok"); // Handle HTTP errors
+                throw new Error("Network response was not ok");
               }
-              return response.json(); // This will fail if the response is not JSON
+              return response.json();
             })
             .then((data) => {
               if (data.image_url) {
-                profile_pic_img.src = data.image_url; // Update the src of the profile picture img element
+                profile_pic_img.src = data.image_url;
               } else {
-                // If there's no image_url in the response, handle it (perhaps the server should always send this on success)
                 alert("Upload succeeded, but no image URL was returned.");
               }
             })
@@ -178,26 +169,18 @@
       }
     </script>
     <script>
-      // Get the modal
       var modal = document.getElementById("passwordChangeLightbox");
-
-      // Get the button that opens the modal
-      var btn = document.querySelector(".fa-cog"); // Assuming .fa-cog is your settings icon class
-
-      // Get the <span> element that closes the modal
+      var btn = document.querySelector(".fa-cog");
       var span = document.getElementsByClassName("close")[0];
 
-      // When the user clicks the button, open the modal
       btn.onclick = function () {
         modal.style.display = "block";
       };
 
-      // When the user clicks on <span> (x), close the modal
       span.onclick = function () {
         modal.style.display = "none";
       };
 
-      // When the user clicks anywhere outside of the modal, close it
       window.onclick = function (event) {
         if (event.target == modal) {
           modal.style.display = "none";

@@ -765,6 +765,23 @@ def delete_location(location_id):
     return redirect(url_for('admin'))
 
 
+@app.route('/toggle_admin/<int:user_id>', methods=['POST'])
+@login_required
+def toggle_admin(user_id):
+    user = User.query.get_or_404(user_id)
+    if not current_user.is_admin:
+        flash('You do not have permission to perform this action.', 'error')
+        return redirect(url_for('dashboard'))
+    
+    user.is_admin = not user.is_admin
+    db.session.commit()
+    
+    if user.is_admin:
+        flash(f'{user.username} is now an admin.', 'success')
+    else:
+        flash(f'{user.username} is no longer an admin.', 'info')
+    
+    return redirect(url_for('dashboard', user_id=user.id))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -774,13 +791,13 @@ def login():
         user = User.query.filter_by(username=username).first()
         if user:
             login_user(user)
-            app.logger.debug(f'User {username} logged in successfully (password not checked).')
-            flash('Logged in successfully!', 'success')
-            return redirect(url_for('dashboard'))
+            if user.is_admin:
+                return redirect(url_for('admin'))
+            else:
+                return redirect(url_for('dashboard'))
         else:
-            app.logger.debug(f'User {username} not found.')
             flash('Invalid username', 'error')
-        return redirect(url_for('index'))
+            return redirect(url_for('login'))
     return render_template('login.html')
 
 

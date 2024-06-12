@@ -12,26 +12,22 @@
     />
     <title>Dashboard</title>
   </head>
-
   <body>
     <img
       src="{{ url_for('static', filename='cup.png') }}"
       alt="Floating Cup"
       class="floating-cup"
     />
-
     <img
       src="{{ url_for('static', filename='logo.png') }}"
       alt="CircularPET Logo"
       class="logo2"
     />
-
     <img
       src="{{ user.profile_picture if user.profile_picture else url_for('static', filename='stock.png') }}"
       alt="Profile Picture"
       id="profilePic"
     />
-
     <div class="login-container bigger">
       <div class="login-form naame">
         <h2>{{ user.username }}</h2>
@@ -40,14 +36,12 @@
         {% else %}
         <h3>Controleur</h3>
         {% endif %}
-
         <!-- Hidden file input for changing the profile picture -->
         <h5>Locatie:</h5>
         <p>{{ user.location.name if user.location else 'Geen' }}</p>
         <h5>Admin:</h5>
         <p>{{ 'Ja' if user.is_admin else 'Nee' }}</p>
         <!-- Display Admin Status -->
-
         <form
           class="blij"
           method="POST"
@@ -62,7 +56,6 @@
           <div>{{ form.submit() }}</div>
         </form>
         <br />
-
         <form
           class="blij"
           method="POST"
@@ -76,9 +69,20 @@
             style="background-color: red"
           />
         </form>
+        <br />
+        <form
+          class="toggle-admin"
+          method="POST"
+          action="{{ url_for('toggle_admin', user_id=user.id) }}"
+        >
+          <input
+            type="submit"
+            value="{{ 'Remove Admin' if user.is_admin else 'Make Admin' }}"
+            style="background-color: {{ 'red' if user.is_admin else 'green' }}; color: white;"
+          />
+        </form>
       </div>
     </div>
-
     <div class="bottom-navbar">
       <a href="javascript:history.back()" class="nav-item"
         ><i class="fas fa-arrow-left"></i><span>Terug</span></a
@@ -87,7 +91,6 @@
         ><i class="fas fa-cog"></i><span>Settings</span></a
       >
     </div>
-
     <input
       type="file"
       id="profileInput"
@@ -95,7 +98,6 @@
       style="display: none"
       onchange="uploadPicture()"
     />
-
     <!-- Lightbox container (hidden by default) -->
     <div id="passwordChangeLightbox" class="modal">
       <!-- Lightbox content -->
@@ -116,7 +118,6 @@
               name="new_password"
               required
             />
-
             <label for="confirm_password">Confirm New Password:</label>
             <input
               type="password"
@@ -124,23 +125,19 @@
               name="confirm_password"
               required
             />
-
             <button type="submit">Change Password</button>
           </form>
         </div>
       </div>
     </div>
-
     <script>
       document.getElementById("profilePic").onclick = function () {
         document.getElementById("profileInput").click();
       };
-
       function uploadPicture() {
         var form_data = new FormData();
         var file_input = document.getElementById("profileInput");
         var profile_pic_img = document.getElementById("profilePic"); // Get the profile picture img element
-
         if (file_input.files.length > 0) {
           form_data.append("profile_picture", file_input.files[0]);
           fetch('{{ url_for("upload_profile_picture", user_id=user.id) }}', {
@@ -172,23 +169,18 @@
     <script>
       // Get the modal
       var modal = document.getElementById("passwordChangeLightbox");
-
       // Get the button that opens the modal
       var btn = document.querySelector(".fa-cog"); // Assuming .fa-cog is your settings icon class
-
       // Get the <span> element that closes the modal
       var span = document.getElementsByClassName("close")[0];
-
       // When the user clicks the button, open the modal
       btn.onclick = function () {
         modal.style.display = "block";
       };
-
       // When the user clicks on <span> (x), close the modal
       span.onclick = function () {
         modal.style.display = "none";
       };
-
       // When the user clicks anywhere outside of the modal, close it
       window.onclick = function (event) {
         if (event.target == modal) {
@@ -196,7 +188,6 @@
         }
       };
     </script>
-
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %}
     <div class="alert alert-{{ category }}">{{ message }}</div>

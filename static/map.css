@@ -36,6 +36,10 @@ h2 {
   overflow: hidden; /* Ensures nothing leaks out */
 }
 
+.btn-secondary {
+  margin: 20px;
+}
+
 .location-filters {
   position: absolute;
   bottom: 0;

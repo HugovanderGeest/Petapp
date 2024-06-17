@@ -188,37 +188,58 @@
           {% endfor %}
         </ul>
       </div>
-
       <div id="locationsSection" style="display: none">
-        <h2>Locations</h2>
+        <h2>Locaties</h2>
         <ul id="locationsList">
           {% for location in locations %}
           <div class="location-card">
             <h3>{{ location.name }}</h3>
-            <p>Date: {{ location.date if location.date else 'None' }}</p>
+            <p>Datum: {{ location.date if location.date else 'Geen' }}</p>
+            <p>Adres: {{ location.address if location.address else 'Geen' }}</p>
             <p>
-              Address: {{ location.address if location.address else 'None' }}
+              Starttijd: {{ location.start_time if location.start_time else
+              'Geen' }}
             </p>
             <p>
-              Start Time: {{ location.start_time if location.start_time else
-              'None' }}
+              Aantal Dagen: {{ location.amount_of_days if
+              location.amount_of_days else 'Geen' }}
             </p>
             <p>
-              Amount of Days: {{ location.amount_of_days if
-              location.amount_of_days else 'None' }}
+              Website Links:
+              <a href="{{ location.website_links }}" target="_blank"
+                >{{ location.website_links if location.website_links else 'Geen'
+                }}</a
+              >
             </p>
-            <p>
-              Website Links: {{ location.website_links if location.website_links
-              else 'None' }}
-            </p>
-            <a href="{{ url_for('location_details', location_id=location.id) }}"
-              >View Details</a
-            >
+            <div class="buttons">
+              <a
+                href="{{ url_for('location', user_id=current_user.id, location_id=location.id) }}"
+                class="btn btn-secondary"
+                >Ga naar Locatie</a
+              >
+              <a
+                href="{{ url_for('location_details', location_id=location.id) }}"
+                class="btn btn-secondary"
+                >Bekijk Breefing</a
+              >
+              <form
+                action="{{ url_for('toggle_location_status', location_id=location.id) }}"
+                method="POST"
+                style="display: inline"
+              >
+                <button
+                  type="submit"
+                  class="btn btn-secondary {{ 'btn-danger' if location.closed else 'btn-success' }}"
+                >
+                  {{ 'Open' if location.closed else 'Sluit' }} Aanmeldingen
+                </button>
+              </form>
+            </div>
             <form
               action="{{ url_for('delete_location', location_id=location.id) }}"
               method="POST"
               style="display: inline"
-              onsubmit="return confirm('Are you sure you want to delete this location?');"
+              onsubmit="return confirm('Weet u zeker dat u deze locatie wilt verwijderen?');"
             >
               <button type="submit" class="delete-button">&times;</button>
             </form>

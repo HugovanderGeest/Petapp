@@ -1641,7 +1641,6 @@ input[type="submit"] {
   font-size: 24px;
 }
 
-/* Location Card Styles */
 .location-card {
   background-color: #1700a1;
   color: #fff;
@@ -1649,6 +1648,7 @@ input[type="submit"] {
   padding: 20px;
   margin: 10px 0;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 .location-card h3 {
@@ -1668,6 +1668,67 @@ input[type="submit"] {
 
 .location-card a:hover {
   text-decoration: underline;
+}
+
+.btn.btn-secondary {
+  padding: 10px 20px;
+  background-color: #ffcc00;
+  border: none;
+  color: #1700a1;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  display: inline-block;
+  margin: 10px 5px 0 0; /* Adjust spacing as needed */
+}
+
+.btn.btn-secondary:hover {
+  background-color: #e0b800;
+  color: #fff;
+}
+
+.close-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.success-message,
+.already-requested-message {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: green;
+  font-size: 1.2em;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+  z-index: 1000;
+}
+
+.already-requested-message {
+  color: red;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {

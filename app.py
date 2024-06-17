@@ -195,8 +195,9 @@ class Location(db.Model):
     url = db.Column(db.String(500), nullable=True)
     map_image = db.Column(db.String(255))  # New field to store the filename of the map image
     max_people = db.Column(db.Integer, nullable=False, default=10)  # Maximum number of people that can be approved
+    closed = db.Column(db.Boolean, default=False)  # New field to indicate if the location is closed
 
-    def __init__(self, name=None, date=None, address=None, start_time=None, amount_of_days=None, website_links=None, zakken=0, bekers=0, url=None, map_image=None, max_people=10):
+    def __init__(self, name=None, date=None, address=None, start_time=None, amount_of_days=None, website_links=None, zakken=0, bekers=0, url=None, map_image=None, max_people=10, closed=False):
         self.name = name
         self.date = date
         self.address = address
@@ -208,6 +209,7 @@ class Location(db.Model):
         self.url = url
         self.map_image = map_image
         self.max_people = max_people
+        self.closed = closed
 
 
 
@@ -1295,6 +1297,21 @@ def update_bar(bar_id):
         return jsonify({field: new_value})
     else:
         return jsonify({'error': 'Invalid field or increment value'}), 400
+    
+@app.route('/toggle_location_status/<int:location_id>', methods=['POST'])
+@login_required
+def toggle_location_status(location_id):
+    if not current_user.is_admin:
+        flash('You do not have permission to perform this action.', 'error')
+        return redirect(url_for('admin'))
+
+    location = Location.query.get_or_404(location_id)
+    location.closed = not location.closed
+    db.session.commit()
+
+    flash(f'Location {location.name} has been {"opened" if not location.closed else "closed"} successfully.', 'success')
+    return redirect(url_for('admin'))
+
     
 @app.route('/bar/<int:bar_id>/check_in', methods=['POST'])
 def check_in_bar(bar_id):

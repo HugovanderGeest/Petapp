@@ -729,7 +729,21 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    return render_template('/index.html')
+    locations = Location.query.all()
+    return render_template('index.html', locations=locations)
+
+@app.route('/locatie/<int:location_id>')
+def locatie_bars(location_id):
+    location = Location.query.get_or_404(location_id)
+    bars = Bar.query.filter_by(location_id=location_id).all()
+    return render_template('locatie_bars.html', location=location, bars=bars)
+
+@app.route('/bar_details/<int:bar_id>')
+def view_bar(bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+    return render_template('jouwbar.html', bar=bar)
+
+
 
 @app.route('/delete_user/<int:id>', methods=['POST'])
 def delete_user(id):

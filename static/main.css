@@ -2472,3 +2472,196 @@ input[type="submit"] {
   border-radius: 0px 0px 15px 15px;
   padding: 0px 0px 10px 0px;
 }
+
+/* New CSS for the updated pages */
+.index-content-block,
+.bars-content-block {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 90%;
+  max-width: 600px; /* Increased max-width for more horizontal space */
+  margin-top: 20px;
+}
+
+.circularpet-logo {
+  width: 100px;
+  margin-bottom: 20px;
+}
+
+/* New CSS for the updated pages */
+.index-content-block,
+.bars-content-block {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  width: 90%;
+  max-width: 600px; /* Increased max-width for more horizontal space */
+  margin-top: 20px;
+  text-align: center; /* Center align the content */
+}
+
+.circularpet-logo {
+  width: 100px;
+  margin: 0 auto 20px; /* Center the logo */
+  display: block;
+}
+
+.search-container {
+  margin-bottom: 20px;
+}
+
+.search-input-container {
+  position: relative;
+}
+
+.search-input-container input {
+  width: 70vw;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  padding: 20px;
+  padding-left: 20px;
+  padding-left: 20px;
+  background-image: url("https://upload.wikimedia.org/wikipedia/commons/5/55/Magnifying_glass_icon.svg");
+  background-repeat: no-repeat;
+  background-size: 20px;
+  background-repeat: no-repeat;
+  background-position: 10px center;
+  padding-left: 50px;
+  max-width: 500px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -30%);
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #999;
+}
+
+.welcome-container {
+  margin-bottom: 20px;
+}
+
+.welcome-container h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.welcome-container p {
+  font-size: 1.2em;
+  color: #666;
+}
+
+.locations-section,
+.bars-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.locations-list,
+.bars-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.locations-list li,
+.bars-list li {
+  background-color: var(--pc);
+  padding: 10px;
+  text-decoration: none;
+  color: white;
+  border-radius: 15px;
+  margin: 10px;
+  width: 45%; /* Adjusted width for wrapping */
+  text-align: center;
+}
+
+.locations-list li a,
+.bars-list li a {
+  text-decoration: none;
+  color: white;
+  display: block;
+  width: 100%;
+}
+
+.new-floating-cup {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 80px;
+  height: auto;
+  animation: newFloatAnimation 6s ease-in-out infinite;
+  z-index: 1;
+}
+
+.employee-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: var(--pc);
+  color: white;
+  padding: 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.employee-button:hover {
+  background-color: var(--cs);
+}
+
+.content-block {
+  background-color: white;
+  margin: 10px;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+@keyframes newFloatAnimation {
+  0% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(30px, -50px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@media (max-width: 600px) {
+  .locations-list li,
+  .bars-list li {
+    width: 90%;
+    font-size: 1.5em;
+  }
+  .employee-button {
+    width: 90%;
+    left: 5%;
+    right: 5%;
+  }
+  .new-floating-cup {
+    width: 60px;
+  }
+}

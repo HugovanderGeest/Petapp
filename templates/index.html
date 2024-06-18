@@ -1,74 +1,140 @@
 {% extends "base.html" %} {% block content %}
-<a
-  href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/"
-  target="_blank"
-  class="maakappp"
-  >Maak hier een app van</a
->
 
-<img
-  src="{{ url_for('static', filename='cup.png') }}"
-  alt="Floating Cup"
-  class="floating-cup"
-/>
-<div class="login-container">
+<div class="index-content-block">
   <img
     src="{{ url_for('static', filename='logo.png') }}"
     alt="CircularPET Logo"
-    class="logo"
+    class="circularpet-logo"
   />
-  <div class="login-form">
-    <form
-      id="loginForm"
-      method="POST"
-      action="{{ url_for('login') }}"
-      style="height: 160px"
-    >
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-      messages %} {% for category, message in messages %}
-      <div class="alert alert-{{ category }}">{{ message }}</div>
-      {% endfor %} {% endif %} {% endwith %}
 
-      <div class="input-group">
+  <div class="welcome-container" id="welcomeSection">
+    <h1>Welkom op de app</h1>
+    <p>Selecteer een locatie of zoek naar een specifieke locatie hieronder:</p>
+  </div>
+
+  <div class="search-container" id="searchContainer">
+    <form class="zoekenn" action="{{ url_for('index') }}" method="get">
+      <div class="search-input-container">
         <input
           type="text"
-          id="username"
-          name="username"
-          required
-          placeholder="Naam"
+          id="locationSearchInput"
+          onkeyup="searchLocations()"
+          placeholder="Zoek een locatie..."
         />
-      </div>
-      <div class="input-group">
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          placeholder="Wachtwoord"
-        />
-      </div>
-      <div class="input-group">
-        <input type="submit" value="Login" />
       </div>
     </form>
   </div>
+
+  <div id="locationList" class="locations-section">
+    <ul class="locations-list">
+      {% for location in locations %}
+      <li class="location-item">
+        <a href="{{ url_for('locatie_bars', location_id=location.id) }}"
+          >{{ location.name }}</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <button
+    id="newEmployeeButton"
+    class="employee-button"
+    onclick="showOldContent()"
+  >
+    Ik ben een werknemer
+  </button>
 </div>
 
-<img
-  id="movingImage"
-  src="{{ url_for('static', filename='image.png') }}"
-  alt="Moving Image"
-  style="position: absolute; bottom: 0; display: none"
-/>
+<div id="newOldContent" style="display: none">
+  <a
+    href="https://www.howtogeek.com/196087/how-to-add-websites-to-the-home-screen-on-any-smartphone-or-tablet/"
+    target="_blank"
+    class="maakappp"
+    >Maak hier een app van</a
+  >
+
+  <div class="login-container">
+    <img
+      src="{{ url_for('static', filename='logo.png') }}"
+      alt="CircularPET Logo"
+      class="logo"
+    />
+    <div class="login-form">
+      <form
+        id="loginForm"
+        method="POST"
+        action="{{ url_for('login') }}"
+        style="height: 160px"
+      >
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %} {% for category, message in messages %}
+        <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %} {% endif %} {% endwith %}
+
+        <div class="input-group">
+          <input
+            type="text"
+            id="username"
+            name="username"
+            required
+            placeholder="Naam"
+          />
+        </div>
+        <div class="input-group">
+          <input
+            type="password"
+            id="password"
+            name="password"
+            required
+            placeholder="Wachtwoord"
+          />
+        </div>
+        <div class="input-group">
+          <input type="submit" value="Login" />
+        </div>
+      </form>
+    </div>
+  </div>
+  <img
+    id="movingImage"
+    src="{{ url_for('static', filename='image.png') }}"
+    alt="Moving Image"
+    style="position: absolute; bottom: 0; display: none"
+  />
+</div>
 
 <script>
+  function showOldContent() {
+    document.getElementById("newOldContent").style.display = "block";
+    document.getElementById("newEmployeeButton").style.display = "none";
+    document.getElementById("locationList").style.display = "none";
+    document.getElementById("welcomeSection").style.display = "none";
+    document.getElementById("searchContainer").style.display = "none";
+  }
+
   document.getElementById("loginForm").addEventListener("submit", function () {
     document.getElementById("loading").style.display = "block";
   });
-</script>
-<script>
+
+  function searchLocations() {
+    const input = document.getElementById("locationSearchInput");
+    const filter = input.value.toLowerCase();
+    const locationItems = document.getElementsByClassName("location-item");
+
+    for (let i = 0; i < locationItems.length; i++) {
+      const locationName =
+        locationItems[i].textContent || locationItems[i].innerText;
+      if (locationName.toLowerCase().indexOf(filter) > -1) {
+        locationItems[i].style.display = "";
+      } else {
+        locationItems[i].style.display = "none";
+      }
+    }
+  }
+
   let clickCount = 0;
-  const cupImage = document.querySelector(".floating-cup");
+  const cupImage = document.querySelector(".new-floating-cup");
   const movingImage = document.getElementById("movingImage");
 
   cupImage.addEventListener("click", function () {

@@ -1,0 +1,58 @@
+{% extends "base.html" %} {% block content %}
+<div class="content-block">
+  <img
+    src="{{ url_for('static', filename='logo.png') }}"
+    alt="CircularPET Logo"
+    class="circularpet-logo"
+  />
+
+  <div class="welcome-container">
+    <h1>{{ location.name }}</h1>
+    <p>Selecteer een bar of zoek naar een specifieke bar hieronder:</p>
+  </div>
+
+  <div class="search-container">
+    <form
+      class="zoekenn"
+      action="{{ url_for('locatie_bars', location_id=location.id) }}"
+      method="get"
+    >
+      <div class="search-input-container">
+        <input
+          type="text"
+          id="barSearchInput"
+          onkeyup="searchBars()"
+          placeholder="Zoek een bar..."
+        />
+      </div>
+    </form>
+  </div>
+
+  <div id="barList" class="bars-section">
+    <ul class="bars-list">
+      {% for bar in bars %}
+      <li class="bar-item">
+        <a href="{{ url_for('view_bar', bar_id=bar.id) }}">{{ bar.name }}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+<script>
+  function searchBars() {
+    const input = document.getElementById("barSearchInput");
+    const filter = input.value.toLowerCase();
+    const barItems = document.getElementsByClassName("bar-item");
+
+    for (let i = 0; i < barItems.length; i++) {
+      const barName = barItems[i].textContent || barItems[i].innerText;
+      if (barName.toLowerCase().indexOf(filter) > -1) {
+        barItems[i].style.display = "";
+      } else {
+        barItems[i].style.display = "none";
+      }
+    }
+  }
+</script>
+{% endblock %}

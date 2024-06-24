@@ -498,11 +498,6 @@ body {
   text-decoration: none;
 }
 
-#notificationsList li {
-  color: white;
-  padding: 20px !important;
-}
-
 .zoeken {
   padding: 12px 20px;
   background-color: var(--pc); /* Your button color */
@@ -2587,7 +2582,6 @@ input[type="submit"] {
   justify-content: center;
 }
 
-.locations-list li,
 .bars-list li {
   background-color: var(--pc);
   padding: 10px;
@@ -2596,6 +2590,17 @@ input[type="submit"] {
   border-radius: 15px;
   margin: 10px;
   width: 45%; /* Adjusted width for wrapping */
+  text-align: center;
+}
+
+.locations-list li {
+  background-color: var(--pc);
+  padding: 20px;
+  text-decoration: none;
+  color: white;
+  border-radius: 15px;
+  margin: 10px;
+  width: 70%; /* Adjusted width for wrapping */
   text-align: center;
 }
 

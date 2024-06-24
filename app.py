@@ -314,13 +314,21 @@ class ActivityLog(db.Model):
     def __repr__(self):
         return f'<ActivityLog {self.field} - User: {self.user.username}, Bar: {self.bar.name}>'
 
+# Define the translation dictionary
+NOTIFICATION_TYPES_TRANSLATIONS = {
+    'need_bags': 'Heeft zakken nodig',
+    'new_user': 'Nieuwe gebruiker',
+    'update': 'Update',
+    'too_many_full_bags': 'Te veel volle zakken',
+    # Add other translations as needed
+}
+
 class Notification(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
     type = db.Column(db.String(50), nullable=False)
     note = db.Column(db.Text, nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
-    is_read = db.Column(db.Boolean, default=False)  # New attribute
 
     def __init__(self, bar_id, type, note=None):
         self.bar_id = bar_id
@@ -328,7 +336,9 @@ class Notification(db.Model):
         self.note = note
         self.is_read = False  # Initialize is_read to False
 
-
+    @property
+    def translated_type(self):
+        return NOTIFICATION_TYPES_TRANSLATIONS.get(self.type, self.type)
 
 @app.route('/bar/<int:bar_id>/update_location_link', methods=['POST'])
 def update_location_link(bar_id):
@@ -1216,6 +1226,29 @@ def export_check_ins():
         as_attachment=True,
         download_name="check-in_logs.xlsx"
     )
+
+@app.route('/delete_notification/<int:notification_id>', methods=['POST'])
+@login_required
+def delete_notification(notification_id):
+    notification = Notification.query.get_or_404(notification_id)
+    
+    # Check if the current user is authorized to delete the notification
+    if not current_user.is_admin:
+        flash('You do not have permission to delete this notification.', 'error')
+        return redirect(url_for('admin'))
+    
+    db.session.delete(notification)
+    db.session.commit()
+    
+    flash('Notification has been deleted!', 'success')
+    return redirect(url_for('admin'))
+
+
+
+@app.template_filter('to_local')
+def to_local_filter(utc_dt):
+    local_dt = utc_to_local(utc_dt)
+    return local_dt.strftime("%d-%m-%Y %H:%M:%S")  # Aanpassing naar dag-maand-jaar uur:minuut:second
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):

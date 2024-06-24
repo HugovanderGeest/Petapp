@@ -1,4 +1,206 @@
 {% extends "base.html" %} {% block content %}
-<h1>{{ bar.name }}</h1>
-<p>Details about the bar will go here.</p>
+<style>
+  body,
+  html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #87cefa, #f0f8ff);
+  }
+
+  h1 {
+    margin-top: 20px;
+    color: #000;
+  }
+
+  p {
+    margin: 20px;
+    text-align: center;
+    color: #000;
+  }
+
+  #buttonContainer {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  button {
+    width: 100%;
+    height: 20vh;
+    margin: 5px 0;
+    font-size: 25px;
+    cursor: pointer;
+    border: none;
+    background-color: var(--pc);
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  button:hover {
+    background-color: #00008b;
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0, 0, 0);
+    background-color: rgba(0, 0, 0, 0.4);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  #noteText {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+  }
+
+  #submitNoteButton {
+    width: 100%;
+    padding: 10px;
+    height: 50px;
+    font-size: 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--pc);
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  #submitNoteButton:hover {
+    background-color: #0056b3;
+  }
+
+  .titeltekst {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    z-index: 2;
+  }
+</style>
+
+<div class="titeltekst">
+  <h1>{{ bar.name }}</h1>
+  <p>
+    Welkom op jouw pagina, hier kan je ons bereiken of iets laten weten
+    <br /><br />
+    Klik op de knoppen als je iets wil laten weten
+  </p>
+</div>
+<!-- Buttons -->
+<div id="buttonContainer">
+  <button id="needBagsButton">Ik heb zakken nodig</button>
+  <button id="tooManyFullBagsButton">Ik heb te veel vollen zakken</button>
+  <button id="leaveNoteButton">Laat een notites achter</button>
+</div>
+
+<!-- The Modal -->
+<div id="noteModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <textarea
+      id="noteText"
+      placeholder="Wat wil je ons laten weten..."
+    ></textarea>
+    <button id="submitNoteButton">Verstuur</button>
+  </div>
+</div>
+
+<script>
+  // Get the modal
+  var modal = document.getElementById("noteModal");
+
+  // Get the button that opens the modal
+  var btn = document.getElementById("leaveNoteButton");
+
+  // Get the <span> element that closes the modal
+  var span = document.getElementsByClassName("close")[0];
+
+  // When the user clicks the button, open the modal
+  btn.onclick = function () {
+    modal.style.display = "flex";
+  };
+
+  // When the user clicks on <span> (x), close the modal
+  span.onclick = function () {
+    modal.style.display = "none";
+  };
+
+  // When the user clicks anywhere outside of the modal, close it
+  window.onclick = function (event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  };
+
+  document.getElementById("needBagsButton").onclick = function () {
+    fetch(`/notify/need_bags/{{ bar.id }}`, { method: "POST" });
+    alert("Notification sent: Ik heb zakken nodig");
+  };
+
+  document.getElementById("tooManyFullBagsButton").onclick = function () {
+    fetch(`/notify/too_many_full_bags/{{ bar.id }}`, { method: "POST" });
+    alert("Notification sent: Ik heb te veel vollen zakken");
+  };
+
+  document.getElementById("submitNoteButton").onclick = function () {
+    const note = document.getElementById("noteText").value;
+    fetch(`/notify/leave_note/{{ bar.id }}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ note }),
+    });
+    alert("Note submitted");
+    modal.style.display = "none";
+    document.getElementById("noteText").value = "";
+  };
+</script>
 {% endblock %}

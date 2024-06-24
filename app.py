@@ -212,7 +212,6 @@ class Location(db.Model):
         self.closed = closed
 
 
-
     def to_dict(self):
         return {
             'id': self.id,
@@ -294,6 +293,7 @@ class Bar(db.Model):
     last_checked_in = db.Column(db.DateTime, nullable=True)
     last_checked_in_user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     last_checked_in_user = db.relationship('User', foreign_keys=[last_checked_in_user_id], backref='checked_in_bars')
+    notifications = db.relationship('Notification', backref='related_bar', lazy=True)  # Ensure unique backref name
 
     def __init__(self, name, location_id, zakken=0, bekers=0):
         self.name = name
@@ -302,6 +302,7 @@ class Bar(db.Model):
         self.location_id = location_id
 
 class ActivityLog(db.Model):
+    __table_args__ = {'extend_existing': True}  # Add this line to extend existing table definition
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
@@ -312,6 +313,22 @@ class ActivityLog(db.Model):
 
     def __repr__(self):
         return f'<ActivityLog {self.field} - User: {self.user.username}, Bar: {self.bar.name}>'
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    bar_id = db.Column(db.Integer, db.ForeignKey('bar.id'), nullable=False)
+    type = db.Column(db.String(50), nullable=False)
+    note = db.Column(db.Text, nullable=True)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+    is_read = db.Column(db.Boolean, default=False)  # New attribute
+
+    def __init__(self, bar_id, type, note=None):
+        self.bar_id = bar_id
+        self.type = type
+        self.note = note
+        self.is_read = False  # Initialize is_read to False
+
+
 
 @app.route('/bar/<int:bar_id>/update_location_link', methods=['POST'])
 def update_location_link(bar_id):
@@ -333,6 +350,18 @@ def access_briefing(user_id):
     else:
         flash('Briefing already accessed.', 'info')
     return redirect(url_for('dashboard'))
+
+@app.route('/notifications', methods=['GET'])
+@login_required
+def notifications():
+    user_notifications = Notification.query.filter_by(user_id=current_user.id, is_read=False).all()
+    
+    # Mark all retrieved notifications as read
+    for notification in user_notifications:
+        notification.is_read = True
+    db.session.commit()
+    
+    return render_template('notifications.html', notifications=user_notifications)
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -381,8 +410,9 @@ def admin():
     users = User.query.all()
     work_requests = WorkRequest.query.all()
     locations = Location.query.all()
+    notifications = Notification.query.order_by(Notification.timestamp.desc()).all()
 
-    return render_template('admin.html', location_form=location_form, user_form=user_form, users=users, work_requests=work_requests, locations=locations)
+    return render_template('admin.html', location_form=location_form, user_form=user_form, users=users, work_requests=work_requests, locations=locations, notifications=notifications)
 
 
 @app.route('/add_user', methods=['POST'])
@@ -1001,7 +1031,7 @@ def log_change():
         return jsonify({'error': 'User not authenticated'}), 403
 
     change_log = ChangeLog(
-        user_id=current_user.id,  # Get the current user's ID
+        user_id=current_user.id,  # Get the current user's ID   
         bar_id=data.get('bar_id'),
         field=data.get('field'),
         old_value=data.get('old_value'),
@@ -1013,7 +1043,25 @@ def log_change():
 
     return jsonify({'success': 'Change logged successfully'}), 200
 
-
+@app.route('/notify/<notification_type>/<int:bar_id>', methods=['POST'])
+def notify(notification_type, bar_id):
+    bar = Bar.query.get_or_404(bar_id)
+    if notification_type in ['too_many_full_bags', 'need_bags']:
+        notification = Notification(bar_id=bar_id, type=notification_type)
+        db.session.add(notification)
+        db.session.commit()
+        return jsonify({'message': 'Notification sent successfully'}), 200
+    elif notification_type == 'leave_note':
+        data = request.get_json()
+        note = data.get('note')
+        if note:
+            notification = Notification(bar_id=bar_id, type='note', note=note)
+            db.session.add(notification)
+            db.session.commit()
+            return jsonify({'message': 'Note submitted successfully'}), 200
+        else:
+            return jsonify({'error': 'Note content is required'}), 400
+    return jsonify({'error': 'Invalid notification type'}), 400
 
 @app.route('/bar/<int:bar_id>/update_details_and_check_in', methods=['POST'])
 def update_bar_details_and_check_in(bar_id):

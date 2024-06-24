@@ -1,12 +1,6 @@
 {% extends "base.html" %} {% block content %}
 
 <div class="index-content-block">
-  <img
-    src="{{ url_for('static', filename='logo.png') }}"
-    alt="CircularPET Logo"
-    class="circularpet-logo"
-  />
-
   <div class="welcome-container" id="welcomeSection">
     <h1>Welkom op de app</h1>
     <p>Selecteer een locatie of zoek naar een specifieke locatie hieronder:</p>
@@ -108,9 +102,7 @@
   function showOldContent() {
     document.getElementById("newOldContent").style.display = "block";
     document.getElementById("newEmployeeButton").style.display = "none";
-    document.getElementById("locationList").style.display = "none";
-    document.getElementById("welcomeSection").style.display = "none";
-    document.getElementById("searchContainer").style.display = "none";
+    document.querySelector(".index-content-block").style.display = "none";
   }
 
   document.getElementById("loginForm").addEventListener("submit", function () {

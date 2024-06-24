@@ -13,6 +13,7 @@
     />
     <title>Admin</title>
     <style>
+      /* Your existing styles */
       .location-card {
         position: relative;
         padding: 10px;
@@ -29,9 +30,24 @@
         font-size: 20px;
         cursor: pointer;
       }
-
       form {
         background-color: transparent;
+      }
+      /* Additional styles for notifications */
+      .filter-container {
+        margin-bottom: 10px;
+      }
+      .filter-container select {
+        margin-right: 10px;
+      }
+      #notificationsSection ul {
+        list-style-type: none;
+        padding: 0;
+      }
+      #notificationsSection ul li {
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
       }
     </style>
   </head>
@@ -45,11 +61,13 @@
       <i id="toggleSidebar" class="fa fa-bars"></i>
     </div>
 
+    <!-- Flash messages -->
     {% with messages = get_flashed_messages(with_categories=true) %} {% if
     messages %} {% for category, message in messages %}
     <div class="alert alert-{{ category }}">{{ message }}</div>
     {% endfor %} {% endif %} {% endwith %}
 
+    <!-- Sidebar navigation -->
     <div class="sidebar" style="display: none">
       <h2 class="side-titel">
         {{ current_user.username if current_user.is_authenticated else 'Admin'
@@ -60,7 +78,7 @@
       {% else %}
       <h3>Controleur</h3>
       {% endif %}
-
+      <!-- Sidebar links -->
       <div class="max-man">
         <a href="{{ url_for('admin') }}">
           <div class="active side-link">
@@ -107,6 +125,7 @@
       </div>
     </div>
 
+    <!-- Main content -->
     <div class="cube-container" style="background-color: transparent">
       <div id="usersSection" style="display: none">
         <div class="search-container minderje">
@@ -119,7 +138,6 @@
             />
           </form>
         </div>
-
         {% for user in users %}
         <div class="user-info">
           <img
@@ -188,6 +206,7 @@
           {% endfor %}
         </ul>
       </div>
+
       <div id="locationsSection" style="display: none">
         <h2>Locaties</h2>
         <ul id="locationsList">
@@ -244,6 +263,34 @@
               <button type="submit" class="delete-button">&times;</button>
             </form>
           </div>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Notifications section -->
+      <div id="notificationsSection">
+        <h2>Notifications</h2>
+        <div class="filter-container">
+          <label for="locationFilter">Select Location:</label>
+          <select id="locationFilter" onchange="filterNotifications()">
+            <option value="">All Locations</option>
+            {% for location in locations %}
+            <option value="{{ location.id }}">{{ location.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <ul id="notificationsList">
+          {% for notification in notifications %}
+          <li data-location="{{ notification.related_bar.id }}">
+            <button class="close-button" onclick="closeNotification(this)">
+              &times;
+            </button>
+            <strong>{{ notification.related_bar.name }}</strong> - {{
+            notification.type }} {% if notification.note %} : {{
+            notification.note }} {% endif %}
+            <small>({{ notification.timestamp }})</small>
+          </li>
           {% endfor %}
         </ul>
       </div>
@@ -344,12 +391,14 @@
         </form>
       </div>
 
+      <!-- Overlay for custom forms -->
       <div
         id="customOverlay"
         class="custom-overlay"
         onclick="closeForm()"
       ></div>
 
+      <!-- Floating action buttons -->
       <button
         id="addUserButton"
         class="custom-floating-button"
@@ -367,6 +416,7 @@
         +
       </button>
 
+      <!-- Bottom navigation -->
       <div class="bottom-navbar">
         <a class="nav-item" onclick="toggleUsers()">
           <i class="fas fa-users"></i>
@@ -382,33 +432,88 @@
         </a>
       </div>
 
+      <!-- Flash messages script -->
       {% with messages = get_flashed_messages(with_categories=true) %} {% if
       messages %}
       <script>
         $(document).ready(function() {
-            {% for category, message in messages %}
+          {% for category, message in messages %}
             Swal.fire({
-                icon: '{{ category }}' === 'success' ? 'success' : 'error',
-                title: '{{ category.capitalize() }}',
-                text: '{{ message }}'
+              icon: '{{ category }}' === 'success' ? 'success' : 'error',
+              title: '{{ category.capitalize() }}',
+              text: '{{ message }}'
             });
-            {% endfor %}
+          {% endfor %}
         });
       </script>
       {% endif %} {% endwith %}
 
+      <!-- jQuery library -->
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+      <!-- JavaScript functions -->
       <script>
         $(document).ready(function () {
+          // Sidebar toggle
           $("#toggleSidebar").click(function () {
             $(".sidebar").slideToggle();
           });
+
+          // Sorting users based on search input
+          function sortUsers() {
+            var input = document.getElementById("userSearchInput");
+            var filter = input.value.toLowerCase();
+            var userDivs = document.getElementsByClassName("user-info");
+
+            for (var i = 0; i < userDivs.length; i++) {
+              var usernameDiv = userDivs[i].getElementsByClassName("fijv")[0];
+              var username = usernameDiv.textContent || usernameDiv.innerText;
+
+              var locationDiv = userDivs[i].getElementsByClassName("fijv")[1];
+              var location = locationDiv
+                ? locationDiv.textContent || locationDiv.innerText
+                : "";
+
+              if (
+                username.toLowerCase().indexOf(filter) > -1 ||
+                location.toLowerCase().indexOf(filter) > -1
+              ) {
+                userDivs[i].style.display = "";
+              } else {
+                userDivs[i].style.display = "none";
+              }
+            }
+          }
+
+          // Filter notifications based on location selection
+          function filterNotifications() {
+            var selectedLocation =
+              document.getElementById("locationFilter").value;
+            var notificationItems = document
+              .getElementById("notificationsList")
+              .getElementsByTagName("li");
+
+            for (var i = 0; i < notificationItems.length; i++) {
+              var notificationLocation =
+                notificationItems[i].getAttribute("data-location");
+
+              if (
+                selectedLocation === "" ||
+                notificationLocation === selectedLocation
+              ) {
+                notificationItems[i].style.display = "";
+              } else {
+                notificationItems[i].style.display = "none";
+              }
+            }
+          }
         });
 
+        // Toggle form visibility
         function toggleForm(formId, overlayId) {
-          console.log("Toggling form:", formId); // Debugging line
           var formContainer = document.getElementById(formId);
           var overlay = document.getElementById(overlayId);
+
           if (formContainer.style.display === "block") {
             formContainer.style.display = "none";
             overlay.style.display = "none";
@@ -418,6 +523,7 @@
           }
         }
 
+        // Close all forms and overlay
         function closeForm() {
           document.getElementById("customUserFormContainer").style.display =
             "none";
@@ -426,12 +532,14 @@
           document.getElementById("customOverlay").style.display = "none";
         }
 
+        // Toggle users section visibility
         function toggleUsers() {
           var usersSection = document.getElementById("usersSection");
           var workRequestsSection = document.getElementById(
             "workRequestsSection"
           );
           var locationsSection = document.getElementById("locationsSection");
+
           if (
             usersSection.style.display === "none" ||
             usersSection.style.display === ""
@@ -447,12 +555,14 @@
           }
         }
 
+        // Toggle work requests section visibility
         function toggleWorkRequests() {
           var workRequestsSection = document.getElementById(
             "workRequestsSection"
           );
           var usersSection = document.getElementById("usersSection");
           var locationsSection = document.getElementById("locationsSection");
+
           if (
             workRequestsSection.style.display === "none" ||
             workRequestsSection.style.display === ""
@@ -467,12 +577,14 @@
           }
         }
 
+        // Toggle locations section visibility
         function toggleLocations() {
           var locationsSection = document.getElementById("locationsSection");
           var usersSection = document.getElementById("usersSection");
           var workRequestsSection = document.getElementById(
             "workRequestsSection"
           );
+
           if (
             locationsSection.style.display === "none" ||
             locationsSection.style.display === ""
@@ -488,29 +600,10 @@
           }
         }
 
-        function sortUsers() {
-          var input = document.getElementById("userSearchInput");
-          var filter = input.value.toLowerCase();
-          var userDivs = document.getElementsByClassName("user-info");
-
-          for (var i = 0; i < userDivs.length; i++) {
-            var usernameDiv = userDivs[i].getElementsByClassName("fijv")[0];
-            var username = usernameDiv.textContent || usernameDiv.innerText;
-
-            var locationDiv = userDivs[i].getElementsByClassName("fijv")[1];
-            var location = locationDiv
-              ? locationDiv.textContent || locationDiv.innerText
-              : "";
-
-            if (
-              username.toLowerCase().indexOf(filter) > -1 ||
-              location.toLowerCase().indexOf(filter) > -1
-            ) {
-              userDivs[i].style.display = "";
-            } else {
-              userDivs[i].style.display = "none";
-            }
-          }
+        // Close notification function
+        function closeNotification(button) {
+          var listItem = button.parentNode; // Get the <li> element containing the button
+          listItem.style.display = "none"; // Hide the notification
         }
       </script>
     </div>

@@ -1,9 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-
-
 <div class="search-container location-bar">
     <form action="" method="get">
         <input type="text" id="barSearchInput" onkeyup="searchBars()" placeholder="Zoeken...">
@@ -15,7 +12,7 @@
     <form id="barLinkForm" method="POST">
         <input type="text" name="bar_name" class="form-input jamooi" placeholder="Bar of container naam" required>
         <button type="button" onclick="removeForm()" class="remove-button">X</button>
-        <input type="submit" value="+ Bar" class=" submit-button jamooi">
+        <input type="submit" value="+ Bar" class="submit-button jamooi">
         <div id="errorText" class="error-text"></div>
     </form>
 </div>
@@ -33,6 +30,11 @@
             <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ 'var(--bar-color)' if bar.background_color == 'blue' else 'var(--bar-color)' }};">
                 {{ bar.name }}
             </a>
+            {% if bar.last_checked_in %}
+                <p>Last checked in: {{ bar.last_checked_in | to_local | humanize }}</p>
+            {% else %}
+                <p>Never checked in</p>
+            {% endif %}
         {% endif %}
         {% if current_user.is_admin %}
         <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
@@ -45,92 +47,35 @@
         {% endif %}
     </li>
     {% endfor %}
-    
 </ul>
-
-</div>
 
 <div id="fontSizeContainer" style="display: none; position: fixed; bottom: 10%; right: 10px; z-index: 1000; background-color: white; padding: 10px; border-radius: 5px;">
     <label for="fontSizeSlider">Adjust Font Size:</label>
-    <input type="range" id="fontSizeSlider" min="1" max="10" value="1"> <!-- default size -->
+    <input type="range" id="fontSizeSlider" min="1" max="10" value="1">
 </div>
-
-
-<!-- <button id="infoBtn" class="fab"><i class="fas fa-question"></i><b/button> -->
 
 <div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
     <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
         <b>Op deze pagina kun je aanklikken in welke bar jij nu bent</b><br><br>
         <b>Blauw</b><br> zijn barren<br><br>
-
         Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
-        <button class="sluit-knop" onclick="closeLightbox()">Sluit</button> 
+        <button class="sluit-knop" onclick="closeLightbox()">Sluit</button>
     </div>
 </div>
 
-
-<!-- <a href="{{ url_for('map_page', location_id=location.id) }}">
-<button class="fab map-knop"><i class="fas fa-fas fa-map-marker-alt"></i></button>
-</a> -->
-
-<!-- <div class="return-to-dashboard">
-    <a href="{{ url_for('dashboard', user_id=current_user.id) }}">
-        <button class="fab fabl"><i class="fas fa-user"></i></button>
-    </a>
-</div> -->
-
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 
 <div class="bottom-navbar">
     <a href="{{ url_for('dashboard', user_id=current_user.id) }}" class="nav-item">
         <i class="fas fa-user"></i><span>Jij</span>
     </a>
-
-    <!-- <a href="{{ url_for('upload_photo_page') }}" class="nav-item">
-        <i class="fas fa-camera"></i><span>Foto's</span>
-    </a> -->
-
     <a href="{{ url_for('map_page', location_id=location.id) }}" class="nav-item">
         <i class="fas fa-fas fa-map-marker-alt"></i><span>Map</span>
     </a>
-
     <a id="infoBtn" class="nav-item">
         <i class="fas fa-question"></i><span>Vragen</span>
     </a>
-
 </div>
-
-
-
-<script>
-    $(document).ready(function () {
-        // Toggle form visibility when the gear icon is clicked
-        // Handle form submission
-        $('#barLinkForm').submit(function (e) {
-            e.preventDefault();
-            $.ajax({
-                url: '/add_bar_to_location/{{ location.id }}',
-                type: 'POST',
-                data: $(this).serialize(),
-                success: function (response) {
-                    $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-                    $('#errorText').text('');
-                },
-                error: function (response) {
-                    $('#errorText').text('Error: The bar could not be added.');
-                }
-            });
-        });
-    });
-</script>
-
-<script>
-    success: function(response) {
-        // Make sure `response` actually includes `bar_id`
-        $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
-    }
-</script>
 
 <script>
 function searchBars() {
@@ -141,7 +86,6 @@ function searchBars() {
     li = ul.getElementsByTagName("li");
 
     for (i = 0; i < li.length; i++) {
-        // Search only within links that have a class 'bar-button'
         a = li[i].getElementsByClassName("bar-button")[0]; 
         if (a) {
             txtValue = a.textContent || a.innerText;
@@ -154,88 +98,73 @@ function searchBars() {
     }
 }
 
-</script>
-<script>
-    $(document).ready(function () {
-        $('form').on('change', 'select', function (e) {
-            console.log("Handling form change event.");  // Debug message
-            e.preventDefault();  // Stop the default form submission
-
-            var form = $(this).closest('form');
-            $.ajax({
-                url: form.attr('action'),
-                type: 'POST',
-                data: form.serialize(),
-                success: function (response) {
-                    console.log("Color update successful, reloading page.");  // Debug message
-                    window.location.reload();  // Reload the page to reflect the change
-                },
-                error: function () {
-                    console.log("Error updating color.");  // Debug message
-                    alert('Error updating color');
-                }
-            });
+$(document).ready(function () {
+    $('form').on('change', 'select', function (e) {
+        e.preventDefault();
+        var form = $(this).closest('form');
+        $.ajax({
+            url: form.attr('action'),
+            type: 'POST',
+            data: form.serialize(),
+            success: function (response) {
+                window.location.reload();
+            },
+            error: function () {
+                alert('Error updating color');
+            }
         });
     });
-</script>
 
-
-
-<script>
-$(document).ready(function () {
     $('.removeBarBtn').click(function () {
         var barId = $(this).data('bar-id');
-        // Confirmation dialog
         if (confirm('Are you sure you want to remove this bar?')) {
             $.ajax({
                 url: '/remove_bar/' + barId,
                 type: 'POST',
                 success: function (response) {
                     alert('Bar removed successfully!');
-                    window.location.reload();  // Reload the page to reflect the change
+                    window.location.reload();
                 },  
             });
         }
     });
-});
 
-</script>
-
-<script>
-    document.getElementById('infoBtn').addEventListener('click', function() {
-        document.getElementById('infoLightbox').style.display = 'block';
+    $('#infoBtn').click(function() {
+        $('#infoLightbox').show();
     });
 
-    function closeLightbox() {
-        document.getElementById('infoLightbox').style.display = 'none';
-    }
-</script>
+    $('#infoLightbox button').click(function() {
+        $('#infoLightbox').hide();
+    });
 
-
-<script>
-    // JavaScript to remove the formContainer div
-    function removeForm() {
-        var formContainer = document.getElementById('formContainer');
-        if (formContainer.style.display === 'none') {
-            formContainer.style.display = 'block';  // Optionally toggle visibility instead of removing
-        } else {
-            formContainer.style.display = 'none';
+    $(window).click(function (event) {
+        if ($(event.target).attr("id") === "infoLightbox") {
+            $('#infoLightbox').hide();
         }
-    }
+    });
+
+    $('#barLinkForm').submit(function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/add_bar_to_location/{{ location.id }}',
+            type: 'POST',
+            data: $(this).serialize(),
+            success: function (response) {
+                $('#barsList').append('<li><a href="/bar/' + response.bar_id + '">' + response.bar_name + '</a></li>');
+                $('#errorText').text('');
+            },
+            error: function (response) {
+                $('#errorText').text('Error: The bar could not be added.');
+            }
+        });
+    });
+});
 </script>
-
-
-{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
-    %} {% for category, message in messages %} {% if category == 'success' %}
-    <div class="alert alert-success" role="alert">{{ message }}</div>
-    {% elif category == 'error' %}
-    <div class="alert alert-danger" role="alert">{{ message }}</div>
-    {% elif category == 'info' %}
-    <div class="alert alert-info" role="alert">{{ message }}</div>
-    {% elif category == 'warning' %}
-    <div class="alert alert-warning" role="alert">{{ message }}</div>
-    {% else %}
-    <div class="alert alert-primary" role="alert">{{ message }}</div>
-    {% endif %} {% endfor %} {% endif %} {% endwith %}
-
+{% with messages = get_flashed_messages(with_categories=true) %} 
+{% if messages %} 
+    {% for category, message in messages %}
+        <div class="alert alert-{{ category }}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+{% endwith %}
 {% endblock %}

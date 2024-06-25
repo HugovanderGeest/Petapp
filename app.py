@@ -56,10 +56,20 @@ def allowed_file(filename):
 
 db = SQLAlchemy(app)
 
-local_tz = pytz.timezone('Europe/Berlin')  # Change 'Europe/Berlin' to your timezone
+
+
 def utc_to_local(utc_dt):
-    local_dt = utc_dt.replace(tzinfo=pytz.utc).astimezone(local_tz)
-    return local_tz.normalize(local_dt) 
+    if isinstance(utc_dt, str):
+        # Parse the string to a datetime object
+        utc_dt = datetime.strptime(utc_dt, '%Y-%m-%d %H:%M:%S')
+    if utc_dt.tzinfo is None:
+        # If the datetime object is naive, make it aware with UTC
+        utc_dt = utc_dt.replace(tzinfo=pytz.utc)
+    local_tz = pytz.timezone('Europe/Amsterdam')  # Use the Netherlands timezone
+    local_dt = utc_dt.astimezone(local_tz)
+    return local_tz.normalize(local_dt)  # Nor
+
+
 
 @app.template_filter('to_local')
 def to_local_filter(utc_dt):
@@ -193,9 +203,9 @@ class Location(db.Model):
     zakken = db.Column(db.Integer, nullable=False, default=0)
     bekers = db.Column(db.Integer, nullable=False, default=0)
     url = db.Column(db.String(500), nullable=True)
-    map_image = db.Column(db.String(255))  # New field to store the filename of the map image
-    max_people = db.Column(db.Integer, nullable=False, default=10)  # Maximum number of people that can be approved
-    closed = db.Column(db.Boolean, default=False)  # New field to indicate if the location is closed
+    map_image = db.Column(db.String(255))
+    max_people = db.Column(db.Integer, nullable=False, default=10)
+    closed = db.Column(db.Boolean, default=False)
 
     def __init__(self, name=None, date=None, address=None, start_time=None, amount_of_days=None, website_links=None, zakken=0, bekers=0, url=None, map_image=None, max_people=10, closed=False):
         self.name = name
@@ -776,13 +786,13 @@ def index():
 def locatie_bars(location_id):
     location = Location.query.get_or_404(location_id)
     bars = Bar.query.filter_by(location_id=location_id).all()
-    return render_template('locatie_bars.html', location=location, bars=bars)
+    return render_template('location.html', location=location, bars=bars)
+
 
 @app.route('/bar_details/<int:bar_id>')
 def view_bar(bar_id):
     bar = Bar.query.get_or_404(bar_id)
     return render_template('jouwbar.html', bar=bar)
-
 
 
 @app.route('/delete_user/<int:id>', methods=['POST'])
@@ -910,20 +920,35 @@ def check_ins():
 
 @app.template_filter('humanize')
 def humanize_time_since(dt):
-    now = datetime.utcnow()
-    diff = now - dt if dt else None
+    if dt is None:
+        return "never"
+        
+    now = datetime.now(pytz.timezone('Europe/Amsterdam'))
+    if dt.tzinfo is None:
+        # Make the naive datetime object timezone-aware
+        dt = pytz.timezone('Europe/Amsterdam').localize(dt)
+    diff = now - dt
+    
+    seconds = diff.total_seconds()
+    minutes = seconds // 60
+    hours = minutes // 60
+    days = hours // 24
+    weeks = days // 7
 
-    if diff is None:
-        return "Nog geen"
-
-    if diff.days > 0:
-        return f"{diff.days} Dagen Geleden"
-    elif diff.seconds >= 3600:
-        return f"{diff.seconds // 3600} Uur. Geleden"
-    elif diff.seconds >= 60:
-        return f"{diff.seconds // 60} Min. Geleden"
+    if seconds < 60:
+        return "just now"
+    elif minutes < 60:
+        return f"{int(minutes)} minute(s) ago"
+    elif hours < 24:
+        return f"{int(hours)} hour(s) ago"
+    elif days < 7:
+        return f"{int(days)} day(s) ago"
+    elif weeks < 4:
+        return f"{int(weeks)} week(s) ago"
     else:
-        return "Zojuist"
+        return dt.strftime('%Y-%m-%d %H:%M:%S')  # Fall back to datetime string if older than a month
+
+
 
 
 @app.route('/log_activity', methods=['POST'])
@@ -987,9 +1012,8 @@ def user_dashboard(user_id):
 
     return render_template('user_dashboard.html', user=user, form=form)
 
-
 @app.route('/location/<int:user_id>/<int:location_id>', methods=['GET', 'POST'])
-@login_required  # Use login_required to ensure the user is logged in
+@login_required
 def location(user_id, location_id):
     session['location_id'] = location_id  # Store location_id in session
     location = Location.query.get_or_404(location_id)
@@ -1010,14 +1034,26 @@ def location(user_id, location_id):
         db.session.add(new_bar)
         db.session.commit()
         flash('New bar added successfully!', 'success')
-        return redirect(url_for('location', location_id=location_id))  # Redirect back to the location page
+        return redirect(url_for('location', user_id=user_id, location_id=location_id))  # Redirect back to the location page
 
-    if bar_link_form.validate_on_submit():
-        # Redirect to the specific bar page
-        bar_number = bar_link_form.bar_number.data
-        return redirect(url_for('bar', bar_id=bar_number))
+    # Format datetime objects for the template
+    formatted_bars = []
+    for bar in bars:
+        formatted_bar = {
+            'id': bar.id,
+            'name': bar.name,
+            'total_kg': bar.total_kg,
+            'background_color': bar.background_color,
+            'zakken': bar.zakken,
+            'bekers': bar.bekers,
+            'location_id': bar.location_id,
+            'last_checked_in': bar.last_checked_in.strftime('%Y-%m-%d %H:%M:%S') if bar.last_checked_in else None,
+            'last_checked_in_user_id': bar.last_checked_in_user_id
+        }
+        formatted_bars.append(formatted_bar)
 
-    return render_template('location.html', location=location, bars=bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
+    return render_template('location.html', location=location, bars=formatted_bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
+
 
 @app.template_filter('hours_since')
 def hours_since(dt):
@@ -1247,8 +1283,8 @@ def delete_notification(notification_id):
 
 @app.template_filter('to_local')
 def to_local_filter(utc_dt):
-    local_dt = utc_to_local(utc_dt)
-    return local_dt.strftime("%d-%m-%Y %H:%M:%S")  # Aanpassing naar dag-maand-jaar uur:minuut:second
+    return utc_to_local(utc_dt)
+
 
 @app.route('/add_bar_to_location/<int:location_id>', methods=['POST'])
 def add_bar_to_location(location_id):

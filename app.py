@@ -59,6 +59,8 @@ db = SQLAlchemy(app)
 
 
 def utc_to_local(utc_dt):
+    if utc_dt is None: 
+        return None
     if isinstance(utc_dt, str):
         # Parse the string to a datetime object
         utc_dt = datetime.strptime(utc_dt, '%Y-%m-%d %H:%M:%S')
@@ -114,6 +116,15 @@ class WorkRequest(db.Model):
 
     def __repr__(self):
         return f'<WorkRequest user_id={self.user_id}, location_id={self.location_id}, status={self.status}>'
+
+class CheckInOutLog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    location_id = db.Column(db.Integer, db.ForeignKey('location.id'), nullable=False)
+    check_in_time = db.Column(db.DateTime, nullable=True)
+    check_out_time = db.Column(db.DateTime, nullable=True)
+    user = db.relationship('User', backref='check_in_out_logs')
+    location = db.relationship('Location', backref='check_in_out_logs')
 
 
 class UserForm(FlaskForm):
@@ -205,7 +216,9 @@ class Location(db.Model):
     url = db.Column(db.String(500), nullable=True)
     map_image = db.Column(db.String(255))
     max_people = db.Column(db.Integer, nullable=False, default=10)
-    closed = db.Column(db.Boolean, default=False)
+    closed = db.Column(db.Boolean, default=False)  # Make sure this line is included
+    pdf_path = db.Column(db.String(255), nullable=True)  # Add this line
+
 
     def __init__(self, name=None, date=None, address=None, start_time=None, amount_of_days=None, website_links=None, zakken=0, bekers=0, url=None, map_image=None, max_people=10, closed=False):
         self.name = name
@@ -220,6 +233,7 @@ class Location(db.Model):
         self.map_image = map_image
         self.max_people = max_people
         self.closed = closed
+
 
 
     def to_dict(self):
@@ -579,8 +593,6 @@ def upload_photo_to_view():
         flash('Invalid file type or no file uploaded.')
         return redirect(request.url)
 
-
-
 # @app.route('/submit_kg', methods=['POST'])
 # @login_required  # Ensure that the route can only be accessed by logged-in users
 # def submit_kg():
@@ -698,38 +710,51 @@ def view_photos():
 
 @app.route('/export_zakken_kg_logs')
 def export_zakken_kg_logs():
-    # Extend the query to include the location name associated with each bar
     logs = db.session.query(
         ZakkenKGLog.kg_submitted,
         ZakkenKGLog.timestamp,
         User.username.label('user_name'),
         Bar.name.label('bar_name'),
-        Location.name.label('location_name')  # Fetch the location name
+        Location.name.label('location_name')
     ).join(User, ZakkenKGLog.user_id == User.id)\
      .join(Bar, ZakkenKGLog.bar_id == Bar.id)\
-     .join(Location, Bar.location_id == Location.id).all()  # Ensure Bar is linked to Location
+     .join(Location, Bar.location_id == Location.id).all()
 
-    # Convert log data into a list of dictionaries for easier DataFrame creation
     data = [{
-            "User Name": log.user_name, 
-            "Bar Name": log.bar_name, 
-            "Location Name": log.location_name,  # Add the location name to the data
-            "KG Submitted": log.kg_submitted, 
+            "User Name": log.user_name,
+            "Bar Name": log.bar_name,
+            "Location Name": log.location_name,
+            "KG Submitted": log.kg_submitted,
             "Timestamp": log.timestamp.strftime("%Y-%m-%d %H:%M:%S")
         } for log in logs]
     
-    # Convert list of dictionaries into a pandas DataFrame
     df = pd.DataFrame(data)
     
-    # Define the file path; consider using os.path or similar for more complex paths
+    # Calculate totals per location
+    totals = df.groupby('Location Name')['KG Submitted'].sum().reset_index()
+    totals.columns = ['Location Name', 'Total KG']
+    
+    # Calculate the number of bags per location
+    bag_counts = df.groupby('Location Name').size().reset_index(name='Number of Bags')
+    
+    # Merge totals and bag counts
+    summary = pd.merge(totals, bag_counts, on='Location Name')
+    
+    # Append summary to the main DataFrame
+    summary_df = pd.DataFrame({'User Name': '', 'Bar Name': '', 'Location Name': summary['Location Name'], 'KG Submitted': summary['Total KG'], 'Timestamp': ''})
+    summary_df['Number of Bags'] = summary['Number of Bags']
+    
+    df = pd.concat([df, summary_df], ignore_index=True)
+    
+    # Define the file path
     directory = os.path.join(app.root_path, 'static')
     filepath = os.path.join(directory, 'zakken_kg_logs.xlsx')
     
     # Write the DataFrame to an Excel file
     df.to_excel(filepath, index=False)
     
-    # Corrected send_from_directory call
     return send_from_directory(directory=directory, path='zakken_kg_logs.xlsx', as_attachment=True, download_name='zakken_kg_logs.xlsx')
+
 
 
 @app.route('/photos/<filename>')
@@ -786,7 +811,8 @@ def index():
 def locatie_bars(location_id):
     location = Location.query.get_or_404(location_id)
     bars = Bar.query.filter_by(location_id=location_id).all()
-    return render_template('location.html', location=location, bars=bars)
+    return render_template('locatie_bars.html', location=location, bars=bars)
+
 
 
 @app.route('/bar_details/<int:bar_id>')
@@ -936,15 +962,13 @@ def humanize_time_since(dt):
     weeks = days // 7
 
     if seconds < 60:
-        return "just now"
+        return "Net"
     elif minutes < 60:
-        return f"{int(minutes)} minute(s) ago"
+        return f"{int(minutes)}m gel."
     elif hours < 24:
-        return f"{int(hours)} hour(s) ago"
+        return f"{int(hours)}u gel."
     elif days < 7:
-        return f"{int(days)} day(s) ago"
-    elif weeks < 4:
-        return f"{int(weeks)} week(s) ago"
+        return f"{int(days)}d gel."
     else:
         return dt.strftime('%Y-%m-%d %H:%M:%S')  # Fall back to datetime string if older than a month
 
@@ -979,17 +1003,19 @@ def log_activity():
 
 @app.template_filter('time_since')
 def time_since(dt):
+    if dt is None:
+        return "nooit"
     now = datetime.utcnow()
     diff = now - dt
-
     if diff.days > 0:
-        return f"{diff.days} days ago"
+        return f"{diff.days} dagen geleden"
     elif diff.seconds >= 3600:
-        return f"{diff.seconds // 3600} hours ago"
+        return f"{diff.seconds // 3600} uur geleden"
     elif diff.seconds >= 60:
-        return f"{diff.seconds // 60} minutes ago"
+        return f"{diff.seconds // 60} minuten geleden"
     else:
-        return "Just now"
+        return "Zojuist"
+
 
 @app.route('/user_dashboard/<int:user_id>', methods=['GET', 'POST'])
 def user_dashboard(user_id):
@@ -1010,8 +1036,8 @@ def user_dashboard(user_id):
         db.session.commit()
         return redirect(url_for('user_dashboard', user_id=user.id))
 
-    return render_template('user_dashboard.html', user=user, form=form)
-
+    return render_template('user_dashboard.html', user=user, form=form)\
+        
 @app.route('/location/<int:user_id>/<int:location_id>', methods=['GET', 'POST'])
 @login_required
 def location(user_id, location_id):
@@ -1023,20 +1049,18 @@ def location(user_id, location_id):
     from_admin = request.args.get('from_admin', 'false').lower() == 'true'  # Capture the parameter
 
     if bar_form.validate_on_submit():
-        # Create a new Bar instance with form data
         new_bar = Bar(
             name=bar_form.name.data,
-            zakken=0,  # Assuming default values or you might want to include these in your form
-            bekers=0,  # Assuming default values
+            zakken=0,
+            bekers=0,
             location_id=location_id,
-            link=bar_form.link.data  # Assuming your form has a 'link' field
+            link=bar_form.link.data
         )
         db.session.add(new_bar)
         db.session.commit()
         flash('New bar added successfully!', 'success')
-        return redirect(url_for('location', user_id=user_id, location_id=location_id))  # Redirect back to the location page
+        return redirect(url_for('location', user_id=user_id, location_id=location_id))
 
-    # Format datetime objects for the template
     formatted_bars = []
     for bar in bars:
         formatted_bar = {
@@ -1053,7 +1077,6 @@ def location(user_id, location_id):
         formatted_bars.append(formatted_bar)
 
     return render_template('location.html', location=location, bars=formatted_bars, bar_form=bar_form, from_admin=from_admin, bar_link_form=bar_link_form, current_user=current_user)
-
 
 @app.template_filter('hours_since')
 def hours_since(dt):
@@ -1137,6 +1160,58 @@ def update_bar_details_and_check_in(bar_id):
     # Redirect to the location route after processing
     return redirect(url_for('location', user_id=current_user.id, location_id=bar.location_id))
 
+@app.route('/toggle_check/<int:location_id>', methods=['POST'])
+@login_required
+def toggle_check(location_id):
+    log = CheckInOutLog.query.filter_by(user_id=current_user.id, location_id=location_id, check_out_time=None).first()
+    if log:
+        log.check_out_time = datetime.utcnow()
+        db.session.commit()
+        flash('Checked out successfully!', 'success')
+    else:
+        new_log = CheckInOutLog(user_id=current_user.id, location_id=location_id, check_in_time=datetime.utcnow())
+        db.session.add(new_log)
+        db.session.commit()
+        flash('Checked in successfully!', 'success')
+    return redirect(url_for('dashboard'))
+
+@app.route('/check_in_out_logs')
+@login_required
+def check_in_out_logs():
+    location_id = request.args.get('location')
+    user_id = request.args.get('user')
+    day = request.args.get('day')
+
+    logs_query = CheckInOutLog.query
+
+    if location_id:
+        logs_query = logs_query.filter_by(location_id=location_id)
+    if user_id:
+        logs_query = logs_query.filter_by(user_id=user_id)
+    if day:
+        day_start = datetime.strptime(day, '%Y-%m-%d')
+        day_end = day_start + timedelta(days=1)
+        logs_query = logs_query.filter(CheckInOutLog.check_in_time >= day_start, CheckInOutLog.check_in_time < day_end)
+
+    logs = logs_query.order_by(CheckInOutLog.check_in_time.desc()).all()
+
+    locations = Location.query.all()
+    users = User.query.all()
+    selected_location = int(location_id) if location_id else None
+    selected_user = int(user_id) if user_id else None
+    selected_day = day if day else ""
+
+    # Calculate total time per user
+    total_time_per_user = {}
+    for log in logs:
+        if log.check_in_time and log.check_out_time:
+            duration = log.check_out_time - log.check_in_time
+            if log.user.username not in total_time_per_user:
+                total_time_per_user[log.user.username] = duration
+            else:
+                total_time_per_user[log.user.username] += duration
+
+    return render_template('check_in_out_logs.html', logs=logs, locations=locations, users=users, selected_location=selected_location, selected_user=selected_user, selected_day=selected_day, total_time_per_user=total_time_per_user)
 
 class DayTimeEntryForm(FlaskForm):
     day = StringField('Day', validators=[DataRequired()])
@@ -1153,6 +1228,26 @@ class LocationAttribute(db.Model):
 
     def __repr__(self):
         return f'<LocationAttribute {self.key}: {self.value}>'
+
+@app.route('/check_in_logs')
+@login_required
+def check_in_logs():
+    # Fetch the check-in logs from the database
+    check_in_logs = CheckInOutLog.query.all()
+    locations = Location.query.all()
+
+    # Calculate total time per user
+    from collections import defaultdict
+    from datetime import timedelta
+
+    total_time_per_user = defaultdict(timedelta)
+
+    for log in check_in_logs:
+        if log.check_in_time and log.check_out_time:
+            total_time_per_user[log.user.username] += (log.check_out_time - log.check_in_time)
+
+    return render_template('check_in_out_logs.html', check_in_logs=check_in_logs, locations=locations, total_time_per_user=total_time_per_user)
+
 
 
 @app.route('/briefings')
@@ -1376,6 +1471,43 @@ def update_location(location_id):
     db.session.commit()
     return redirect(url_for('view_location', location_id=location_id))
 
+from flask import Flask, render_template, redirect, request, url_for, flash, send_file
+from werkzeug.utils import secure_filename
+import os
+
+# Configuration
+app.config['UPLOAD_FOLDER'] = os.path.join(app.root_path, 'static', 'uploads')  # Ensure this directory exists
+ALLOWED_EXTENSIONS = {'pdf'}
+
+# Helper function to check allowed file extensions
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Route to handle PDF upload
+@app.route('/upload_pdf/<int:location_id>', methods=['GET', 'POST'])
+@login_required
+def upload_pdf(location_id):
+    if request.method == 'POST':
+        if 'pdf_file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['pdf_file']
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+            # Assuming you have a Location model and a 'pdf_path' column
+            location = Location.query.get_or_404(location_id)
+            location.pdf_path = filename
+            db.session.commit()
+            flash('PDF uploaded successfully!')
+            return redirect(url_for('location_details', location_id=location_id))
+    return render_template('upload_pdf.html', location_id=location_id)
+
+
 @app.route('/bar/<int:bar_id>/update_color', methods=['POST'])
 def update_bar_color(bar_id):
     bar = Bar.query.get_or_404(bar_id)
@@ -1432,15 +1564,15 @@ def update_bar(bar_id):
 @app.route('/toggle_location_status/<int:location_id>', methods=['POST'])
 @login_required
 def toggle_location_status(location_id):
-    if not current_user.is_admin:
-        flash('You do not have permission to perform this action.', 'error')
-        return redirect(url_for('admin'))
-
-    location = Location.query.get_or_404(location_id)
-    location.closed = not location.closed
-    db.session.commit()
-
-    flash(f'Location {location.name} has been {"opened" if not location.closed else "closed"} successfully.', 'success')
+    try:
+        location = Location.query.get_or_404(location_id)
+        location.closed = not location.closed
+        db.session.commit()
+        status = 'closed' if location.closed else 'open'
+        flash(f"Location '{location.name}' status changed to {status}.", 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f"Failed to update the status of location '{location.name}'.", 'error')
     return redirect(url_for('admin'))
 
     
@@ -1698,17 +1830,45 @@ def delete_log(log_id):
     flash('Log entry deleted successfully.', 'success')
     return redirect(url_for('change_log'))  # Redirect to the change log page or wherever appropriate
 
-
-@app.route('/dashboard', methods=['GET'])
+@app.route('/dashboard')
+@login_required
 def dashboard():
-    if current_user.is_authenticated:
-        username = current_user.username
-        location_name = current_user.location.name if current_user.location else 'Nog geen werklocatie ingesteld'
-        # Generate the path for the current user's profile picture if it exists
-        profile_picture_path = url_for('static', filename='uploads/' + current_user.profile_picture) if current_user.profile_picture else None
-        return render_template('dashboard.html', username=username, location_name=location_name, profile_picture=profile_picture_path, user=current_user)
-    else:
-        return redirect(url_for('login'))
+    user = current_user
+    last_check_in_log = CheckInOutLog.query.filter_by(user_id=user.id, check_out_time=None).order_by(CheckInOutLog.check_in_time.desc()).first()
+    last_check_out_log = CheckInOutLog.query.filter_by(user_id=user.id).filter(CheckInOutLog.check_out_time.isnot(None)).order_by(CheckInOutLog.check_out_time.desc()).first()
+
+    current_check_in = last_check_in_log if last_check_in_log else None
+    last_check_out_time = last_check_out_log.check_out_time if last_check_out_log else None
+
+    return render_template(
+        'dashboard.html',
+        username=user.username,
+        location_name=user.location.name if user.location else 'No location set',
+        profile_picture=user.profile_picture,
+        current_check_in=current_check_in,
+        last_check_out_time=last_check_out_time,
+        user=user
+    )
+
+@app.route('/check_in/<int:location_id>', methods=['GET', 'POST'])
+@login_required
+def check_in(location_id):
+    location = Location.query.get_or_404(location_id)
+    log = CheckInOutLog(user_id=current_user.id, location_id=location_id, check_in_time=datetime.utcnow())
+    db.session.add(log)
+    db.session.commit()
+    flash('Checked in successfully!', 'success')
+    return redirect(url_for('dashboard'))
+
+@app.route('/check_out/<int:location_id>', methods=['GET', 'POST'])
+@login_required
+def check_out(location_id):
+    log = CheckInOutLog.query.filter_by(user_id=current_user.id, location_id=location_id, check_out_time=None).first_or_404()
+    log.check_out_time = datetime.utcnow()
+    db.session.commit()
+    flash('Checked out successfully!', 'success')
+    return redirect(url_for('dashboard'))
+
 
 @app.route('/assign_location/<int:user_id>', methods=['GET', 'POST'])
 def assign_location(user_id):
@@ -1737,17 +1897,21 @@ def list_locations():
 
 
 @app.route('/request_to_work/<int:location_id>', methods=['POST'])
+@login_required
 def request_to_work(location_id):
-    location = Location.query.get_or_404(location_id)
-    request_exists = WorkRequest.query.filter_by(user_id=current_user.id, location_id=location_id).first()
-    if request_exists:
-        flash('You have already requested to work at this location.', 'info')
+    logger.debug(f"Request received for location ID: {location_id} by user ID: {current_user.id}")
+    existing_request = WorkRequest.query.filter_by(user_id=current_user.id, location_id=location_id).first()
+    if existing_request:
+        logger.info('User has already requested this location.')
+        flash('You have already requested this location!', 'info')
     else:
         new_request = WorkRequest(user_id=current_user.id, location_id=location_id)
         db.session.add(new_request)
         db.session.commit()
-        flash(f'Request to work at {location.name} submitted!', 'success')
+        logger.info('Request sent successfully.')
+        flash('Request sent successfully!', 'success')
     return redirect(url_for('list_locations'))
+
 
 
 @app.route('/backup_and_restore_users', methods=['GET'])

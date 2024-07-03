@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='main.css') }}"
+    />
+    <title>Check-In and Check-Out Log</title>
+  </head>
+  <body>
+    <h1>Check-In and Check-Out Log</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>User ID</th>
+          <th>Location ID</th>
+          <th>Action</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for entry in log %}
+        <tr>
+          <td>{{ entry.user_id }}</td>
+          <td>{{ entry.location_id }}</td>
+          <td>{{ entry.action }}</td>
+          <td>{{ entry.timestamp }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+  </body>
+</html>

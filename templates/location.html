@@ -28,13 +28,13 @@
             </span>
         {% else %}
             <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ 'var(--bar-color)' if bar.background_color == 'blue' else 'var(--bar-color)' }};">
-                {{ bar.name }}
-            </a>
-            {% if bar.last_checked_in %}
-                <p>Last checked in: {{ bar.last_checked_in | to_local | humanize }}</p>
+                <span class="bar-name">{{ bar.name }}</span>
+                {% if bar.last_checked_in %}
+                <p class="timeagog">{{ bar.last_checked_in | to_local | humanize }}</p>
             {% else %}
-                <p>Never checked in</p>
+                <p class="timeagog">Nooit ingecheckt</p>
             {% endif %}
+            </a>
         {% endif %}
         {% if current_user.is_admin %}
         <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
@@ -75,24 +75,30 @@
     <a id="infoBtn" class="nav-item">
         <i class="fas fa-question"></i><span>Vragen</span>
     </a>
+    <a href="#" id="sortCheckInBtn" class="nav-item" onclick="sortBarsByCheckIn()">
+        <i class="fas fa-sort"></i><span>Sort oud</span>
+    </a>
 </div>
 
 <script>
 function searchBars() {
-    var input, filter, ul, li, a, i, txtValue;
+    var input, filter, ul, li, a, span, i, txtValue;
     input = document.getElementById("barSearchInput");
     filter = input.value.toUpperCase();
     ul = document.getElementById("barsList");
     li = ul.getElementsByTagName("li");
 
     for (i = 0; i < li.length; i++) {
-        a = li[i].getElementsByClassName("bar-button")[0]; 
+        a = li[i].getElementsByClassName("bar-button")[0];
         if (a) {
-            txtValue = a.textContent || a.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                li[i].style.display = "";
-            } else {
-                li[i].style.display = "none";
+            span = a.getElementsByClassName("bar-name")[0];
+            if (span) {
+                txtValue = span.textContent || span.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
             }
         }
     }
@@ -159,7 +165,57 @@ $(document).ready(function () {
         });
     });
 });
+
+function sortBarsByCheckIn() {
+    console.log("Sorting bars by check-in time...");
+    var barsList = document.getElementById('barsList');
+    var bars = Array.from(barsList.getElementsByTagName('li'));
+
+    bars.sort(function(a, b) {
+        var timeA = a.querySelector('.timeagog').innerText;
+        var timeB = b.querySelector('.timeagog').innerText;
+
+        console.log("Time A: " + timeA + ", Time B: " + timeB);
+
+        if (timeA === 'Nooit ingecheckt') return 1;
+        if (timeB === 'Nooit ingecheckt') return -1;
+
+        var dateA = parseTime(timeA);
+        var dateB = parseTime(timeB);
+
+        console.log("Date A: " + dateA + ", Date B: " + dateB);
+        
+        return dateB - dateA; // Sort descending
+    });
+
+    barsList.innerHTML = '';
+    bars.forEach(function(bar) {
+        barsList.appendChild(bar);
+    });
+    console.log("Bars sorted.");
+}
+
+function parseTime(timeStr) {
+    var now = new Date();
+    if (timeStr.includes("m gel.")) {
+        var minutes = parseInt(timeStr.split("m")[0]);
+        return new Date(now - minutes * 60000);
+    } else if (timeStr.includes("u gel.")) {
+        var hours = parseInt(timeStr.split("u")[0]);
+        return new Date(now - hours * 3600000);
+    } else if (timeStr.includes("d gel.")) {
+        var days = parseInt(timeStr.split("d")[0]);
+        return new Date(now - days * 86400000);
+    } else if (timeStr.includes("w gel.")) {
+        var weeks = parseInt(timeStr.split("w")[0]);
+        return new Date(now - weeks * 604800000);
+    } else {
+        // Fall back to the original date string if it's older than a month
+        return new Date(timeStr);
+    }
+}
 </script>
+
 {% with messages = get_flashed_messages(with_categories=true) %} 
 {% if messages %} 
     {% for category, message in messages %}

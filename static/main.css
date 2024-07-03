@@ -218,8 +218,9 @@ body {
 
 .naame h3 {
   margin-top: -50px;
-  color: gray;
+  color: black;
   font-weight: 400;
+  font-size: 20px;
 }
 
 .naame h4 {
@@ -233,7 +234,7 @@ body {
   background-color: var(--pc); /* Your button color */
   text-decoration: none;
   color: white;
-  padding: 15px;
+  padding: 25px;
   border-radius: 20px;
   font-size: 15px;
 }
@@ -498,6 +499,10 @@ body {
   text-decoration: none;
 }
 
+.timeagog {
+  font-size: 10px;
+}
+
 .zoeken {
   padding: 12px 20px;
   background-color: var(--pc); /* Your button color */
@@ -587,7 +592,7 @@ li {
   background-color: var(--pc); /* Your button color */
   padding: 10px;
   text-decoration: none;
-  color: #4e73df;
+  color: white;
   border-radius: 15px;
 }
 
@@ -1062,7 +1067,6 @@ input.check-button {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
-  justify-content: center;
   list-style: none;
   padding: 0;
   margin-top: -120px;
@@ -2579,7 +2583,6 @@ input[type="submit"] {
   margin: 0;
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
 }
 
 .bars-list li {
@@ -2660,12 +2663,12 @@ input[type="submit"] {
   }
 }
 
-@media (max-width: 600px) {
-  .bars-list li {
-    width: 30%;
-    font-size: 1.5em;
-  }
+.bars-list li {
+  width: 30%;
+  font-size: 1.5em;
+}
 
+@media (max-width: 600px) {
   .locations-list li {
     width: 90%;
     font-size: 1.5em;

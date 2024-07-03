@@ -10,7 +10,7 @@
   method="post"
 >
   <input class="check-button" type="submit" value="Inchecken" />
-  <p class="min-gel">{{ bar.last_checked_in | humanize }}</p>
+  <p class="min-gel">{{ bar.last_checked_in | to_local | humanize }}</p>
 </form>
 
 {% if from_admin %}
@@ -407,7 +407,6 @@
     />
   </svg>
 </div>
-
 {% endfor %} {% endif %} {% endwith %}
 
 <script>
@@ -425,7 +424,7 @@
   // Call this function when you want to show and auto-hide the checkmark
   showCheckmark();
 </script>
-e
+
 <script>
   $(document).ready(function () {
     // When the user clicks the question mark button, show the info lightbox

@@ -177,7 +177,7 @@
         <a href="{{ url_for('check_ins') }}">
           <div class="side-link">
             <i class="fas fa-check"></i>
-            <p>Check</p>
+            <p>Check-ins</p>
           </div>
         </a>
         <a href="{{ url_for('view_photos') }}">
@@ -196,6 +196,12 @@
           <div class="side-link">
             <i class="fas fa-pen"></i>
             <p>Notities</p>
+          </div>
+        </a>
+        <a href="{{ url_for('check_in_logs') }}">
+          <div class="side-link">
+            <i class="fas fa-list"></i>
+            <p>Aanwezig</p>
           </div>
         </a>
         <a href="{{ url_for('index') }}">
@@ -535,11 +541,11 @@
       <script>
         $(document).ready(function() {
           {% for category, message in messages %}
-            Swal.fire({
-              icon: '{{ category }}' === 'success' ? 'success' : 'error',
-              title: '{{ category.capitalize() }}',
-              text: '{{ message }}'
-            });
+          Swal.fire({
+            icon: '{{ category }}' === 'success' ? 'success' : 'error',
+            title: '{{ category.capitalize() }}',
+            text: '{{ message }}'
+          });
           {% endfor %}
         });
       </script>
@@ -581,6 +587,10 @@
               }
             }
           }
+
+          $(document).ready(function () {
+            window.sortUsers = sortUsers;
+          });
 
           // Filter notifications based on location selection
           function filterNotifications() {

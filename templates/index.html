@@ -2,6 +2,13 @@
 
 <div class="index-content-block">
   <div class="welcome-container" id="welcomeSection">
+    <div class="logo-container">
+      <img
+        src="{{ url_for('static', filename='logo.png') }}"
+        alt="CircularPET Logo"
+        class="circularpet-logo"
+      />
+    </div>
     <h1>Welkom op de app</h1>
     <p>Selecteer een locatie of zoek naar een specifieke locatie hieronder:</p>
   </div>
@@ -47,7 +54,6 @@
     class="maakappp"
     >Maak hier een app van</a
   >
-
   <div class="login-container">
     <img
       src="{{ url_for('static', filename='logo.png') }}"
@@ -65,7 +71,6 @@
         messages %} {% for category, message in messages %}
         <div class="alert alert-{{ category }}">{{ message }}</div>
         {% endfor %} {% endif %} {% endwith %}
-
         <div class="input-group">
           <input
             type="text"
@@ -134,15 +139,13 @@
     if (clickCount === 3) {
       clickCount = 0; // Reset click count
       movingImage.style.display = "block"; // Make the image visible
-
-      // Start the animation
       const keyframes = [
         { transform: "translateX(-100vw)" },
         { transform: "translateX(100vw)" },
       ];
       const options = {
-        duration: 10000, // 5 seconds
-        fill: "forwards", // Keep the property values set by the last keyframe
+        duration: 10000, // 10 seconds
+        fill: "forwards",
       };
       movingImage.animate(keyframes, options).onfinish = () => {
         movingImage.style.display = "none"; // Hide after animation
@@ -150,5 +153,4 @@
     }
   });
 </script>
-
 {% endblock %}

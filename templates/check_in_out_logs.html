@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check-In/Out Logs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        .logs-container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: var(--bc);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 18px;
+            text-align: left;
+        }
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: var(--bar-color);
+            color: white;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .filter-container {
+            margin-bottom: 20px;
+        }
+        .total-time-container {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="CircularPET Logo" class="logo2">
+    <div class="gear-icon-container">
+        <i id="toggleSidebar" class="fa fa-bars"></i>
+    </div>
+
+    <div class="sidebar" style="display: none">
+        <h2 class="side-titel">{{ current_user.username if current_user.is_authenticated else 'Admin' }}</h2>
+        {% if current_user.is_admin %}
+        <h3>Admin</h3>
+        {% else %}
+        <h3>Controleur</h3>
+        {% endif %}
+        <div class="max-man">
+            <a href="{{ url_for('admin') }}">
+                <div class="side-link">
+                    <i class="fas fa-user"></i>
+                    <p>Admin</p>
+                </div>
+            </a>
+            <a href="{{ url_for('change_log') }}">
+                <div class="side-link">
+                    <i class="fas fa-book"></i>
+                    <p>Data</p>
+                </div>
+            </a>
+            <a href="{{ url_for('check_ins') }}">
+                <div class="side-link">
+                    <i class="fas fa-check"></i>
+                    <p>Check-ins</p>
+                </div>
+            </a>
+            <a href="{{ url_for('view_photos') }}">
+                <div class="side-link">
+                    <i class="fas fa-images"></i>
+                    <p>Foto's</p>
+                </div>
+            </a>
+            <a href="{{ url_for('show_briefings') }}">
+                <div class="side-link">
+                    <i class="fas fa-file"></i>
+                    <p>Briefings</p>
+                </div>
+            </a>
+            <a href="{{ url_for('bar_notes') }}">
+                <div class="side-link">
+                    <i class="fas fa-pen"></i>
+                    <p>Notities</p>
+                </div>
+            </a>
+            <a href="{{ url_for('index') }}">
+                <div class="side-link">
+                    <i class="fas fa-arrow-left"></i>
+                    <p>Log-uit</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="logs-container">
+        <h1>Check-In/Out Logs</h1>
+        <div class="filter-container">
+            <form method="GET" action="{{ url_for('check_in_out_logs') }}">
+                <label for="location">Filter by Location:</label>
+                <select name="location" id="location" onchange="this.form.submit()">
+                    <option value="">All Locations</option>
+                    {% for location in locations %}
+                    <option value="{{ location.id }}" {% if location.id == selected_location %}selected{% endif %}>
+                        {{ location.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <label for="user">Filter by User:</label>
+                <select name="user" id="user" onchange="this.form.submit()">
+                    <option value="">All Users</option>
+                    {% for user in users %}
+                    <option value="{{ user.id }}" {% if user.id == selected_user %}selected{% endif %}>
+                        {{ user.username }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <label for="day">Filter by Day:</label>
+                <input type="date" name="day" id="day" value="{{ selected_day }}" onchange="this.form.submit()">
+            </form>
+        </div>
+        <div class="total-time-container">
+            <h2>Total Time Per User</h2>
+            <ul>
+                {% for user, total_time in total_time_per_user.items() %}
+                <li>{{ user }}: {{ total_time.total_seconds() // 3600 }}h {{ (total_time.total_seconds() % 3600) // 60 }}m</li>
+                {% endfor %}
+            </ul>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Location</th>
+                    <th>Check-In Time</th>
+                    <th>Check-Out Time</th>
+                    <th>Total Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.user.username }}</td>
+                    <td>{{ log.location.name }}</td>
+                    <td>{{ log.check_in_time.strftime('%Y-%m-%d %H:%M:%S') if log.check_in_time else 'N/A' }}</td>
+                    <td>{{ log.check_out_time.strftime('%Y-%m-%d %H:%M:%S') if log.check_out_time else 'N/A' }}</td>
+                    <td>
+                        {% if log.check_in_time and log.check_out_time %}
+                            {{ (log.check_out_time - log.check_in_time).total_seconds() // 3600 }}h {{ (log.check_out_time - log.check_in_time).total_seconds() % 3600 // 60 }}m
+                        {% else %}
+                            N/A
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Sidebar toggle
+            $("#toggleSidebar").click(function () {
+                $(".sidebar").slideToggle();
+            });
+        });
+    </script>
+</body>
+</html>

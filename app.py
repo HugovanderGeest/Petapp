@@ -216,8 +216,9 @@ class Location(db.Model):
     url = db.Column(db.String(500), nullable=True)
     map_image = db.Column(db.String(255))
     max_people = db.Column(db.Integer, nullable=False, default=10)
-    closed = db.Column(db.Boolean, default=False)  # Make sure this line is included
+    closed = db.Column(db.Boolean, default=False)  # Ensure this line is included
     pdf_path = db.Column(db.String(255), nullable=True)  # Add this line
+
 
 
     def __init__(self, name=None, date=None, address=None, start_time=None, amount_of_days=None, website_links=None, zakken=0, bekers=0, url=None, map_image=None, max_people=10, closed=False):
@@ -1911,8 +1912,6 @@ def request_to_work(location_id):
         logger.info('Request sent successfully.')
         flash('Request sent successfully!', 'success')
     return redirect(url_for('list_locations'))
-
-
 
 @app.route('/backup_and_restore_users', methods=['GET'])
 def backup_and_restore_users():

@@ -1037,7 +1037,21 @@ def user_dashboard(user_id):
         db.session.commit()
         return redirect(url_for('user_dashboard', user_id=user.id))
 
-    return render_template('user_dashboard.html', user=user, form=form)\
+    return render_template('user_dashboard.html', user=user, form=form)
+
+from flask import Flask, render_template, request, jsonify
+
+@app.route('/bar/<int:bar_id>/update_name', methods=['POST'])
+def update_bar_name(bar_id):
+    new_name = request.form.get('name')
+    if not new_name:
+        return jsonify({'success': False, 'message': 'Name cannot be empty'})
+    
+    bar = Bar.query.get_or_404(bar_id)
+    bar.name = new_name
+    db.session.commit()
+    return jsonify({'success': True, 'new_name': new_name})
+
         
 @app.route('/location/<int:user_id>/<int:location_id>', methods=['GET', 'POST'])
 @login_required
@@ -1561,6 +1575,8 @@ def update_bar(bar_id):
         return jsonify({field: new_value})
     else:
         return jsonify({'error': 'Invalid field or increment value'}), 400
+    
+
     
 @app.route('/toggle_location_status/<int:location_id>', methods=['POST'])
 @login_required

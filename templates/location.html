@@ -8,10 +8,9 @@
 </div>
 
 {% if from_admin %}
-<div id="formContainer">
+<div id="formContainer" style="display: none;">
     <form id="barLinkForm" method="POST">
         <input type="text" name="bar_name" class="form-input jamooi" placeholder="Bar of container naam" required>
-        <button type="button" onclick="removeForm()" class="remove-button">X</button>
         <input type="submit" value="+ Bar" class="submit-button jamooi">
         <div id="errorText" class="error-text"></div>
     </form>
@@ -22,65 +21,120 @@
     {% set sorted_bars = bars | sort(attribute='name') %}
     {% for bar in sorted_bars %}
     <li>
-        {% if bar.background_color == 'red' %}
-            <span class="bar-button" style="display: none;">
-                {{ bar.name }}
-            </span>
-        {% else %}
+        <div class="bar-info">
             <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ 'var(--bar-color)' if bar.background_color == 'blue' else 'var(--bar-color)' }};">
-                <span class="bar-name">{{ bar.name }}</span>
-                {% if bar.last_checked_in %}
-                <p class="timeagog">{{ bar.last_checked_in | to_local | humanize }}</p>
-            {% else %}
-                <p class="timeagog">Nooit ingecheckt</p>
-            {% endif %}
+                <span class="bar-name" id="barName-{{ bar.id }}">{{ bar.name }}</span>
             </a>
-        {% endif %}
+            <div class="edit-controls">
+                <input type="text" class="edit-bar-name" id="editBarName-{{ bar.id }}" value="{{ bar.name }}" style="display: none;">
+                <button class="edit-button" style="display: none;" onclick="editBarName({{ bar.id }})">Edit</button>
+                <button class="save-button" style="display: none;" onclick="saveBarName({{ bar.id }})">Save</button>
+            </div>
+        </div>
         {% if current_user.is_admin %}
-        <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
-            <select name="color" onchange="this.form.submit()">
-                <option value="blue" {% if bar.background_color == 'blue' %}selected{% endif %}>Bar</option>
-                <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
-            </select>
-        </form>
+        <div class="admin-controls" style="display: none;">
+            <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
+                <select name="color" onchange="this.form.submit()">
+                    <option value="blue" {% if bar.background_color == 'blue' %}selected{% endif %}>Bar</option>
+                    <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
+                </select>
+            </form>
             <button class="removeBarBtn" data-bar-id="{{ bar.id }}">X</button>
+        </div>
         {% endif %}
     </li>
     {% endfor %}
 </ul>
 
-<div id="fontSizeContainer" style="display: none; position: fixed; bottom: 10%; right: 10px; z-index: 1000; background-color: white; padding: 10px; border-radius: 5px;">
-    <label for="fontSizeSlider">Adjust Font Size:</label>
-    <input type="range" id="fontSizeSlider" min="1" max="10" value="1">
-</div>
-
-<div id="infoLightbox" style="display:none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
-    <div style="background: white; margin: 100px auto; padding: 20px; width: 50%;">
-        <b>Op deze pagina kun je aanklikken in welke bar jij nu bent</b><br><br>
-        <b>Blauw</b><br> zijn barren<br><br>
-        Vragen? app: <a href="tel:0639865297">0639865297</a><br> <br><br> <br>
-        <button class="sluit-knop" onclick="closeLightbox()">Sluit</button>
-    </div>
-</div>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
 <div class="bottom-navbar">
     <a href="{{ url_for('dashboard', user_id=current_user.id) }}" class="nav-item">
         <i class="fas fa-user"></i><span>Jij</span>
     </a>
-    <a href="{{ url_for('map_page', location_id=location.id) }}" class="nav-item">
-        <i class="fas fa-fas fa-map-marker-alt"></i><span>Map</span>
-    </a>
-    <a id="infoBtn" class="nav-item">
+    <!-- <a href="{{ url_for('map_page', location_id=location.id) }}" class="nav-item">
+        <i class="fas fa-map-marker-alt"></i><span>Map</span>
+    </a> -->
+    <!-- <a id="infoBtn" class="nav-item">
         <i class="fas fa-question"></i><span>Vragen</span>
-    </a>
+    </a> -->
     <a href="#" id="sortCheckInBtn" class="nav-item" onclick="sortBarsByCheckIn()">
         <i class="fas fa-sort"></i><span>Sort oud</span>
     </a>
+    <a href="#" id="settingsBtn" class="nav-item" onclick="toggleAdminControls()">
+        <i class="fas fa-cog"></i><span>Settings</span>
+    </a>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <script>
+function editBarName(barId) {
+    document.getElementById(`barName-${barId}`).style.display = 'none';
+    document.getElementById(`editBarName-${barId}`).style.display = 'block';
+    document.querySelector(`#barsList li .edit-controls .edit-button[onclick="editBarName(${barId})"]`).style.display = 'none';
+    document.querySelector(`#barsList li .edit-controls .save-button[onclick="saveBarName(${barId})"]`).style.display = 'inline';
+}
+
+function saveBarName(barId) {
+    var newName = document.getElementById(`editBarName-${barId}`).value;
+    $.ajax({
+        url: `/bar/${barId}/update_name`,
+        method: 'POST',
+        data: { name: newName },
+        success: function(response) {
+            if (response.success) {
+                document.getElementById(`barName-${barId}`).innerText = response.new_name;
+                document.getElementById(`barName-${barId}`).style.display = 'block';
+                document.getElementById(`editBarName-${barId}`).style.display = 'none';
+                document.querySelector(`#barsList li .edit-controls .edit-button[onclick="editBarName(${barId})"]`).style.display = 'inline';
+                document.querySelector(`#barsList li .edit-controls .save-button[onclick="saveBarName(${barId})"]`).style.display = 'none';
+            } else {
+                alert(response.message || 'Error updating name');
+            }
+        },
+        error: function() {
+            alert('An error occurred while updating the name.');
+        }
+    });
+}
+
+
+
+function toggleAdminControls() {
+    var adminControls = document.getElementsByClassName('admin-controls');
+    var editButtons = document.getElementsByClassName('edit-button');
+    for (var i = 0; i < adminControls.length; i++) {
+        adminControls[i].style.display = adminControls[i].style.display === 'none' ? 'block' : 'none';
+    }
+    for (var j = 0; j < editButtons.length; j++) {
+        editButtons[j].style.display = editButtons[j].style.display === 'none' ? 'inline' : 'none';
+    }
+    var formContainer = document.getElementById('formContainer');
+    formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+}
+
+function saveBarName(barId) {
+    var newName = document.getElementById(`editBarName-${barId}`).value;
+    $.ajax({
+        url: `/bar/${barId}/update_name`,
+        method: 'POST',
+        data: { name: newName },
+        success: function(response) {
+            if (response.success) {
+                document.getElementById(`barName-${barId}`).innerText = newName;
+                document.getElementById(`barName-${barId}`).style.display = 'block';
+                document.getElementById(`editBarName-${barId}`).style.display = 'none';
+                document.getElementById(`saveBarName-${barId}`).style.display = 'none';
+            } else {
+                alert('Error updating name');
+            }
+        }
+    });
+}
+
+function toggleFormVisibility() {
+    var formContainer = document.getElementById('formContainer');
+    formContainer.style.display = formContainer.style.display === 'none' ? 'block' : 'none';
+}
 function searchBars() {
     var input, filter, ul, li, a, span, i, txtValue;
     input = document.getElementById("barSearchInput");

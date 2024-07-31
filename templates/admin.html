@@ -320,10 +320,11 @@
             </p>
             <div class="buttons">
               <a
-                href="{{ url_for('location', user_id=current_user.id, location_id=location.id) }}"
+                href="{{ url_for('location', user_id=current_user.id, location_id=location.id) }}?from_admin={{ 'true' if current_user.is_admin else 'false' }}"
                 class="btn btn-secondary"
                 >Ga naar Locatie</a
               >
+
               <a
                 href="{{ url_for('location_details', location_id=location.id) }}"
                 class="btn btn-secondary"

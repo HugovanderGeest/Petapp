@@ -1961,5 +1961,70 @@ def remove_bar(bar_id):
     db.session.commit()
     return jsonify({'success': 'Bar removed successfully'}), 200
 
+
+from flask import jsonify
+import csv
+from google.oauth2 import service_account
+from googleapiclient.discovery import build
+import io
+
+
+@app.route('/close_location/<int:location_id>', methods=['POST'])
+def close_location(location_id):
+    location = Location.query.get_or_404(location_id)
+    location.is_closed = True
+    db.session.commit()
+    
+    # Remove checkins-related extraction
+    data = extract_location_data(location_id)
+    
+    # Generate CSV or handle data as needed
+    csv_file = generate_csv(data)
+    
+    # Upload to Google Drive or other storage
+    upload_to_drive(csv_file, 'location_data.csv')
+    
+    return jsonify({"message": "Location closed and data exported"}), 200
+
+def extract_location_data(location_id):
+    # Query database for required information, excluding checkins
+    users = User.query.filter_by(location_id=location_id).all()
+    bars = Bar.query.filter_by(location_id=location_id).all()
+    
+    # Format data as needed
+    data = {
+        "users": [(user.id, user.name) for user in users],
+        "bars": [(bar.id, bar.name) for bar in bars],
+    }
+    return data
+
+
+def generate_csv(data):
+    output = io.StringIO()
+    writer = csv.writer(output)
+    writer.writerow(['ID', 'Name/Date', 'Type'])
+    
+    for user in data['users']:
+        writer.writerow([user[0], user[1], 'User'])
+    for bar in data['bars']:
+        writer.writerow([bar[0], bar[1], 'Bar'])
+    for checkin in data['checkins']:
+        writer.writerow([checkin[0], checkin[1], 'Checkin'])
+    
+    output.seek(0)
+    return output.getvalue()
+
+def upload_to_drive(file_content, filename):
+    SCOPES = ['https://www.googleapis.com/auth/drive.file']
+    creds = service_account.Credentials.from_service_account_file(
+        'path_to_service_account.json', scopes=SCOPES)
+    service = build('drive', 'v3', credentials=creds)
+    file_metadata = {'name': filename, 'parents': ['1RcBf6_UZA2j7g0iRKBx9_rgKqei9wnAI']}
+    media = MediaFileUpload(io.BytesIO(file_content.encode()), mimetype='text/csv')
+    file = service.files().create(body=file_metadata, media_body=media, fields='id').execute()
+    return file.get('id')
+
+
 if __name__ == '__main__':
     app.run(debug=True)  
+

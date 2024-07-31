@@ -341,6 +341,14 @@
                   {{ 'Open' if location.closed else 'Sluit' }} Aanmeldingen
                 </button>
               </form>
+
+              <!-- Close Location Button -->
+              <button
+                onclick="closeLocation({{ location.id }})"
+                class="btn btn-danger"
+              >
+                Close Location
+              </button>
             </div>
             <form
               action="{{ url_for('delete_location', location_id=location.id) }}"
@@ -354,6 +362,29 @@
           {% endfor %}
         </ul>
       </div>
+
+      <script>
+        function closeLocation(locationId) {
+          if (
+            confirm(
+              "Are you sure you want to close this location? This will archive all associated data."
+            )
+          ) {
+            fetch(`/close_location/${locationId}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                alert(data.message);
+                window.location.reload();
+              })
+              .catch((error) => console.error("Error:", error));
+          }
+        }
+      </script>
 
       <div id="notificationsSection">
         <h2>Meldingen</h2>

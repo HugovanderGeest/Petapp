@@ -1,5 +1,36 @@
 {% extends "base.html" %} {% block content %}
 
+<style>
+  /* Additional CSS for responsiveness */
+  .locations-section {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .locations-list {
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+  }
+
+  .location-item {
+    margin-bottom: 10px;
+  }
+
+  .location-link {
+    display: block;
+    padding: 10px;
+    font-size: 1.2em;
+    color: #333;
+    text-decoration: none;
+  }
+
+  .locations-list li a,
+  .bars-list li a {
+    width: 50%;
+  }
+</style>
+
 <div class="index-content-block">
   <div class="welcome-container" id="welcomeSection">
     <div class="logo-container">
@@ -30,9 +61,12 @@
     <ul class="locations-list">
       {% for location in locations %}
       <li class="location-item">
-        <a href="{{ url_for('locatie_bars', location_id=location.id) }}"
-          >{{ location.name }}</a
+        <a
+          href="{{ url_for('locatie_bars', location_id=location.id) }}"
+          class="location-link"
         >
+          {{ location.name }}
+        </a>
       </li>
       {% endfor %}
     </ul>

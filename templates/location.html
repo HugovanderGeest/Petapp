@@ -21,30 +21,33 @@
     {% set sorted_bars = bars | sort(attribute='name') %}
     {% for bar in sorted_bars %}
     <li>
-        <div class="bar-info">
+        {% if bar.background_color == 'red' %}
+            <span class="bar-button" style="display: none;">
+                {{ bar.name }}
+            </span>
+        {% else %}
             <a href="{{ url_for('bar', bar_id=bar.id) }}" class="bar-button" style="background-color: {{ 'var(--bar-color)' if bar.background_color == 'blue' else 'var(--bar-color)' }};">
-                <span class="bar-name" id="barName-{{ bar.id }}">{{ bar.name }}</span>
+                <span class="bar-name">{{ bar.name }}</span>
+                {% if bar.last_checked_in %}
+                    <p class="timeagog">{{ bar.last_checked_in | to_local | humanize }}</p>
+                {% else %}
+                    <p class="timeagog">Nooit ingecheckt</p>
+                {% endif %}
             </a>
-            <div class="edit-controls">
-                <input type="text" class="edit-bar-name" id="editBarName-{{ bar.id }}" value="{{ bar.name }}" style="display: none;">
-                <button class="edit-button" style="display: none;" onclick="editBarName({{ bar.id }})">Edit</button>
-                <button class="save-button" style="display: none;" onclick="saveBarName({{ bar.id }})">Save</button>
-            </div>
-        </div>
+        {% endif %}
         {% if current_user.is_admin %}
-        <div class="admin-controls" style="display: none;">
-            <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
-                <select name="color" onchange="this.form.submit()">
-                    <option value="blue" {% if bar.background_color == 'blue' %}selected{% endif %}>Bar</option>
-                    <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
-                </select>
-            </form>
-            <button class="removeBarBtn" data-bar-id="{{ bar.id }}">X</button>
-        </div>
+        <form method="POST" action="{{ url_for('update_bar_color', bar_id=bar.id) }}">
+            <select name="color" onchange="this.form.submit()">
+                <option value="blue" {% if bar.background_color == 'blue' %}selected{% endif %}>Bar</option>
+                <option value="red" {% if bar.background_color == 'red' %}selected{% endif %}>Container</option>
+            </select>
+        </form>
+        <button class="removeBarBtn" data-bar-id="{{ bar.id }}">X</button>
         {% endif %}
     </li>
     {% endfor %}
 </ul>
+
 
 <div class="bottom-navbar">
     <a href="{{ url_for('dashboard', user_id=current_user.id) }}" class="nav-item">
